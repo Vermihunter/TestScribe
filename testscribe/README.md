@@ -1,20 +1,26 @@
 # testscribe README
 
-This is the README for your extension "testscribe". After writing up a brief description, we recommend including the following sections.
+TestScribe is a tool to automatically generate unit tests for your projects. It supports both project-level generation and
+file/class level test generation. Currently it supports `C++` and the most famous C++ unit testing framework, [GoogleTest](https://github.com/google/googletest).
+
+The project describes some best practices i.e. some scenarios that are most likely one of the best solutions for a problem. These techniques
+are mappings for code-to-unit test type. On the other hand, TestScribe gives the users the freedom to generate any type of test type for
+a given piece of code.
+
+Although TestScribe currently implements a single programming language with a single unit testing framework implementation, it defines
+an interface that allows developers to extend this framework for their favorite programming language and unit testing framework. More about 
+this feature in the [Extending TestScribe](#extending-testscribe) section.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- Generate unit tests for a directory
+- Generate unit tests for a file
+- Generate unit tests for the selected code 
 
-For example if there is an image subfolder under your extension project workspace:
+The unit test generation for the selected code option comes with two different customization levels:
+- The user decides what type of test should be generated for the given class/method
+- Automatic generation specificed by TestScribe
 
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
 
 ## Extension Settings
 
@@ -49,23 +55,19 @@ Added features X, Y, and Z.
 
 ---
 
-## Following extension guidelines
+## Extending TestScribe
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+TestScribe uses [Tree-sitter](https://tree-sitter.github.io/tree-sitter/) as a parser making it extremely easy to add new languages.
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+The application is divided into two parts:
+- Parsing the file into objects
+- Generating unit tests for the objects
 
-## Working with Markdown
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+### Parsing
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
 
-## For more information
+### Generating unit tests
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+TestScribe uses the [handlebars](https://handlebarsjs.com/) templating engine to define the different types of tests. Separating this logic from code helps making it easily configurable. To add support for your beloved unit testing framework you have to first define what the tests look like.
 
-**Enjoy!**
