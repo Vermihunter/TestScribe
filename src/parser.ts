@@ -41,11 +41,6 @@ interface FunctionMember extends Member {
     parameters: Parameter[];
 }
 
-// interface ClassOrStruct {
-//     className: string;
-//     variables: Member[];
-//     functions: FunctionMember[];
-// }
 
 interface ClassOrStruct {
     className: string;
@@ -66,7 +61,7 @@ function determineAccessSpecifier(node: Parser.SyntaxNode | null): AccessSpecifi
     return AccessSpecifier.Private;
 }
 
-function collectClassDetails(
+export function collectClassDetails(
     node: Parser.SyntaxNode,
     defaultAccess: AccessSpecifier = AccessSpecifier.Private
 ): ClassOrStruct | null {

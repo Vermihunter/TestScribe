@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as Handlebars from 'handlebars';
 
-function getTemplate(templateName: string, data: Record<string, any>): string {
+export function getTemplate(templateName: string, data: Record<string, any>): string {
     const templatePath = path.join(__dirname, '..', 'templates', 'GoogleTest', templateName);
     if (fs.existsSync(templatePath)) {
         const templateContent = fs.readFileSync(templatePath, 'utf-8');
