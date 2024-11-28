@@ -1,0 +1,47 @@
+# Node.js dependencies
+node_modules/
+
+# Output from TypeScript compiler
+out/
+
+# Logs
+*.log
+*.log.*
+
+# Environment settings
+.env
+.env.*
+
+# VS Code specific settings
+.vscode/
+
+# Temporary files and caches
+*.tmp
+*.temp
+*.bak
+.DS_Store
+Thumbs.db
+.idea/
+*.swp
+*.swo
+*.swn
+*.un~
+
+# npm debug log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Extensions packaging
+*.vsix
+
+# Test coverage reports
+coverage/
+.nyc_output/
+
+# Git hooks and metadata
+.husky/
+hooks/
+
+# Other
+.vscode-test/
