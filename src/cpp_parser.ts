@@ -1,54 +1,6 @@
 import Parser from 'tree-sitter';
 import Cpp from 'tree-sitter-cpp';
-
-
-const fs = require('fs');
-const path = require('path');
-
-
-const filePath = path.resolve(__dirname, "test/data" ,'structs_with_methods.cpp');
-const cppCode = fs.readFileSync(filePath, 'utf8');
-
-// Initialize parser and set the language
-const parser = new Parser();
-parser.setLanguage(Cpp);
-
-// Parse the C++ code
-const tree = parser.parse(cppCode);
-
-// Define the AccessSpecifier enum
-enum AccessSpecifier {
-    Public = 'public',
-    Protected = 'protected',
-    Private = 'private',
-}
-
-interface Parameter {
-    name: string;
-    type: string;
-}
-
-// Define the structure of a variable and class result
-interface Member {
-    name: string;
-    type: string;
-    isStatic: boolean;
-    isVirtual: boolean;
-    access: AccessSpecifier; // public, private, or protected
-}
-
-interface FunctionMember extends Member {
-    parameters: Parameter[];
-}
-
-
-interface ClassOrStruct {
-    className: string;
-    variables: Member[];
-    functions: FunctionMember[];
-    access: AccessSpecifier;
-    nestedClasses: ClassOrStruct[];
-}
+import {AccessSpecifier, ClassOrStruct, Member, FunctionMember, Parameter } from './cpp_objects';
 
 
 function determineAccessSpecifier(node: Parser.SyntaxNode | null): AccessSpecifier {
@@ -61,7 +13,7 @@ function determineAccessSpecifier(node: Parser.SyntaxNode | null): AccessSpecifi
     return AccessSpecifier.Private;
 }
 
-export function collectClassDetails(
+function collectClassDetails(
     node: Parser.SyntaxNode,
     defaultAccess: AccessSpecifier = AccessSpecifier.Private
 ): ClassOrStruct | null {
@@ -179,7 +131,7 @@ export function collectClassDetails(
 }
 
 // Function to collect all top-level classes in the file
-function collectAllClasses(node: Parser.SyntaxNode): ClassOrStruct[] {
+export function collectAllClasses(node: Parser.SyntaxNode): ClassOrStruct[] {
     const classes: ClassOrStruct[] = [];
 
     if (node.type === 'translation_unit') {
@@ -194,43 +146,35 @@ function collectAllClasses(node: Parser.SyntaxNode): ClassOrStruct[] {
     return classes;
 }
 
-const rootNode = tree.rootNode;
-const classDetails = collectAllClasses(rootNode);
 
-// Output the results
-console.log('Classes and their variables:');
-console.log(JSON.stringify(classDetails, null, 2));
 
-console.log("###########################");
-console.log("###########################");
+// // ######################### GLOBAL FUNCTIONS
 
-// ######################### FUNCTIONS
+// // Traverse to find all function definitions
+// const functionNodes = rootNode.descendantsOfType('function_definition');
 
-// Traverse to find all function definitions
-const functionNodes = rootNode.descendantsOfType('function_definition');
+// for (const func of functionNodes) {
+//     // Extract function name
+//     const declarator = func.childForFieldName('declarator');
+//     const functionName = declarator?.childForFieldName('declarator')?.text;
 
-for (const func of functionNodes) {
-    // Extract function name
-    const declarator = func.childForFieldName('declarator');
-    const functionName = declarator?.childForFieldName('declarator')?.text;
+//     // Extract return type
+//     const returnType = declarator?.previousSibling?.text;
 
-    // Extract return type
-    const returnType = declarator?.previousSibling?.text;
+//     // Extract parameters
+//     const parameterList = declarator?.childForFieldName('parameters');
+//     const parameters = parameterList?.namedChildren.map(param => param.text).join(', ') || 'void';
 
-    // Extract parameters
-    const parameterList = declarator?.childForFieldName('parameters');
-    const parameters = parameterList?.namedChildren.map(param => param.text).join(', ') || 'void';
+//     // Extract body
+//     const body = func.childForFieldName('body')?.text;
 
-    // Extract body
-    const body = func.childForFieldName('body')?.text;
+//     const lines = body?.split('\n')?.map(x => x.trim()).filter(line => line);
 
-    const lines = body?.split('\n')?.map(x => x.trim()).filter(line => line);
-
-    // Print details
-    console.log(`Function Name: ${functionName}`);
-    console.log(`Return Type: ${returnType}`);
-    console.log(`Parameters: ${parameters}`);
-    console.log(`Body: ${lines}`);
-    console.log(lines);
-    console.log('-----------------------');
-}
+//     // Print details
+//     console.log(`Function Name: ${functionName}`);
+//     console.log(`Return Type: ${returnType}`);
+//     console.log(`Parameters: ${parameters}`);
+//     console.log(`Body: ${lines}`);
+//     console.log(lines);
+//     console.log('-----------------------');
+// }
