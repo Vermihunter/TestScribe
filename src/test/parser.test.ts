@@ -4,8 +4,6 @@ const Cpp = require('tree-sitter-cpp');
 const Parser = require('tree-sitter');
 
 
-// collectClassDetails(null)
-
 const fs = require('fs');
 const path = require('path');
 

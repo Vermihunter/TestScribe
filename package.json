@@ -14,8 +14,16 @@
   "contributes": {
     "commands": [
       {
-        "command": "testscribe.helloWorld",
-        "title": "Hello World"
+        "command": "testscribe.forSelected",
+        "title": "Generate tests for selected code"
+      },
+      {
+        "command": "testscribe.forCurrFile",
+        "title": "Generate tests for the current file"
+      },
+      {
+        "command": "testscribe.forSelectedDir",
+        "title": "Generate tests for the selected directory"
       }
     ]
   },
@@ -28,8 +36,6 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.14",
-    "@types/mocha": "^10.0.9",
     "@types/node": "20.x",
     "@types/vscode": "^1.95.0",
     "@typescript-eslint/eslint-plugin": "^8.10.0",
@@ -37,12 +43,12 @@
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.1",
     "eslint": "^9.13.0",
-    "jest": "^29.7.0",
     "ts-jest": "^29.2.5",
     "typescript": "^5.6.3"
   },
   "dependencies": {
     "handlebars": "^4.7.8",
+    "jest": "^29.7.0",
     "tree-sitter": "^0.21.1",
     "tree-sitter-cli": "^0.24.4",
     "tree-sitter-cpp": "^0.23.4",
