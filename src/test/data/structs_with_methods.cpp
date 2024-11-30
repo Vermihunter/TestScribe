@@ -15,7 +15,7 @@ struct Point {
 protected:
     static double x;
     double y;
-    static double distance(const Point * a, const Point& b);
+    static double distance(const Point    *    a, const Point& b);
 
     struct A{
         int k;
