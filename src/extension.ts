@@ -1,6 +1,57 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import {generateTestCMake, generateTestMain, generateTestsForCode} from './cpp_test_creator';
+
+const fs = require('fs');
+const path = require('path');
+
+
+function getRelativePathFromRoot(filePath: string): string | null  {
+    const workspaceFolders = vscode.workspace.workspaceFolders;
+
+    if(!workspaceFolders || workspaceFolders.length === 0) {
+        return null;
+    }
+    
+    const rootPath = workspaceFolders[0].uri.fsPath;
+    const relativePath = path.relative(rootPath, filePath);
+    if(relativePath.startsWith('..')) {
+        return null;
+    }
+    
+    const parts = relativePath.split(path.sep); 
+    parts[0] = "tests"; 
+    const testPath = path.resolve(rootPath, parts.join(path.sep));
+    return testPath;
+}
+
+function generateForFiles(fileNames: string[], testFilePath: string) {
+    const generatedCppFiles: string[] = fileNames.flatMap(input =>  generateTestsForCode(fs.readFileSync(input, 'utf-8'),  testFilePath));
+    generateTestMain(testFilePath);
+    generateTestCMake(generatedCppFiles, testFilePath);
+}
+
+const endings = ['.hpp', '.cpp', '.h'];
+function getHppFilesRecursively(dir: string): string[] {
+    let hppFiles: string[] = [];
+
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+
+    for (const entry of entries) {
+        const fullPath = path.join(dir, entry.name);
+
+        if (entry.isDirectory()) {
+            // Recursively read subdirectories
+            hppFiles = hppFiles.concat(getHppFilesRecursively(fullPath));
+        } else if (entry.isFile() && endings.some(ending => fullPath.endsWith(ending))) {
+            // Add the .hpp file to the list
+            hppFiles.push(fullPath);
+        }
+    }
+
+    return hppFiles;
+}
 
 
 // This method is called when your extension is activated
@@ -16,7 +67,6 @@ export function activate(context: vscode.ExtensionContext) {
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
     const forCurrFile = vscode.commands.registerCommand('testscribe.forCurrFile', () => {
-        console.log("Curr file");
         // Get the active editor
         const editor = vscode.window.activeTextEditor;
 
@@ -28,44 +78,37 @@ export function activate(context: vscode.ExtensionContext) {
         // Get the current file path
         const filePath = editor.document.uri.fsPath;
 
-        // Get the current file content
-        const fileContent = editor.document.getText();
-
-        // Print the path and content (log to console and show a message)
-        console.log('Current File Path:', filePath);
-        console.log('Current File Content:', fileContent);
+        const testPath = getRelativePathFromRoot(filePath);
+        if(testPath === null) {
+            return;
+        }
+        
+        generateForFiles([filePath], path.dirname(testPath));
     });
 
-    const forSelectedDir = vscode.commands.registerCommand('testscribe.forSelectedDir', () => {
-    
-    });
+    const forSelectedDir = vscode.commands.registerCommand('testscribe.forSelectedDir', async () => {
+        const folderUri = await vscode.window.showOpenDialog({
+            canSelectFiles: false,
+            canSelectFolders: true,
+            canSelectMany: false,
+            openLabel: 'Select source folder'
+        });
 
-
-	const forSelected = vscode.commands.registerCommand('testscribe.forSelected', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		const editor = vscode.window.activeTextEditor;
-        if (!editor) {
-            vscode.window.showErrorMessage('No active editor');
+        if(folderUri === undefined || folderUri[0] === null) {
+            return;
+        }
+        
+        const testPath = getRelativePathFromRoot(folderUri[0].fsPath);
+        if(testPath === null) {
             return;
         }
 
-        // Get the selected text
-        const selection = editor.selection;
-        const selectedText = editor.document.getText(selection);
+        const cppFiles = getHppFilesRecursively(folderUri[0].fsPath);
+        generateForFiles(cppFiles, testPath);
+    });
 
-        if (selectedText) {
-            // Print the selected text
-            console.log('Selected Test:', selectedText);
-            vscode.window.showInformationMessage(`Selected Test: ${selectedText}`);
-        } else {
-            vscode.window.showWarningMessage('No text selected');
-        }
 
-		vscode.window.showInformationMessage('Hello Worlddddd from TestScribe!');
-	});
-
-	context.subscriptions.push(forCurrFile, forSelectedDir, forSelected);
+	context.subscriptions.push(forCurrFile, forSelectedDir);
 }
 
 // This method is called when your extension is deactivated

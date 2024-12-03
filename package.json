@@ -14,10 +14,6 @@
   "contributes": {
     "commands": [
       {
-        "command": "testscribe.forSelected",
-        "title": "Generate tests for selected code"
-      },
-      {
         "command": "testscribe.forCurrFile",
         "title": "Generate tests for the current file"
       },
