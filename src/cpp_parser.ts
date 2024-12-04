@@ -145,36 +145,3 @@ export function collectAllClasses(node: Parser.SyntaxNode): ClassOrStruct[] {
 
     return classes;
 }
-
-
-
-// // ######################### GLOBAL FUNCTIONS
-
-// // Traverse to find all function definitions
-// const functionNodes = rootNode.descendantsOfType('function_definition');
-
-// for (const func of functionNodes) {
-//     // Extract function name
-//     const declarator = func.childForFieldName('declarator');
-//     const functionName = declarator?.childForFieldName('declarator')?.text;
-
-//     // Extract return type
-//     const returnType = declarator?.previousSibling?.text;
-
-//     // Extract parameters
-//     const parameterList = declarator?.childForFieldName('parameters');
-//     const parameters = parameterList?.namedChildren.map(param => param.text).join(', ') || 'void';
-
-//     // Extract body
-//     const body = func.childForFieldName('body')?.text;
-
-//     const lines = body?.split('\n')?.map(x => x.trim()).filter(line => line);
-
-//     // Print details
-//     console.log(`Function Name: ${functionName}`);
-//     console.log(`Return Type: ${returnType}`);
-//     console.log(`Parameters: ${parameters}`);
-//     console.log(`Body: ${lines}`);
-//     console.log(lines);
-//     console.log('-----------------------');
-// }

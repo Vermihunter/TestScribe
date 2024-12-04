@@ -1,29 +1,29 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import {generateTestCMake, generateTestMain, generateTestsForFile} from './cpp_test_creator';
+import {generateRootTestCMake, generateTestMain, generateTestsForFile} from './cpp_test_creator';
 
 const fs = require('fs');
 const path = require('path');
 
 
-function getRelativePathFromRoot(filePath: string): [string | null, string | null]  {
+function getRelativePathFromRoot(filePath: string): string | null  {
     const workspaceFolders = vscode.workspace.workspaceFolders;
 
     if(!workspaceFolders || workspaceFolders.length === 0) {
-        return [null, null];
+        return null;
     }
     
     const rootPath = workspaceFolders[0].uri.fsPath;
     const relativePath = path.relative(rootPath, filePath);
     if(relativePath.startsWith('..')) {
-        return [null, null];
+        return null;
     }
     
     const parts = relativePath.split(path.sep); 
     parts[0] = "tests"; 
     const testPath = path.resolve(rootPath, parts.join(path.sep));
-    return [testPath, parts.slice(1).join(path.sep)];
+    return testPath;
 }
 
 function generateForFiles(fileNames: string[], srcRoot: string, testFilePath: string) {
@@ -35,9 +35,18 @@ function generateForFiles(fileNames: string[], srcRoot: string, testFilePath: st
     const testRootPath = path.resolve(workspaceFolders[0].uri.fsPath, "tests");
     const generatedCppFiles: string[] = fileNames.flatMap(input =>  
         generateTestsForFile(input, srcRoot, testFilePath));
-        
-    generateTestMain(testRootPath);
-    generateTestCMake(generatedCppFiles, testRootPath);
+      
+    // This is unnecessary -> possible to link with google test's main 
+    //generateTestMain(testRootPath);
+
+    // TODO: get all relative paths from root/tests -> pass as third argument that are not root/tests = subdirectories
+    const subdirectories = Array.from(
+        // Make a set -> remove duplicates
+        new Set(generatedCppFiles
+        .map(x => path.relative(testFilePath, path.dirname(x)))
+        .filter(x => x !== ""))); // Remove empty paths -> test files in root/tests (they are part of the root CMakeLists.txt)
+    
+    generateRootTestCMake(generatedCppFiles, testRootPath, subdirectories);
 }
 
 const endings = ['.hpp', '.cpp', '.h'];
@@ -86,7 +95,7 @@ export function activate(context: vscode.ExtensionContext) {
         // Get the current file path
         const filePath = editor.document.uri.fsPath;
 
-        const [testPath, relativePath] = getRelativePathFromRoot(filePath);
+        const testPath = getRelativePathFromRoot(filePath);
         if(testPath === null) {
             return;
         }
@@ -108,15 +117,12 @@ export function activate(context: vscode.ExtensionContext) {
         }
         
         const rootPath = folderUri[0].fsPath;
-        const [testPath, relativePath] = getRelativePathFromRoot(rootPath);
+        const testPath = getRelativePathFromRoot(rootPath);
         if(testPath === null) {
             return;
         }
 
         const cppFiles = getHppFilesRecursively(rootPath);
-        console.log(`Cpp files: ${cppFiles}`);
-        console.log(`Test path: ${testPath}`);
-        console.log(`Root path: ${rootPath}`);
         generateForFiles(cppFiles, rootPath, testPath);
     });
 

@@ -19,10 +19,12 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 
 
-# Add test source files (adjust the list as needed)
-set(TEST_SOURCES
-    {{TestFiles}}
-)
+file(GLOB TEST_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/*.hpp" "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+
+
+{{#each Subdirectories}}
+add_subdirectory({{this}})
+{{/each}}
 
 add_executable(run_tests ${TEST_SOURCES})
 target_link_libraries(run_tests gtest gtest_main)

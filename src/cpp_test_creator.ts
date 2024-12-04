@@ -7,6 +7,7 @@ import {getTemplate} from './templates';
 const fs = require('fs');
 const path = require('path');
 const CMAKE_FILE_NAME = "CMakeLists.txt";
+const CMAKE_SUBDIR_TEMPLATE_FILENAME = "CMakeLists_local.txt";
 
 function generateIfNotExists(rootPath: string, fileName: string, templateName: string, config: Record<string, any>) {
     const fullPath = path.resolve(rootPath, fileName); 
@@ -18,14 +19,22 @@ function generateIfNotExists(rootPath: string, fileName: string, templateName: s
     fs.writeFileSync(fullPath, getTemplate(templateName, config));
 }
 
-export function generateTestCMake(cppFiles: string[], testFilePath: string) {
-    generateIfNotExists(testFilePath, CMAKE_FILE_NAME, CMAKE_FILE_NAME, {TestFiles: cppFiles.join('\n\t')});
+export function generateRootTestCMake(cppFiles: string[], testFilePath: string, subdirectories: string[]) {
+    generateIfNotExists(testFilePath, CMAKE_FILE_NAME, CMAKE_FILE_NAME, {Subdirectories: subdirectories});
+
+    // Generate CMakeLists.txt in all subdirectories
+    subdirectories.forEach(subdir => generateTestSubdirCMake(path.resolve(testFilePath, subdir)));
 }
+
+
+function generateTestSubdirCMake(testFilePath: string) {
+    generateIfNotExists(testFilePath, CMAKE_FILE_NAME, CMAKE_SUBDIR_TEMPLATE_FILENAME, {});
+}
+
 
 export function generateTestMain(testFilePath: string) {
     generateIfNotExists(testFilePath, "main.cpp", "test_main.cpp", {});
 }
-
 
 
 // Returns a list of generated filenames
@@ -57,6 +66,8 @@ export function generateTestsForFile(fileName: string, srcRoot: string, testFile
     const testDependency = getTemplate("dependency.txt", {});
     const classDependency = `#include "${path.relative(testFilePath, fileName)}"`;
     const generatedTestFiles: string[] = [];
+
+    // Generate a test file for every class
     classData.forEach((value) => {
         const data = testDependency + classDependency + "\n" + value.functions.map(func => {
             const params = func.parameters.map(x => { 
