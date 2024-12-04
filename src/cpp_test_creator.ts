@@ -29,11 +29,16 @@ export function generateTestMain(testFilePath: string) {
 
 
 // Returns a list of generated filenames
-export function generateTestsForCode(code: string, testFilePath: string): string[] {
+export function generateTestsForFile(fileName: string, srcRoot: string, testFilePath: string): string[] {
     
     // Initialize parser and set the language
     const parser = new Parser();
     parser.setLanguage(Cpp);
+
+    const code = fs.readFileSync(fileName, 'utf-8');
+
+    const relativePath = path.relative(srcRoot, path.dirname(fileName));
+    console.log(`Relative path in test generator: ${relativePath}`);
 
     // Parse the C++ coderootTestDir
     const tree = parser.parse(code);
@@ -43,15 +48,17 @@ export function generateTestsForCode(code: string, testFilePath: string): string
     const classData = collectAllClasses(rootNode);
 
     // Create dir if not exists
+    testFilePath = path.resolve(testFilePath, relativePath);
     if (!fs.existsSync(testFilePath) || !fs.lstatSync(testFilePath).isDirectory()) {
         fs.mkdirSync(testFilePath, {recursive: true});
     }
 
     // Add the dependencies only once for each file
-    const dependency = getTemplate("dependency.txt", {});
+    const testDependency = getTemplate("dependency.txt", {});
+    const classDependency = `#include "${path.relative(testFilePath, fileName)}"`;
     const generatedTestFiles: string[] = [];
     classData.forEach((value) => {
-        const data = dependency + "\n" + value.functions.map(func => {
+        const data = testDependency + classDependency + "\n" + value.functions.map(func => {
             const params = func.parameters.map(x => { 
                 const name_parts = x.name.split(' ');
                 // Adding pointer/reference to the type if present

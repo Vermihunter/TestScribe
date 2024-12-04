@@ -1,35 +1,43 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import {generateTestCMake, generateTestMain, generateTestsForCode} from './cpp_test_creator';
+import {generateTestCMake, generateTestMain, generateTestsForFile} from './cpp_test_creator';
 
 const fs = require('fs');
 const path = require('path');
 
 
-function getRelativePathFromRoot(filePath: string): string | null  {
+function getRelativePathFromRoot(filePath: string): [string | null, string | null]  {
     const workspaceFolders = vscode.workspace.workspaceFolders;
 
     if(!workspaceFolders || workspaceFolders.length === 0) {
-        return null;
+        return [null, null];
     }
     
     const rootPath = workspaceFolders[0].uri.fsPath;
     const relativePath = path.relative(rootPath, filePath);
     if(relativePath.startsWith('..')) {
-        return null;
+        return [null, null];
     }
     
     const parts = relativePath.split(path.sep); 
     parts[0] = "tests"; 
     const testPath = path.resolve(rootPath, parts.join(path.sep));
-    return testPath;
+    return [testPath, parts.slice(1).join(path.sep)];
 }
 
-function generateForFiles(fileNames: string[], testFilePath: string) {
-    const generatedCppFiles: string[] = fileNames.flatMap(input =>  generateTestsForCode(fs.readFileSync(input, 'utf-8'),  testFilePath));
-    generateTestMain(testFilePath);
-    generateTestCMake(generatedCppFiles, testFilePath);
+function generateForFiles(fileNames: string[], srcRoot: string, testFilePath: string) {
+    const workspaceFolders = vscode.workspace.workspaceFolders;
+    if(!workspaceFolders || workspaceFolders.length === 0) {
+        return null;
+    }
+
+    const testRootPath = path.resolve(workspaceFolders[0].uri.fsPath, "tests");
+    const generatedCppFiles: string[] = fileNames.flatMap(input =>  
+        generateTestsForFile(input, srcRoot, testFilePath));
+        
+    generateTestMain(testRootPath);
+    generateTestCMake(generatedCppFiles, testRootPath);
 }
 
 const endings = ['.hpp', '.cpp', '.h'];
@@ -78,12 +86,13 @@ export function activate(context: vscode.ExtensionContext) {
         // Get the current file path
         const filePath = editor.document.uri.fsPath;
 
-        const testPath = getRelativePathFromRoot(filePath);
+        const [testPath, relativePath] = getRelativePathFromRoot(filePath);
         if(testPath === null) {
             return;
         }
-        
-        generateForFiles([filePath], path.dirname(testPath));
+
+        console.log(`Curr file - file path: ${filePath}`);
+        generateForFiles([filePath], path.dirname(filePath), path.dirname(testPath));
     });
 
     const forSelectedDir = vscode.commands.registerCommand('testscribe.forSelectedDir', async () => {
@@ -98,13 +107,17 @@ export function activate(context: vscode.ExtensionContext) {
             return;
         }
         
-        const testPath = getRelativePathFromRoot(folderUri[0].fsPath);
+        const rootPath = folderUri[0].fsPath;
+        const [testPath, relativePath] = getRelativePathFromRoot(rootPath);
         if(testPath === null) {
             return;
         }
 
-        const cppFiles = getHppFilesRecursively(folderUri[0].fsPath);
-        generateForFiles(cppFiles, testPath);
+        const cppFiles = getHppFilesRecursively(rootPath);
+        console.log(`Cpp files: ${cppFiles}`);
+        console.log(`Test path: ${testPath}`);
+        console.log(`Root path: ${rootPath}`);
+        generateForFiles(cppFiles, rootPath, testPath);
     });
 
 
