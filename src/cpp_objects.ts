@@ -21,6 +21,8 @@ export interface Member {
 
 export interface FunctionMember extends Member {
     parameters: Parameter[];
+    throws: string[];
+    templateParameters: Parameter[];
 }
 
 
@@ -29,6 +31,13 @@ export interface ClassOrStruct {
     variables: Member[];
     functions: FunctionMember[];
     access: AccessSpecifier;
+    parentClasses: string[];
+    templateParameters: Parameter[];
     nestedClasses: ClassOrStruct[];
+}
+
+export interface CppFile {
+    classes: ClassOrStruct[];
+    globalFunctions: FunctionMember[];
 }
 

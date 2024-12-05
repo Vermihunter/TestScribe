@@ -40,12 +40,14 @@ function generateForFiles(fileNames: string[], srcRoot: string, testFilePath: st
     //generateTestMain(testRootPath);
 
     // TODO: get all relative paths from root/tests -> pass as third argument that are not root/tests = subdirectories
+    console.log(`Generated cpp files: ${generatedCppFiles}`);
     const subdirectories = Array.from(
         // Make a set -> remove duplicates
         new Set(generatedCppFiles
         .map(x => path.relative(testFilePath, path.dirname(x)))
         .filter(x => x !== ""))); // Remove empty paths -> test files in root/tests (they are part of the root CMakeLists.txt)
     
+    console.log(`Subdirectories: ${subdirectories} - testFilePath: ${testFilePath}`);
     generateRootTestCMake(generatedCppFiles, testRootPath, subdirectories);
 }
 

@@ -1,0 +1,239 @@
+translation_unit [1:0-35:2] (named) -> child count: 7
+	declaration [1:0-1:12] (named) -> child count: 3
+		primitive_type [1:0-1:4] (named) text: "void"
+		function_declarator [1:5-1:11] (named) -> child count: 2
+			identifier [1:5-1:9] (named) text: "lala"
+			parameter_list [1:9-1:11] (named) -> child count: 2
+				( [1:9-1:10] text: "("
+				) [1:10-1:11] text: ")"
+		; [1:11-1:12] text: ";"
+	function_definition [3:0-5:1] (named) -> child count: 3
+		primitive_type [3:0-3:4] (named) text: "void"
+		function_declarator [3:5-3:16] (named) -> child count: 2
+			identifier [3:5-3:14] (named) text: "lala_impl"
+			parameter_list [3:14-3:16] (named) -> child count: 2
+				( [3:14-3:15] text: "("
+				) [3:15-3:16] text: ")"
+		compound_statement [3:17-5:1] (named) -> child count: 2
+			{ [3:17-3:18] text: "{"
+			} [5:0-5:1] text: "}"
+	class_specifier [7:0-9:1] (named) -> child count: 3
+		class [7:0-7:5] text: "class"
+		type_identifier [7:6-7:7] (named) text: "D"
+		field_declaration_list [7:8-9:1] (named) -> child count: 3
+			{ [7:8-7:9] text: "{"
+			field_declaration [8:4-8:15] (named) -> child count: 3
+				primitive_type [8:4-8:8] (named) text: "void"
+				function_declarator [8:9-8:14] (named) -> child count: 2
+					field_identifier [8:9-8:12] (named) text: "D_a"
+					parameter_list [8:12-8:14] (named) -> child count: 2
+						( [8:12-8:13] text: "("
+						) [8:13-8:14] text: ")"
+				; [8:14-8:15] text: ";"
+			} [9:0-9:1] text: "}"
+	; [9:1-9:2] text: ";"
+	template_declaration [11:0-14:1] (named) -> child count: 3
+		template [11:0-11:8] text: "template"
+		template_parameter_list [11:8-11:27] (named) -> child count: 5
+			< [11:8-11:9] text: "<"
+			type_parameter_declaration [11:9-11:19] (named) -> child count: 2
+				typename [11:9-11:17] text: "typename"
+				type_identifier [11:18-11:19] (named) text: "T"
+			, [11:19-11:20] text: ","
+			parameter_declaration [11:21-11:26] (named) -> child count: 2
+				primitive_type [11:21-11:24] (named) text: "int"
+				identifier [11:25-11:26] (named) text: "K"
+			> [11:26-11:27] text: ">"
+		function_definition [12:0-14:1] (named) -> child count: 3
+			primitive_type [12:0-12:4] (named) text: "void"
+			function_declarator [12:5-12:31] (named) -> child count: 2
+				identifier [12:5-12:14] (named) text: "fill_impl"
+				parameter_list [12:14-12:31] (named) -> child count: 3
+					( [12:14-12:15] text: "("
+					parameter_declaration [12:15-12:30] (named) -> child count: 3
+						type_qualifier [12:15-12:20] (named) -> child count: 1
+							const [12:15-12:20] text: "const"
+						type_identifier [12:21-12:22] (named) text: "T"
+						reference_declarator [12:22-12:30] (named) -> child count: 2
+							& [12:22-12:23] text: "&"
+							identifier [12:24-12:30] (named) text: "source"
+					) [12:30-12:31] text: ")"
+			compound_statement [12:32-14:1] (named) -> child count: 2
+				{ [12:32-12:33] text: "{"
+				} [14:0-14:1] text: "}"
+	template_declaration [16:0-17:32] (named) -> child count: 3
+		template [16:0-16:8] text: "template"
+		template_parameter_list [16:8-16:27] (named) -> child count: 5
+			< [16:8-16:9] text: "<"
+			type_parameter_declaration [16:9-16:19] (named) -> child count: 2
+				typename [16:9-16:17] text: "typename"
+				type_identifier [16:18-16:19] (named) text: "T"
+			, [16:19-16:20] text: ","
+			parameter_declaration [16:21-16:26] (named) -> child count: 2
+				primitive_type [16:21-16:24] (named) text: "int"
+				identifier [16:25-16:26] (named) text: "K"
+			> [16:26-16:27] text: ">"
+		declaration [17:0-17:32] (named) -> child count: 3
+			primitive_type [17:0-17:4] (named) text: "void"
+			function_declarator [17:5-17:31] (named) -> child count: 2
+				identifier [17:5-17:14] (named) text: "fill_decl"
+				parameter_list [17:14-17:31] (named) -> child count: 3
+					( [17:14-17:15] text: "("
+					parameter_declaration [17:15-17:30] (named) -> child count: 3
+						type_qualifier [17:15-17:20] (named) -> child count: 1
+							const [17:15-17:20] text: "const"
+						type_identifier [17:21-17:22] (named) text: "T"
+						reference_declarator [17:22-17:30] (named) -> child count: 2
+							& [17:22-17:23] text: "&"
+							identifier [17:24-17:30] (named) text: "source"
+					) [17:30-17:31] text: ")"
+			; [17:31-17:32] text: ";"
+	template_declaration [20:0-35:2] (named) -> child count: 4
+		template [20:0-20:8] text: "template"
+		template_parameter_list [20:8-20:27] (named) -> child count: 5
+			< [20:8-20:9] text: "<"
+			type_parameter_declaration [20:9-20:19] (named) -> child count: 2
+				typename [20:9-20:17] text: "typename"
+				type_identifier [20:18-20:19] (named) text: "T"
+			, [20:19-20:20] text: ","
+			parameter_declaration [20:21-20:26] (named) -> child count: 2
+				primitive_type [20:21-20:24] (named) text: "int"
+				identifier [20:25-20:26] (named) text: "K"
+			> [20:26-20:27] text: ">"
+		class_specifier [21:0-35:1] (named) -> child count: 3
+			class [21:0-21:5] text: "class"
+			type_identifier [21:6-21:9] (named) text: "Foo"
+			field_declaration_list [21:10-35:1] (named) -> child count: 7
+				{ [21:10-21:11] text: "{"
+				access_specifier [22:0-22:6] (named) -> child count: 1
+					public [22:0-22:6] text: "public"
+				: [22:6-22:7] text: ":"
+				template_declaration [25:4-28:5] (named) -> child count: 3
+					template [25:4-25:12] text: "template"
+					template_parameter_list [25:12-25:24] (named) -> child count: 3
+						< [25:12-25:13] text: "<"
+						type_parameter_declaration [25:13-25:23] (named) -> child count: 2
+							typename [25:13-25:21] text: "typename"
+							type_identifier [25:22-25:23] (named) text: "V"
+						> [25:23-25:24] text: ">"
+					function_definition [26:4-28:5] (named) -> child count: 3
+						primitive_type [26:4-26:8] (named) text: "void"
+						function_declarator [26:9-26:42] (named) -> child count: 2
+							identifier [26:9-26:13] (named) text: "func"
+							parameter_list [26:13-26:42] (named) -> child count: 5
+								( [26:13-26:14] text: "("
+								parameter_declaration [26:14-26:22] (named) -> child count: 2
+									primitive_type [26:14-26:20] (named) text: "double"
+									identifier [26:21-26:22] (named) text: "s"
+								, [26:22-26:23] text: ","
+								parameter_declaration [26:24-26:41] (named) -> child count: 2
+									qualified_identifier [26:24-26:37] (named) -> child count: 3
+										namespace_identifier [26:24-26:27] (named) text: "std"
+										:: [26:27-26:29] text: "::"
+										type_identifier [26:29-26:37] (named) text: "ofstream"
+									reference_declarator [26:37-26:41] (named) -> child count: 2
+										& [26:37-26:38] text: "&"
+										identifier [26:39-26:41] (named) text: "of"
+								) [26:41-26:42] text: ")"
+						compound_statement [26:43-28:5] (named) -> child count: 2
+							{ [26:43-26:44] text: "{"
+							} [28:4-28:5] text: "}"
+				function_definition [30:4-32:5] (named) -> child count: 3
+					primitive_type [30:4-30:8] (named) text: "bool"
+					function_declarator [30:9-30:48] (named) -> child count: 3
+						operator_name [30:9-30:19] (named) -> child count: 2
+							operator [30:9-30:17] text: "operator"
+							== [30:17-30:19] text: "=="
+						parameter_list [30:19-30:42] (named) -> child count: 3
+							( [30:19-30:20] text: "("
+							parameter_declaration [30:20-30:41] (named) -> child count: 3
+								type_qualifier [30:20-30:25] (named) -> child count: 1
+									const [30:20-30:25] text: "const"
+								template_type [30:26-30:34] (named) -> child count: 2
+									type_identifier [30:26-30:29] (named) text: "Foo"
+									template_argument_list [30:29-30:34] (named) -> child count: 5
+										< [30:29-30:30] text: "<"
+										type_descriptor [30:30-30:31] (named) -> child count: 1
+											type_identifier [30:30-30:31] (named) text: "T"
+										, [30:31-30:32] text: ","
+										type_descriptor [30:32-30:33] (named) -> child count: 1
+											type_identifier [30:32-30:33] (named) text: "K"
+										> [30:33-30:34] text: ">"
+								reference_declarator [30:34-30:41] (named) -> child count: 2
+									& [30:34-30:35] text: "&"
+									identifier [30:36-30:41] (named) text: "other"
+							) [30:41-30:42] text: ")"
+						type_qualifier [30:43-30:48] (named) -> child count: 1
+							const [30:43-30:48] text: "const"
+					compound_statement [30:49-32:5] (named) -> child count: 3
+						{ [30:49-30:50] text: "{"
+						return_statement [31:8-31:48] (named) -> child count: 3
+							return [31:8-31:14] text: "return"
+							binary_expression [31:15-31:47] (named) -> child count: 3
+								parenthesized_expression [31:15-31:29] (named) -> child count: 3
+									( [31:15-31:16] text: "("
+									binary_expression [31:16-31:28] (named) -> child count: 3
+										identifier [31:16-31:17] (named) text: "x"
+										== [31:18-31:20] text: "=="
+										field_expression [31:21-31:28] (named) -> child count: 3
+											identifier [31:21-31:26] (named) text: "other"
+											. [31:26-31:27] text: "."
+											field_identifier [31:27-31:28] (named) text: "x"
+									) [31:28-31:29] text: ")"
+								&& [31:30-31:32] text: "&&"
+								parenthesized_expression [31:33-31:47] (named) -> child count: 3
+									( [31:33-31:34] text: "("
+									binary_expression [31:34-31:46] (named) -> child count: 3
+										identifier [31:34-31:35] (named) text: "y"
+										== [31:36-31:38] text: "=="
+										field_expression [31:39-31:46] (named) -> child count: 3
+											identifier [31:39-31:44] (named) text: "other"
+											. [31:44-31:45] text: "."
+											field_identifier [31:45-31:46] (named) text: "y"
+									) [31:46-31:47] text: ")"
+							; [31:47-31:48] text: ";"
+						} [32:4-32:5] text: "}"
+				friend_declaration [34:4-34:78] (named) -> child count: 2
+					friend [34:4-34:10] text: "friend"
+					declaration [34:11-34:78] (named) -> child count: 3
+						qualified_identifier [34:11-34:23] (named) -> child count: 3
+							namespace_identifier [34:11-34:14] (named) text: "std"
+							:: [34:14-34:16] text: "::"
+							type_identifier [34:16-34:23] (named) text: "ostream"
+						reference_declarator [34:23-34:77] (named) -> child count: 2
+							& [34:23-34:24] text: "&"
+							function_declarator [34:25-34:77] (named) -> child count: 2
+								operator_name [34:25-34:35] (named) -> child count: 2
+									operator [34:25-34:33] text: "operator"
+									<< [34:33-34:35] text: "<<"
+								parameter_list [34:35-34:77] (named) -> child count: 5
+									( [34:35-34:36] text: "("
+									parameter_declaration [34:36-34:52] (named) -> child count: 2
+										qualified_identifier [34:36-34:48] (named) -> child count: 3
+											namespace_identifier [34:36-34:39] (named) text: "std"
+											:: [34:39-34:41] text: "::"
+											type_identifier [34:41-34:48] (named) text: "ostream"
+										reference_declarator [34:48-34:52] (named) -> child count: 2
+											& [34:48-34:49] text: "&"
+											identifier [34:50-34:52] (named) text: "os"
+									, [34:52-34:53] text: ","
+									parameter_declaration [34:54-34:76] (named) -> child count: 3
+										type_qualifier [34:54-34:59] (named) -> child count: 1
+											const [34:54-34:59] text: "const"
+										template_type [34:60-34:68] (named) -> child count: 2
+											type_identifier [34:60-34:63] (named) text: "Foo"
+											template_argument_list [34:63-34:68] (named) -> child count: 5
+												< [34:63-34:64] text: "<"
+												type_descriptor [34:64-34:65] (named) -> child count: 1
+													type_identifier [34:64-34:65] (named) text: "T"
+												, [34:65-34:66] text: ","
+												type_descriptor [34:66-34:67] (named) -> child count: 1
+													type_identifier [34:66-34:67] (named) text: "K"
+												> [34:67-34:68] text: ">"
+										reference_declarator [34:68-34:76] (named) -> child count: 2
+											& [34:68-34:69] text: "&"
+											identifier [34:70-34:76] (named) text: "person"
+									) [34:76-34:77] text: ")"
+						; [34:77-34:78] text: ";"
+				} [35:0-35:1] text: "}"
+		; [35:1-35:2] text: ";"

@@ -62,7 +62,8 @@ const parser = new Parser();
 parser.setLanguage(Cpp);
 
 // Read the C++ file
-const filePath = path.resolve(__dirname, 'example.cpp');
+//const filePath = path.resolve(__dirname, 'example.cpp');
+const filePath = path.resolve(__dirname, 'tool_card.h');
 const cppCode = fs.readFileSync(filePath, 'utf8');
 
 // Parse the file content
@@ -279,286 +280,307 @@ function determineAccessSpecifier(node: Parser.SyntaxNode | null): AccessSpecifi
 //     return classes;
 // }
 
-function collectClasses(
-    node: Parser.SyntaxNode,
-    currentAccess: AccessSpecifier = AccessSpecifier.Private,
-    templateParameters: TemplateParameter[] = []
-  ): ClassOrStruct[] {
-    const classes: ClassOrStruct[] = [];
+// function collectClasses(
+//     node: Parser.SyntaxNode,
+//     currentAccess: AccessSpecifier = AccessSpecifier.Private,
+//     templateParameters: TemplateParameter[] = []
+//   ): ClassOrStruct[] {
+//     const classes: ClassOrStruct[] = [];
   
-    if (node.type === 'template_declaration') {
-      const newTemplateParameters = extractTemplateParameters(node);
-      const declarationNode = node.childForFieldName('declaration');
-      if (declarationNode) {
-        const childClasses = collectClasses(declarationNode, currentAccess, newTemplateParameters);
-        classes.push(...childClasses);
-      }
-    } else if (node.type === 'class_specifier' || node.type === 'struct_specifier') {
-      const classDetails = collectClassDetails(node, currentAccess, templateParameters);
-      if (classDetails) {
-        classes.push(classDetails);
-      }
-    } else {
-      // Traverse children
-      for (const child of node.namedChildren) {
-        const childClasses = collectClasses(child, currentAccess, templateParameters);
-        classes.push(...childClasses);
-      }
-    }
+//     if (node.type === 'template_declaration') {
+//       const newTemplateParameters = extractTemplateParameters(node);
+//       const declarationNode = node.childForFieldName('declaration');
+//       if (declarationNode) {
+//         const childClasses = collectClasses(declarationNode, currentAccess, newTemplateParameters);
+//         classes.push(...childClasses);
+//       }
+//     } else if (node.type === 'class_specifier' || node.type === 'struct_specifier') {
+//       const classDetails = collectClassDetails(node, currentAccess, templateParameters);
+//       if (classDetails) {
+//         classes.push(classDetails);
+//       }
+//     } else {
+//       // Traverse children
+//       for (const child of node.namedChildren) {
+//         const childClasses = collectClasses(child, currentAccess, templateParameters);
+//         classes.push(...childClasses);
+//       }
+//     }
   
-    return classes;
-  }
+//     return classes;
+//   }
   
-  function collectClassDetails(
-    node: Parser.SyntaxNode,
-    currentAccess: AccessSpecifier,
-    templateParameters: TemplateParameter[]
-  ): ClassOrStruct | null {
-    const classNameNode = node.childForFieldName('name');
-    const className = classNameNode ? classNameNode.text : '<anonymous>';
-    const variables: Member[] = [];
-    const functions: FunctionMember[] = [];
-    const nestedClasses: ClassOrStruct[] = [];
+//   function collectClassDetails(
+//     node: Parser.SyntaxNode,
+//     currentAccess: AccessSpecifier,
+//     templateParameters: TemplateParameter[]
+//   ): ClassOrStruct | null {
+//     const classNameNode = node.childForFieldName('name');
+//     const className = classNameNode ? classNameNode.text : '<anonymous>';
+//     const variables: Member[] = [];
+//     const functions: FunctionMember[] = [];
+//     const nestedClasses: ClassOrStruct[] = [];
   
-    const bodyNode = node.childForFieldName('body');
-    const classAccess =
-      node.type === 'struct_specifier' ? AccessSpecifier.Public : AccessSpecifier.Private;
+//     const bodyNode = node.childForFieldName('body');
+//     const classAccess =
+//       node.type === 'struct_specifier' ? AccessSpecifier.Public : AccessSpecifier.Private;
   
-    if (bodyNode) {
-      let currentAccessSpecifier = classAccess;
+//     if (bodyNode) {
+//       let currentAccessSpecifier = classAccess;
   
-      for (const child of bodyNode.namedChildren) {
-        if (child.type === 'access_specifier') {
-          currentAccessSpecifier = determineAccessSpecifier(child);
-        } else {
-          processMember(child, currentAccessSpecifier, variables, functions, nestedClasses);
-        }
-      }
-    }
+//       for (const child of bodyNode.namedChildren) {
+//         if (child.type === 'access_specifier') {
+//           currentAccessSpecifier = determineAccessSpecifier(child);
+//         } else {
+//           processMember(child, currentAccessSpecifier, variables, functions, nestedClasses);
+//         }
+//       }
+//     }
   
-    const classObj: ClassOrStruct = {
-      className,
-      variables,
-      functions,
-      access: currentAccess,
-      nestedClasses,
-    };
+//     const classObj: ClassOrStruct = {
+//       className,
+//       variables,
+//       functions,
+//       access: currentAccess,
+//       nestedClasses,
+//     };
   
-    if (templateParameters.length > 0) {
-      classObj.templateParameters = templateParameters;
-    }
+//     if (templateParameters.length > 0) {
+//       classObj.templateParameters = templateParameters;
+//     }
   
-    return classObj;
-  }
+//     return classObj;
+//   }
   
-  function processMember(
-    node: Parser.SyntaxNode,
-    accessSpecifier: AccessSpecifier,
-    variables: Member[],
-    functions: FunctionMember[],
-    nestedClasses: ClassOrStruct[]
-  ): void {
-    if (node.type === 'template_declaration') {
-      const newTemplateParameters = extractTemplateParameters(node);
-      const declarationNode = node.childForFieldName('declaration');
-      if (declarationNode) {
-        if (
-          declarationNode.type === 'function_definition' ||
-          declarationNode.type === 'function_declaration'
-        ) {
-          const functionMember = processFunction(
-            declarationNode,
-            accessSpecifier,
-            newTemplateParameters
-          );
-          if (functionMember) {
-            functions.push(functionMember);
-          }
-        } else if (
-          declarationNode.type === 'class_specifier' ||
-          declarationNode.type === 'struct_specifier'
-        ) {
-          const nestedClass = collectClassDetails(
-            declarationNode,
-            accessSpecifier,
-            newTemplateParameters
-          );
-          if (nestedClass) {
-            nestedClasses.push(nestedClass);
-          }
-        }
-      }
-    } else if (
-      node.type === 'function_definition' ||
-      node.type === 'function_declaration'
-    ) {
-      const functionMember = processFunction(node, accessSpecifier, []);
-      if (functionMember) {
-        functions.push(functionMember);
-      }
-    } else if (node.type === 'field_declaration') {
-      const variableMember = processField(node, accessSpecifier);
-      if (variableMember) {
-        variables.push(variableMember);
-      }
-    } else if (
-      node.type === 'class_specifier' ||
-      node.type === 'struct_specifier'
-    ) {
-      const nestedClass = collectClassDetails(node, accessSpecifier, []);
-      if (nestedClass) {
-        nestedClasses.push(nestedClass);
-      }
-    } else {
-      // Recursively process child nodes
-      for (const child of node.namedChildren) {
-        processMember(child, accessSpecifier, variables, functions, nestedClasses);
-      }
-    }
-  }
+//   function processMember(
+//     node: Parser.SyntaxNode,
+//     accessSpecifier: AccessSpecifier,
+//     variables: Member[],
+//     functions: FunctionMember[],
+//     nestedClasses: ClassOrStruct[]
+//   ): void {
+//     if (node.type === 'template_declaration') {
+//       const newTemplateParameters = extractTemplateParameters(node);
+//       const declarationNode = node.childForFieldName('declaration');
+//       if (declarationNode) {
+//         if (
+//           declarationNode.type === 'function_definition' ||
+//           declarationNode.type === 'function_declaration'
+//         ) {
+//           const functionMember = processFunction(
+//             declarationNode,
+//             accessSpecifier,
+//             newTemplateParameters
+//           );
+//           if (functionMember) {
+//             functions.push(functionMember);
+//           }
+//         } else if (
+//           declarationNode.type === 'class_specifier' ||
+//           declarationNode.type === 'struct_specifier'
+//         ) {
+//           const nestedClass = collectClassDetails(
+//             declarationNode,
+//             accessSpecifier,
+//             newTemplateParameters
+//           );
+//           if (nestedClass) {
+//             nestedClasses.push(nestedClass);
+//           }
+//         }
+//       }
+//     } else if (
+//       node.type === 'function_definition' ||
+//       node.type === 'function_declaration'
+//     ) {
+//       const functionMember = processFunction(node, accessSpecifier, []);
+//       if (functionMember) {
+//         functions.push(functionMember);
+//       }
+//     } else if (node.type === 'field_declaration') {
+//       const variableMember = processField(node, accessSpecifier);
+//       if (variableMember) {
+//         variables.push(variableMember);
+//       }
+//     } else if (
+//       node.type === 'class_specifier' ||
+//       node.type === 'struct_specifier'
+//     ) {
+//       const nestedClass = collectClassDetails(node, accessSpecifier, []);
+//       if (nestedClass) {
+//         nestedClasses.push(nestedClass);
+//       }
+//     } else {
+//       // Recursively process child nodes
+//       for (const child of node.namedChildren) {
+//         processMember(child, accessSpecifier, variables, functions, nestedClasses);
+//       }
+//     }
+//   }
   
-  function processFunction(
-    node: Parser.SyntaxNode,
-    accessSpecifier: AccessSpecifier,
-    templateParameters: TemplateParameter[]
-  ): FunctionMember | null {
-    const storageModifiers = node.children.filter(
-      (n) =>
-        n.type === 'storage_class_specifier' ||
-        n.type === 'type_qualifier' ||
-        n.type === 'virtual_specifier'
-    );
-    const isStatic = storageModifiers.some((n) => n.text === 'static');
-    const isVirtual = storageModifiers.some((n) => n.text === 'virtual');
+//   function processFunction(
+//     node: Parser.SyntaxNode,
+//     accessSpecifier: AccessSpecifier,
+//     templateParameters: TemplateParameter[]
+//   ): FunctionMember | null {
+//     const storageModifiers = node.children.filter(
+//       (n) =>
+//         n.type === 'storage_class_specifier' ||
+//         n.type === 'type_qualifier' ||
+//         n.type === 'virtual_specifier'
+//     );
+//     const isStatic = storageModifiers.some((n) => n.text === 'static');
+//     const isVirtual = storageModifiers.some((n) => n.text === 'virtual');
   
-    const typeNode = node.childForFieldName('type');
-    const declaratorNode = node.childForFieldName('declarator');
+//     const typeNode = node.childForFieldName('type');
+//     const declaratorNode = node.childForFieldName('declarator');
   
-    if (declaratorNode && declaratorNode.type.includes('function_declarator')) {
-      const nameNode = declaratorNode.childForFieldName('declarator');
-      const parametersNode = declaratorNode.childForFieldName('parameters');
+//     if (declaratorNode && declaratorNode.type.includes('function_declarator')) {
+//       const nameNode = declaratorNode.childForFieldName('declarator');
+//       const parametersNode = declaratorNode.childForFieldName('parameters');
   
-      const name = nameNode ? nameNode.text : '<anonymous>';
-      const type = typeNode ? typeNode.text : '<unknown>';
+//       const name = nameNode ? nameNode.text : '<anonymous>';
+//       const type = typeNode ? typeNode.text : '<unknown>';
   
-      const parameters: Parameter[] = [];
-      if (parametersNode) {
-        for (const paramNode of parametersNode.namedChildren) {
-          if (paramNode.type === 'parameter_declaration') {
-            const paramTypeNode = paramNode.childForFieldName('type');
-            const paramDeclaratorNode = paramNode.childForFieldName('declarator');
+//       const parameters: Parameter[] = [];
+//       if (parametersNode) {
+//         for (const paramNode of parametersNode.namedChildren) {
+//           if (paramNode.type === 'parameter_declaration') {
+//             const paramTypeNode = paramNode.childForFieldName('type');
+//             const paramDeclaratorNode = paramNode.childForFieldName('declarator');
   
-            const paramType = paramTypeNode ? paramTypeNode.text : '<unknown>';
-            const paramName = paramDeclaratorNode ? paramDeclaratorNode.text : '<anonymous>';
+//             const paramType = paramTypeNode ? paramTypeNode.text : '<unknown>';
+//             const paramName = paramDeclaratorNode ? paramDeclaratorNode.text : '<anonymous>';
   
-            parameters.push({
-              name: paramName,
-              type: paramType,
-            });
-          }
-        }
-      }
+//             parameters.push({
+//               name: paramName,
+//               type: paramType,
+//             });
+//           }
+//         }
+//       }
   
-      const functionMember: FunctionMember = {
-        name,
-        type,
-        isStatic,
-        isVirtual,
-        access: accessSpecifier,
-        parameters,
-      };
+//       const functionMember: FunctionMember = {
+//         name,
+//         type,
+//         isStatic,
+//         isVirtual,
+//         access: accessSpecifier,
+//         parameters,
+//       };
   
-      if (templateParameters.length > 0) {
-        functionMember.templateParameters = templateParameters;
-      }
+//       if (templateParameters.length > 0) {
+//         functionMember.templateParameters = templateParameters;
+//       }
   
-      return functionMember;
-    }
-    return null;
-  }
+//       return functionMember;
+//     }
+//     return null;
+//   }
   
-  function processField(
-    node: Parser.SyntaxNode,
-    accessSpecifier: AccessSpecifier
-  ): Member | null {
-    const storageModifiers = node.children.filter(
-      (n) =>
-        n.type === 'storage_class_specifier' ||
-        n.type === 'type_qualifier' ||
-        n.type === 'virtual_specifier'
-    );
-    const isStatic = storageModifiers.some((n) => n.text === 'static');
-    const isVirtual = storageModifiers.some((n) => n.text === 'virtual');
+//   function processField(
+//     node: Parser.SyntaxNode,
+//     accessSpecifier: AccessSpecifier
+//   ): Member | null {
+//     const storageModifiers = node.children.filter(
+//       (n) =>
+//         n.type === 'storage_class_specifier' ||
+//         n.type === 'type_qualifier' ||
+//         n.type === 'virtual_specifier'
+//     );
+//     const isStatic = storageModifiers.some((n) => n.text === 'static');
+//     const isVirtual = storageModifiers.some((n) => n.text === 'virtual');
   
-    const typeNode = node.childForFieldName('type');
-    const declaratorNode = node.childForFieldName('declarator');
+//     const typeNode = node.childForFieldName('type');
+//     const declaratorNode = node.childForFieldName('declarator');
   
-    if (declaratorNode) {
-      const name = extractVariableName(declaratorNode);
-      const type = typeNode ? typeNode.text : '<unknown>';
+//     if (declaratorNode) {
+//       const name = extractVariableName(declaratorNode);
+//       const type = typeNode ? typeNode.text : '<unknown>';
   
-      const member: Member = {
-        name,
-        type,
-        isStatic,
-        isVirtual,
-        access: accessSpecifier,
-      };
+//       const member: Member = {
+//         name,
+//         type,
+//         isStatic,
+//         isVirtual,
+//         access: accessSpecifier,
+//       };
   
-      return member;
-    }
-    return null;
-  }
+//       return member;
+//     }
+//     return null;
+//   }
   
-  function extractVariableName(node: Parser.SyntaxNode): string {
-    if (node.type === 'identifier') {
-      return node.text;
-    } else if (
-      node.type === 'array_declarator' ||
-      node.type === 'pointer_declarator' ||
-      node.type === 'reference_declarator'
-    ) {
-      const declaratorChild = node.childForFieldName('declarator');
-      if (declaratorChild) {
-        return extractVariableName(declaratorChild);
-      } else {
-        return '<anonymous>';
-      }
-    } else {
-      return '<anonymous>';
-    }
-  }
+//   function extractVariableName(node: Parser.SyntaxNode): string {
+//     if (node.type === 'identifier') {
+//       return node.text;
+//     } else if (
+//       node.type === 'array_declarator' ||
+//       node.type === 'pointer_declarator' ||
+//       node.type === 'reference_declarator'
+//     ) {
+//       const declaratorChild = node.childForFieldName('declarator');
+//       if (declaratorChild) {
+//         return extractVariableName(declaratorChild);
+//       } else {
+//         return '<anonymous>';
+//       }
+//     } else {
+//       return '<anonymous>';
+//     }
+//   }
   
-  function extractTemplateParameters(templateNode: Parser.SyntaxNode): TemplateParameter[] {
-    const parameters: TemplateParameter[] = [];
-    const templateParameterListNode = templateNode.childForFieldName('parameters');
-    if (templateParameterListNode) {
-      for (const paramNode of templateParameterListNode.namedChildren) {
-        if (paramNode.type === 'type_parameter_declaration') {
-          const typeNameNode = paramNode.childForFieldName('name');
-          const typeKeyNode = paramNode.childForFieldName('key');
-          const typeKey = typeKeyNode ? typeKeyNode.text : 'typename';
-          const name = typeNameNode ? typeNameNode.text : '<anonymous>';
-          parameters.push({ name, type: typeKey });
-        } else if (paramNode.type === 'parameter_declaration') {
-          // Non-type template parameter
-          const typeNode = paramNode.childForFieldName('type');
-          const declaratorNode = paramNode.childForFieldName('declarator');
-          const type = typeNode ? typeNode.text : '<unknown>';
-          const name = declaratorNode ? declaratorNode.text : '<anonymous>';
-          parameters.push({ name, type });
-        }
-      }
-    }
-    return parameters;
-  }
+//   function extractTemplateParameters(templateNode: Parser.SyntaxNode): TemplateParameter[] {
+//     const parameters: TemplateParameter[] = [];
+//     const templateParameterListNode = templateNode.childForFieldName('parameters');
+//     if (templateParameterListNode) {
+//       for (const paramNode of templateParameterListNode.namedChildren) {
+//         if (paramNode.type === 'type_parameter_declaration') {
+//           const typeNameNode = paramNode.childForFieldName('name');
+//           const typeKeyNode = paramNode.childForFieldName('key');
+//           const typeKey = typeKeyNode ? typeKeyNode.text : 'typename';
+//           const name = typeNameNode ? typeNameNode.text : '<anonymous>';
+//           parameters.push({ name, type: typeKey });
+//         } else if (paramNode.type === 'parameter_declaration') {
+//           // Non-type template parameter
+//           const typeNode = paramNode.childForFieldName('type');
+//           const declaratorNode = paramNode.childForFieldName('declarator');
+//           const type = typeNode ? typeNode.text : '<unknown>';
+//           const name = declaratorNode ? declaratorNode.text : '<anonymous>';
+//           parameters.push({ name, type });
+//         }
+//       }
+//     }
+//     return parameters;
+//   }
   
+function printNode(node: Parser.SyntaxNode, indent: string = '') {
+  const nodeType = node.type;
+  const startPosition = node.startPosition;
+  const endPosition = node.endPosition;
+  const isNamed = node.isNamed;
 
+  const nodeInfo = `${indent}${nodeType} [${startPosition.row}:${startPosition.column}-${endPosition.row}:${endPosition.column}]${isNamed ? ' (named)' : ''}`;
   
+  // Print node text if it's a leaf node
+  if (node.childCount === 0) {
+    const nodeText = node.text.trim();
+    console.log(`${nodeInfo} text: "${nodeText}"`);
+  } else {
+    console.log(`${nodeInfo} -> child count: ${node.childCount}`);
+    // Recursively print child nodes with increased indentation
+    for (const child of node.children) {
+      printNode(child, indent + '\t');
+    }
+  }
+}
+
+//tree.rootNode.children.forEach(child => printNode(child));
+printNode(tree.rootNode);
 
 // Extract details from the root node
-const classDetails = collectClasses(tree.rootNode);
+//const classDetails = collectClasses(tree.rootNode);
 
 // Output the results
-console.log('Classes and their details (including nested classes and templates):');
-console.log(JSON.stringify(classDetails, null, 2));
+//console.log('Classes and their details (including nested classes and templates):');
+//console.log(JSON.stringify(classDetails, null, 2));

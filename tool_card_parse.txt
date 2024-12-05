@@ -1,0 +1,532 @@
+translation_unit [0:0-95:0] (named) -> child count: 2
+	preproc_ifdef [0:0-94:6] (named) -> child count: 16
+		#ifndef [0:0-0:7] text: "#ifndef"
+		identifier [0:8-0:33] (named) text: "PUTDIEWITHOUTNEIGHBORTC_H"
+		preproc_def [1:0-2:0] (named) -> child count: 2
+			#define [1:0-1:7] text: "#define"
+			identifier [1:8-1:33] (named) text: "PUTDIEWITHOUTNEIGHBORTC_H"
+		preproc_include [3:0-4:0] (named) -> child count: 2
+			#include [3:0-3:8] text: "#include"
+			string_literal [3:9-3:16] (named) -> child count: 3
+				" [3:9-3:10] text: """
+				string_content [3:10-3:15] (named) text: "Die.h"
+				" [3:15-3:16] text: """
+		preproc_include [4:0-5:0] (named) -> child count: 2
+			#include [4:0-4:8] text: "#include"
+			string_literal [4:9-4:27] (named) -> child count: 3
+				" [4:9-4:10] text: """
+				string_content [4:10-4:26] (named) text: "DieToFieldMove.h"
+				" [4:26-4:27] text: """
+		preproc_include [5:0-6:0] (named) -> child count: 2
+			#include [5:0-5:8] text: "#include"
+			string_literal [5:9-5:28] (named) -> child count: 3
+				" [5:9-5:10] text: """
+				string_content [5:10-5:27] (named) text: "RandomGenerator.h"
+				" [5:27-5:28] text: """
+		preproc_include [6:0-7:0] (named) -> child count: 2
+			#include [6:0-6:8] text: "#include"
+			string_literal [6:9-6:21] (named) -> child count: 3
+				" [6:9-6:10] text: """
+				string_content [6:10-6:20] (named) text: "ToolCard.h"
+				" [6:20-6:21] text: """
+		comment [9:0-9:9] (named) text: "// int k;"
+		comment [10:0-10:21] (named) text: "// bool parse = true;"
+		comment [12:0-12:39] (named) text: "// double global_func_Decl(bool fixed);"
+		comment [15:0-15:35] (named) text: "// static void global_func_impl() {"
+		comment [17:0-17:4] (named) text: "// }"
+		comment [21:0-26:3] (named) text: "/**
+ * @brief Implementation of the Cork-backed Straightedge Tool card
+ *
+ * Using this tool card a user can place a die to a field that is not reachable.
+ * If the field is reachable, this tool card cannot be used.
+ */"
+		class_specifier [27:0-92:1] (named) -> child count: 4
+			class [27:0-27:5] text: "class"
+			type_identifier [27:6-27:29] (named) text: "PutDieWithoutNeighborTC"
+			base_class_clause [27:30-27:45] (named) -> child count: 4
+				: [27:30-27:31] text: ":"
+				type_identifier [27:32-27:40] (named) text: "ToolCard"
+				, [27:40-27:41] text: ","
+				type_identifier [27:42-27:45] (named) text: "int"
+			field_declaration_list [28:0-92:1] (named) -> child count: 14
+				{ [28:0-28:1] text: "{"
+				access_specifier [29:2-29:8] (named) -> child count: 1
+					public [29:2-29:8] text: "public"
+				: [29:8-29:9] text: ":"
+				comment [30:4-30:30] (named) text: "/** Default constructor */"
+				declaration [31:4-31:30] (named) -> child count: 2
+					function_declarator [31:4-31:29] (named) -> child count: 2
+						identifier [31:4-31:27] (named) text: "PutDieWithoutNeighborTC"
+						parameter_list [31:27-31:29] (named) -> child count: 2
+							( [31:27-31:28] text: "("
+							) [31:28-31:29] text: ")"
+					; [31:29-31:30] text: ";"
+				comment [32:4-32:29] (named) text: "/** Default destructor */"
+				declaration [33:4-33:39] (named) -> child count: 3
+					virtual [33:4-33:11] text: "virtual"
+					function_declarator [33:12-33:38] (named) -> child count: 2
+						destructor_name [33:12-33:36] (named) -> child count: 2
+							~ [33:12-33:13] text: "~"
+							identifier [33:13-33:36] (named) text: "PutDieWithoutNeighborTC"
+						parameter_list [33:36-33:38] (named) -> child count: 2
+							( [33:36-33:37] text: "("
+							) [33:37-33:38] text: ")"
+					; [33:38-33:39] text: ";"
+				field_declaration [35:4-35:74] (named) -> child count: 4
+					virtual [35:4-35:11] text: "virtual"
+					type_identifier [35:12-35:31] (named) text: "ToolCardUseFeedback"
+					function_declarator [35:32-35:73] (named) -> child count: 3
+						field_identifier [35:32-35:35] (named) text: "use"
+						parameter_list [35:35-35:64] (named) -> child count: 5
+							( [35:35-35:36] text: "("
+							parameter_declaration [35:36-35:54] (named) -> child count: 2
+								type_identifier [35:36-35:52] (named) text: "tool_card_move_t"
+								identifier [35:53-35:54] (named) text: "m"
+							, [35:54-35:55] text: ","
+							parameter_declaration [35:56-35:63] (named) -> child count: 2
+								type_identifier [35:56-35:60] (named) text: "Game"
+								reference_declarator [35:60-35:63] (named) -> child count: 2
+									& [35:60-35:61] text: "&"
+									identifier [35:62-35:63] (named) text: "g"
+							) [35:63-35:64] text: ")"
+						virtual_specifier [35:65-35:73] (named) -> child count: 1
+							override [35:65-35:73] text: "override"
+					; [35:73-35:74] text: ";"
+				field_declaration [37:4-37:76] (named) -> child count: 4
+					virtual [37:4-37:11] text: "virtual"
+					primitive_type [37:12-37:16] (named) text: "void"
+					function_declarator [37:17-37:75] (named) -> child count: 3
+						field_identifier [37:17-37:38] (named) text: "append_possible_moves"
+						parameter_list [37:38-37:66] (named) -> child count: 3
+							( [37:38-37:39] text: "("
+							parameter_declaration [37:39-37:65] (named) -> child count: 2
+								type_identifier [37:39-37:60] (named) text: "ToolCardAppendContext"
+								reference_declarator [37:60-37:65] (named) -> child count: 2
+									& [37:60-37:61] text: "&"
+									identifier [37:62-37:65] (named) text: "ctx"
+							) [37:65-37:66] text: ")"
+						virtual_specifier [37:67-37:75] (named) -> child count: 1
+							override [37:67-37:75] text: "override"
+					; [37:75-37:76] text: ";"
+				function_definition [39:4-42:5] (named) -> child count: 4
+					virtual [39:4-39:11] text: "virtual"
+					type_identifier [39:12-39:16] (named) text: "tc_t"
+					function_declarator [39:17-39:52] (named) -> child count: 3
+						field_identifier [39:17-39:22] (named) text: "clone"
+						parameter_list [39:22-39:43] (named) -> child count: 3
+							( [39:22-39:23] text: "("
+							parameter_declaration [39:23-39:42] (named) -> child count: 3
+								type_qualifier [39:23-39:28] (named) -> child count: 1
+									const [39:23-39:28] text: "const"
+								primitive_type [39:29-39:32] (named) text: "int"
+								pointer_declarator [39:33-39:42] (named) -> child count: 3
+									* [39:33-39:34] text: "*"
+									type_qualifier [39:35-39:40] (named) -> child count: 1
+										const [39:35-39:40] text: "const"
+									identifier [39:41-39:42] (named) text: "l"
+							) [39:42-39:43] text: ")"
+						virtual_specifier [39:44-39:52] (named) -> child count: 1
+							override [39:44-39:52] text: "override"
+					compound_statement [40:4-42:5] (named) -> child count: 3
+						{ [40:4-40:5] text: "{"
+						return_statement [41:8-41:64] (named) -> child count: 3
+							return [41:8-41:14] text: "return"
+							call_expression [41:15-41:63] (named) -> child count: 2
+								qualified_identifier [41:15-41:56] (named) -> child count: 3
+									namespace_identifier [41:15-41:18] (named) text: "std"
+									:: [41:18-41:20] text: "::"
+									template_function [41:20-41:56] (named) -> child count: 2
+										identifier [41:20-41:31] (named) text: "make_unique"
+										template_argument_list [41:31-41:56] (named) -> child count: 3
+											< [41:31-41:32] text: "<"
+											type_descriptor [41:32-41:55] (named) -> child count: 1
+												type_identifier [41:32-41:55] (named) text: "PutDieWithoutNeighborTC"
+											> [41:55-41:56] text: ">"
+								argument_list [41:56-41:63] (named) -> child count: 3
+									( [41:56-41:57] text: "("
+									pointer_expression [41:57-41:62] (named) -> child count: 2
+										* [41:57-41:58] text: "*"
+										this [41:58-41:62] (named) text: "this"
+									) [41:62-41:63] text: ")"
+							; [41:63-41:64] text: ";"
+						} [42:4-42:5] text: "}"
+				field_declaration [44:4-44:76] (named) -> child count: 4
+					virtual [44:4-44:11] text: "virtual"
+					type_identifier [44:12-44:31] (named) text: "ToolCardUseFeedback"
+					function_declarator [44:32-44:75] (named) -> child count: 3
+						field_identifier [44:32-44:36] (named) text: "undo"
+						parameter_list [44:36-44:66] (named) -> child count: 5
+							( [44:36-44:37] text: "("
+							parameter_declaration [44:37-44:56] (named) -> child count: 2
+								type_identifier [44:37-44:53] (named) text: "tool_card_move_t"
+								reference_declarator [44:53-44:56] (named) -> child count: 2
+									& [44:53-44:54] text: "&"
+									identifier [44:55-44:56] (named) text: "m"
+							, [44:56-44:57] text: ","
+							parameter_declaration [44:58-44:65] (named) -> child count: 2
+								type_identifier [44:58-44:62] (named) text: "Game"
+								reference_declarator [44:62-44:65] (named) -> child count: 2
+									& [44:62-44:63] text: "&"
+									identifier [44:64-44:65] (named) text: "g"
+							) [44:65-44:66] text: ")"
+						virtual_specifier [44:67-44:75] (named) -> child count: 1
+							override [44:67-44:75] text: "override"
+					; [44:75-44:76] text: ";"
+				field_declaration [46:4-46:62] (named) -> child count: 4
+					storage_class_specifier [46:4-46:10] (named) -> child count: 1
+						static [46:4-46:10] text: "static"
+					primitive_type [46:11-46:15] (named) text: "void"
+					function_declarator [46:16-46:61] (named) -> child count: 2
+						field_identifier [46:16-46:21] (named) text: "print"
+						parameter_list [46:21-46:61] (named) -> child count: 5
+							( [46:21-46:22] text: "("
+							parameter_declaration [46:22-46:31] (named) -> child count: 2
+								primitive_type [46:22-46:26] (named) text: "void"
+								pointer_declarator [46:27-46:31] (named) -> child count: 2
+									* [46:27-46:28] text: "*"
+									pointer_declarator [46:28-46:31] (named) -> child count: 2
+										* [46:28-46:29] text: "*"
+										identifier [46:30-46:31] (named) text: "l"
+							, [46:31-46:32] text: ","
+							parameter_declaration [46:33-46:60] (named) -> child count: 3
+								type_qualifier [46:33-46:38] (named) -> child count: 1
+									const [46:33-46:38] text: "const"
+								qualified_identifier [46:39-46:55] (named) -> child count: 3
+									namespace_identifier [46:39-46:42] (named) text: "std"
+									:: [46:42-46:44] text: "::"
+									template_type [46:44-46:55] (named) -> child count: 2
+										type_identifier [46:44-46:50] (named) text: "vector"
+										template_argument_list [46:50-46:55] (named) -> child count: 3
+											< [46:50-46:51] text: "<"
+											type_descriptor [46:51-46:54] (named) -> child count: 1
+												primitive_type [46:51-46:54] (named) text: "int"
+											> [46:54-46:55] text: ">"
+								reference_declarator [46:55-46:60] (named) -> child count: 2
+									& [46:55-46:56] text: "&"
+									identifier [46:57-46:60] (named) text: "vec"
+							) [46:60-46:61] text: ")"
+					; [46:61-46:62] text: ";"
+				field_declaration [48:4-91:6] (named) -> child count: 2
+					struct_specifier [48:4-91:5] (named) -> child count: 4
+						struct [48:4-48:10] text: "struct"
+						type_identifier [48:11-48:15] (named) text: "Move"
+						base_class_clause [48:16-48:30] (named) -> child count: 2
+							: [48:16-48:17] text: ":"
+							type_identifier [48:18-48:30] (named) text: "ToolCardMove"
+						field_declaration_list [49:4-91:5] (named) -> child count: 10
+							{ [49:4-49:5] text: "{"
+							function_definition [50:8-53:9] (named) -> child count: 3
+								function_declarator [50:8-50:68] (named) -> child count: 2
+									identifier [50:8-50:12] (named) text: "Move"
+									parameter_list [50:12-50:68] (named) -> child count: 7
+										( [50:12-50:13] text: "("
+										parameter_declaration [50:13-50:27] (named) -> child count: 2
+											type_identifier [50:13-50:17] (named) text: "ID_t"
+											identifier [50:18-50:27] (named) text: "_playerId"
+										, [50:27-50:28] text: ","
+										parameter_declaration [50:29-50:40] (named) -> child count: 2
+											primitive_type [50:29-50:35] (named) text: "size_t"
+											identifier [50:36-50:40] (named) text: "_ind"
+										, [50:40-50:41] text: ","
+										parameter_declaration [50:42-50:67] (named) -> child count: 3
+											type_qualifier [50:42-50:47] (named) -> child count: 1
+												const [50:42-50:47] text: "const"
+											type_identifier [50:48-50:62] (named) text: "DieToFieldMove"
+											reference_declarator [50:62-50:67] (named) -> child count: 2
+												& [50:62-50:63] text: "&"
+												identifier [50:64-50:67] (named) text: "_bm"
+										) [50:67-50:68] text: ")"
+								field_initializer_list [51:12-51:52] (named) -> child count: 4
+									: [51:12-51:13] text: ":"
+									field_initializer [51:14-51:43] (named) -> child count: 2
+										field_identifier [51:14-51:26] (named) text: "ToolCardMove"
+										argument_list [51:26-51:43] (named) -> child count: 5
+											( [51:26-51:27] text: "("
+											identifier [51:27-51:36] (named) text: "_playerId"
+											, [51:36-51:37] text: ","
+											identifier [51:38-51:42] (named) text: "_ind"
+											) [51:42-51:43] text: ")"
+									, [51:43-51:44] text: ","
+									field_initializer [51:45-51:52] (named) -> child count: 2
+										field_identifier [51:45-51:47] (named) text: "bm"
+										argument_list [51:47-51:52] (named) -> child count: 3
+											( [51:47-51:48] text: "("
+											identifier [51:48-51:51] (named) text: "_bm"
+											) [51:51-51:52] text: ")"
+								compound_statement [52:8-53:9] (named) -> child count: 2
+									{ [52:8-52:9] text: "{"
+									} [53:8-53:9] text: "}"
+							function_definition [55:8-59:9] (named) -> child count: 4
+								virtual [55:8-55:15] text: "virtual"
+								primitive_type [55:16-55:20] (named) text: "void"
+								function_declarator [55:21-55:63] (named) -> child count: 4
+									field_identifier [55:21-55:26] (named) text: "print"
+									parameter_list [55:26-55:48] (named) -> child count: 3
+										( [55:26-55:27] text: "("
+										parameter_declaration [55:27-55:47] (named) -> child count: 2
+											qualified_identifier [55:27-55:43] (named) -> child count: 3
+												namespace_identifier [55:27-55:30] (named) text: "std"
+												:: [55:30-55:32] text: "::"
+												qualified_identifier [55:32-55:43] (named) -> child count: 3
+													namespace_identifier [55:32-55:34] (named) text: "cp"
+													:: [55:34-55:36] text: "::"
+													type_identifier [55:36-55:43] (named) text: "ostream"
+											reference_declarator [55:43-55:47] (named) -> child count: 2
+												& [55:43-55:44] text: "&"
+												identifier [55:45-55:47] (named) text: "os"
+										) [55:47-55:48] text: ")"
+									type_qualifier [55:49-55:54] (named) -> child count: 1
+										const [55:49-55:54] text: "const"
+									virtual_specifier [55:55-55:63] (named) -> child count: 1
+										override [55:55-55:63] text: "override"
+								compound_statement [56:8-59:9] (named) -> child count: 4
+									{ [56:8-56:9] text: "{"
+									expression_statement [57:12-57:55] (named) -> child count: 2
+										binary_expression [57:12-57:54] (named) -> child count: 3
+											identifier [57:12-57:14] (named) text: "os"
+											<< [57:15-57:17] text: "<<"
+											string_literal [57:18-57:54] (named) -> child count: 3
+												" [57:18-57:19] text: """
+												string_content [57:19-57:53] (named) text: "PutDieWithoutNeighborToolCardMove:"
+												" [57:53-57:54] text: """
+										; [57:54-57:55] text: ";"
+									expression_statement [58:12-58:25] (named) -> child count: 2
+										call_expression [58:12-58:24] (named) -> child count: 2
+											field_expression [58:12-58:20] (named) -> child count: 3
+												identifier [58:12-58:14] (named) text: "bm"
+												. [58:14-58:15] text: "."
+												field_identifier [58:15-58:20] (named) text: "print"
+											argument_list [58:20-58:24] (named) -> child count: 3
+												( [58:20-58:21] text: "("
+												identifier [58:21-58:23] (named) text: "os"
+												) [58:23-58:24] text: ")"
+										; [58:24-58:25] text: ";"
+									} [59:8-59:9] text: "}"
+							function_definition [61:8-71:9] (named) -> child count: 4
+								virtual [61:8-61:15] text: "virtual"
+								type_identifier [61:16-61:22] (named) text: "move_t"
+								function_declarator [61:23-62:59] (named) -> child count: 3
+									field_identifier [61:23-61:28] (named) text: "clone"
+									parameter_list [61:28-62:50] (named) -> child count: 5
+										( [61:28-61:29] text: "("
+										parameter_declaration [61:29-61:51] (named) -> child count: 3
+											type_qualifier [61:29-61:34] (named) -> child count: 1
+												const [61:29-61:34] text: "const"
+											type_identifier [61:35-61:45] (named) text: "DiceSupply"
+											reference_declarator [61:45-61:51] (named) -> child count: 2
+												& [61:45-61:46] text: "&"
+												identifier [61:47-61:51] (named) text: "from"
+										, [61:51-61:52] text: ","
+										parameter_declaration [62:29-62:49] (named) -> child count: 3
+											type_qualifier [62:29-62:34] (named) -> child count: 1
+												const [62:29-62:34] text: "const"
+											type_identifier [62:35-62:45] (named) text: "DiceSupply"
+											reference_declarator [62:45-62:49] (named) -> child count: 2
+												& [62:45-62:46] text: "&"
+												identifier [62:47-62:49] (named) text: "to"
+										) [62:49-62:50] text: ")"
+									virtual_specifier [62:51-62:59] (named) -> child count: 1
+										override [62:51-62:59] text: "override"
+								compound_statement [63:8-71:9] (named) -> child count: 5
+									{ [63:8-63:9] text: "{"
+									declaration [64:12-64:20] (named) -> child count: 5
+										primitive_type [64:12-64:15] (named) text: "int"
+										identifier [64:16-64:17] (named) text: "a"
+										, [64:17-64:18] text: ","
+										identifier [64:18-64:19] (named) text: "b"
+										; [64:19-64:20] text: ";"
+									expression_statement [65:12-65:18] (named) -> child count: 2
+										assignment_expression [65:12-65:17] (named) -> child count: 3
+											identifier [65:12-65:13] (named) text: "a"
+											= [65:14-65:15] text: "="
+											identifier [65:16-65:17] (named) text: "b"
+										; [65:17-65:18] text: ";"
+									return_statement [66:12-70:59] (named) -> child count: 3
+										return [66:12-66:18] text: "return"
+										new_expression [66:19-70:58] (named) -> child count: 3
+											new [66:19-66:22] text: "new"
+											qualified_identifier [66:23-66:52] (named) -> child count: 3
+												namespace_identifier [66:23-66:46] (named) text: "PutDieWithoutNeighborTC"
+												:: [66:46-66:48] text: "::"
+												type_identifier [66:48-66:52] (named) text: "Move"
+											argument_list [66:52-70:58] (named) -> child count: 7
+												( [66:52-66:53] text: "("
+												identifier [67:16-67:24] (named) text: "playerId"
+												, [67:24-67:25] text: ","
+												identifier [67:26-67:29] (named) text: "ind"
+												, [67:29-67:30] text: ","
+												compound_literal_expression [68:16-70:57] (named) -> child count: 2
+													type_identifier [68:16-68:30] (named) text: "DieToFieldMove"
+													initializer_list [68:31-70:57] (named) -> child count: 9
+														{ [68:31-68:32] text: "{"
+														identifier [68:32-68:40] (named) text: "playerId"
+														, [68:40-68:41] text: ","
+														call_expression [69:32-69:71] (named) -> child count: 2
+															identifier [69:32-69:53] (named) text: "get_corresponding_die"
+															argument_list [69:53-69:71] (named) -> child count: 7
+																( [69:53-69:54] text: "("
+																field_expression [69:54-69:60] (named) -> child count: 3
+																	identifier [69:54-69:56] (named) text: "bm"
+																	. [69:56-69:57] text: "."
+																	field_identifier [69:57-69:60] (named) text: "die"
+																, [69:60-69:61] text: ","
+																identifier [69:62-69:66] (named) text: "from"
+																, [69:66-69:67] text: ","
+																identifier [69:68-69:70] (named) text: "to"
+																) [69:70-69:71] text: ")"
+														, [69:71-69:72] text: ","
+														field_expression [70:32-70:47] (named) -> child count: 3
+															identifier [70:32-70:34] (named) text: "bm"
+															. [70:34-70:35] text: "."
+															field_identifier [70:35-70:47] (named) text: "boardIndices"
+														, [70:47-70:48] text: ","
+														field_expression [70:49-70:56] (named) -> child count: 3
+															identifier [70:49-70:51] (named) text: "bm"
+															. [70:51-70:52] text: "."
+															field_identifier [70:52-70:56] (named) text: "mode"
+														} [70:56-70:57] text: "}"
+												) [70:57-70:58] text: ")"
+										; [70:58-70:59] text: ";"
+									} [71:8-71:9] text: "}"
+							function_definition [73:8-76:9] (named) -> child count: 4
+								virtual [73:8-73:15] text: "virtual"
+								type_identifier [73:16-73:35] (named) text: "die_to_field_move_t"
+								function_declarator [73:36-73:66] (named) -> child count: 3
+									field_identifier [73:36-73:55] (named) text: "get_placing_submove"
+									parameter_list [73:55-73:57] (named) -> child count: 2
+										( [73:55-73:56] text: "("
+										) [73:56-73:57] text: ")"
+									virtual_specifier [73:58-73:66] (named) -> child count: 1
+										override [73:58-73:66] text: "override"
+								compound_statement [74:8-76:9] (named) -> child count: 3
+									{ [74:8-74:9] text: "{"
+									return_statement [75:12-75:23] (named) -> child count: 3
+										return [75:12-75:18] text: "return"
+										pointer_expression [75:19-75:22] (named) -> child count: 2
+											& [75:19-75:20] text: "&"
+											identifier [75:20-75:22] (named) text: "bm"
+										; [75:22-75:23] text: ";"
+									} [76:8-76:9] text: "}"
+							function_definition [78:8-78:75] (named) -> child count: 4
+								virtual [78:8-78:15] text: "virtual"
+								primitive_type [78:16-78:20] (named) text: "bool"
+								function_declarator [78:21-78:57] (named) -> child count: 4
+									field_identifier [78:21-78:40] (named) text: "contains_randomness"
+									parameter_list [78:40-78:42] (named) -> child count: 2
+										( [78:40-78:41] text: "("
+										) [78:41-78:42] text: ")"
+									type_qualifier [78:43-78:48] (named) -> child count: 1
+										const [78:43-78:48] text: "const"
+									virtual_specifier [78:49-78:57] (named) -> child count: 1
+										override [78:49-78:57] text: "override"
+								compound_statement [78:58-78:75] (named) -> child count: 3
+									{ [78:58-78:59] text: "{"
+									return_statement [78:60-78:73] (named) -> child count: 3
+										return [78:60-78:66] text: "return"
+										false [78:67-78:72] (named) text: "false"
+										; [78:72-78:73] text: ";"
+									} [78:74-78:75] text: "}"
+							function_definition [79:8-79:69] (named) -> child count: 4
+								virtual [79:8-79:15] text: "virtual"
+								primitive_type [79:16-79:20] (named) text: "bool"
+								function_declarator [79:21-79:51] (named) -> child count: 4
+									field_identifier [79:21-79:34] (named) text: "is_relocating"
+									parameter_list [79:34-79:36] (named) -> child count: 2
+										( [79:34-79:35] text: "("
+										) [79:35-79:36] text: ")"
+									type_qualifier [79:37-79:42] (named) -> child count: 1
+										const [79:37-79:42] text: "const"
+									virtual_specifier [79:43-79:51] (named) -> child count: 1
+										override [79:43-79:51] text: "override"
+								compound_statement [79:52-79:69] (named) -> child count: 3
+									{ [79:52-79:53] text: "{"
+									return_statement [79:54-79:67] (named) -> child count: 3
+										return [79:54-79:60] text: "return"
+										false [79:61-79:66] (named) text: "false"
+										; [79:66-79:67] text: ";"
+									} [79:68-79:69] text: "}"
+							function_definition [81:8-88:9] (named) -> child count: 4
+								virtual [81:8-81:15] text: "virtual"
+								primitive_type [81:16-81:20] (named) text: "bool"
+								function_declarator [81:21-81:61] (named) -> child count: 3
+									field_identifier [81:21-81:27] (named) text: "equals"
+									parameter_list [81:27-81:52] (named) -> child count: 3
+										( [81:27-81:28] text: "("
+										parameter_declaration [81:28-81:51] (named) -> child count: 3
+											type_qualifier [81:28-81:33] (named) -> child count: 1
+												const [81:28-81:33] text: "const"
+											type_identifier [81:34-81:40] (named) text: "move_t"
+											reference_declarator [81:40-81:51] (named) -> child count: 2
+												& [81:40-81:41] text: "&"
+												identifier [81:42-81:51] (named) text: "otherMove"
+										) [81:51-81:52] text: ")"
+									virtual_specifier [81:53-81:61] (named) -> child count: 1
+										override [81:53-81:61] text: "override"
+								compound_statement [82:8-88:9] (named) -> child count: 4
+									{ [82:8-82:9] text: "{"
+									declaration [83:12-84:72] (named) -> child count: 3
+										qualified_identifier [83:12-83:41] (named) -> child count: 3
+											namespace_identifier [83:12-83:35] (named) text: "PutDieWithoutNeighborTC"
+											:: [83:35-83:37] text: "::"
+											type_identifier [83:37-83:41] (named) text: "Move"
+										init_declarator [83:41-84:71] (named) -> child count: 3
+											pointer_declarator [83:41-83:73] (named) -> child count: 2
+												* [83:41-83:42] text: "*"
+												identifier [83:43-83:73] (named) text: "otherPutDieWithoutNeighborMove"
+											= [83:74-83:75] text: "="
+											call_expression [84:16-84:71] (named) -> child count: 2
+												template_function [84:16-84:60] (named) -> child count: 2
+													identifier [84:16-84:28] (named) text: "dynamic_cast"
+													template_argument_list [84:28-84:60] (named) -> child count: 3
+														< [84:28-84:29] text: "<"
+														type_descriptor [84:29-84:59] (named) -> child count: 2
+															qualified_identifier [84:29-84:58] (named) -> child count: 3
+																namespace_identifier [84:29-84:52] (named) text: "PutDieWithoutNeighborTC"
+																:: [84:52-84:54] text: "::"
+																type_identifier [84:54-84:58] (named) text: "Move"
+															abstract_pointer_declarator [84:58-84:59] (named) -> child count: 1
+																* [84:58-84:59] text: "*"
+														> [84:59-84:60] text: ">"
+												argument_list [84:60-84:71] (named) -> child count: 3
+													( [84:60-84:61] text: "("
+													identifier [84:61-84:70] (named) text: "otherMove"
+													) [84:70-84:71] text: ")"
+										; [84:71-84:72] text: ";"
+									return_statement [85:12-87:33] (named) -> child count: 3
+										return [85:12-85:18] text: "return"
+										parenthesized_expression [85:19-87:32] (named) -> child count: 3
+											( [85:19-85:20] text: "("
+											conditional_expression [85:20-87:31] (named) -> child count: 5
+												binary_expression [85:20-85:61] (named) -> child count: 3
+													identifier [85:20-85:50] (named) text: "otherPutDieWithoutNeighborMove"
+													!= [85:51-85:53] text: "!="
+													null [85:54-85:61] (named) -> child count: 1
+														nullptr [85:54-85:61] text: "nullptr"
+												? [86:24-86:25] text: "?"
+												call_expression [86:26-86:79] (named) -> child count: 2
+													field_expression [86:26-86:43] (named) -> child count: 3
+														identifier [86:26-86:28] (named) text: "bm"
+														. [86:28-86:29] text: "."
+														field_identifier [86:29-86:43] (named) text: "equals_to_dtfm"
+													argument_list [86:43-86:79] (named) -> child count: 3
+														( [86:43-86:44] text: "("
+														field_expression [86:44-86:78] (named) -> child count: 3
+															identifier [86:44-86:74] (named) text: "otherPutDieWithoutNeighborMove"
+															-> [86:74-86:76] text: "->"
+															field_identifier [86:76-86:78] (named) text: "bm"
+														) [86:78-86:79] text: ")"
+												: [87:24-87:25] text: ":"
+												false [87:26-87:31] (named) text: "false"
+											) [87:31-87:32] text: ")"
+										; [87:32-87:33] text: ";"
+									} [88:8-88:9] text: "}"
+							field_declaration [90:8-90:26] (named) -> child count: 3
+								type_identifier [90:8-90:22] (named) text: "DieToFieldMove"
+								field_identifier [90:23-90:25] (named) text: "bm"
+								; [90:25-90:26] text: ";"
+							} [91:4-91:5] text: "}"
+					; [91:5-91:6] text: ";"
+				} [92:0-92:1] text: "}"
+		; [92:1-92:2] text: ";"
+		#endif [94:0-94:6] text: "#endif"
+	comment [94:7-94:35] (named) text: "// PUTDIEWITHOUTNEIGHBORTC_H"

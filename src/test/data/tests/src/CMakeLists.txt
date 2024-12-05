@@ -1,0 +1,5 @@
+# Collect files in this directory
+file(GLOB LOCAL_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/*.hpp" "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+
+# Append these files to the global source variable
+set(TEST_SOURCES ${TEST_SOURCES} ${LOCAL_FILES} PARENT_SCOPE)

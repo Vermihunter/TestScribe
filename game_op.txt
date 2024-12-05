@@ -1,0 +1,417 @@
+Classes and their details (including nested classes and templates):
+{
+  "classes": [
+    {
+      "className": "GameFlowController",
+      "functions": [],
+      "access": "private",
+      "parentClasses": [],
+      "templateParameters": [],
+      "variables": [],
+      "nestedClasses": []
+    },
+    {
+      "className": "EvalState",
+      "functions": [],
+      "access": "private",
+      "parentClasses": [],
+      "templateParameters": [],
+      "variables": [],
+      "nestedClasses": []
+    },
+    {
+      "className": "GamePlayingPage",
+      "functions": [],
+      "access": "private",
+      "parentClasses": [],
+      "templateParameters": [],
+      "variables": [],
+      "nestedClasses": []
+    },
+    {
+      "className": "Game",
+      "functions": [
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "~Game",
+          "type": "",
+          "access": "public",
+          "parameters": [],
+          "throws": [],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "Game",
+          "type": "",
+          "access": "public",
+          "parameters": [
+            {
+              "type": "const Game  &",
+              "name": "g"
+            },
+            {
+              "type": "rnd_t",
+              "name": "rnd"
+            }
+          ],
+          "throws": [],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "Game",
+          "type": "",
+          "access": "public",
+          "parameters": [
+            {
+              "type": "const Game  &",
+              "name": "g"
+            }
+          ],
+          "throws": [],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "clone",
+          "type": "game_t",
+          "access": "public",
+          "parameters": [],
+          "throws": [],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "clone_identical",
+          "type": "game_t",
+          "access": "public",
+          "parameters": [],
+          "throws": [],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "clone_with_pseudo_random_future",
+          "type": "game_t",
+          "access": "public",
+          "parameters": [
+            {
+              "type": "ID_t",
+              "name": "focusedPlayerID"
+            },
+            {
+              "type": "int",
+              "name": "seed"
+            }
+          ],
+          "throws": [],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "clone_with_seed",
+          "type": "game_t",
+          "access": "public",
+          "parameters": [
+            {
+              "type": "int",
+              "name": "seed"
+            }
+          ],
+          "throws": [],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "Game",
+          "type": "",
+          "access": "public",
+          "parameters": [
+            {
+              "type": "game_context_t",
+              "name": "ctx"
+            },
+            {
+              "type": "game_state_t",
+              "name": "gameState"
+            }
+          ],
+          "throws": [],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "get_player_window_pattern_card_options",
+          "type": "auto",
+          "access": "public",
+          "parameters": [
+            {
+              "type": "ID_t",
+              "name": "playerId"
+            }
+          ],
+          "throws": [],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "set_board",
+          "type": "void",
+          "access": "public",
+          "parameters": [
+            {
+              "type": "ID_t",
+              "name": "playerId"
+            },
+            {
+              "type": "board_t",
+              "name": "board"
+            }
+          ],
+          "throws": [],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "possible_moves",
+          "type": "move_c",
+          "access": "public",
+          "parameters": [],
+          "throws": [],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "get_single_move",
+          "type": "move_t",
+          "access": "public",
+          "parameters": [
+            {
+              "type": "single_move_choice_strategy_t",
+              "name": "strategy"
+            }
+          ],
+          "throws": [],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "move_request",
+          "type": "void",
+          "access": "public",
+          "parameters": [
+            {
+              "type": "move_t",
+              "name": "m"
+            }
+          ],
+          "throws": [
+            "BadMoveRequest"
+          ],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "undo_last_move",
+          "type": "void",
+          "access": "public",
+          "parameters": [],
+          "throws": [],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "undo_dtfm",
+          "type": "void",
+          "access": "public",
+          "parameters": [
+            {
+              "type": "die_to_field_move_t",
+              "name": "m"
+            },
+            {
+              "type": "bool",
+              "name": "putDieBackToCurrRoundsDice"
+            },
+            {
+              "type": "bool",
+              "name": "shiftRoundsBack"
+            }
+          ],
+          "throws": [],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "evaluate",
+          "type": "eval_state_c",
+          "access": "public",
+          "parameters": [],
+          "throws": [],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "basic_move_request",
+          "type": "void",
+          "access": "private",
+          "parameters": [
+            {
+              "type": "die_to_field_move_t",
+              "name": "m"
+            },
+            {
+              "type": "bool",
+              "name": "allowDieToFieldMove"
+            }
+          ],
+          "throws": [],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "tool_card_move_request",
+          "type": "void",
+          "access": "private",
+          "parameters": [
+            {
+              "type": "move_t",
+              "name": "m"
+            }
+          ],
+          "throws": [],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "remove_die_from_currents",
+          "type": "void",
+          "access": "private",
+          "parameters": [
+            {
+              "type": "Die  *",
+              "name": "d"
+            },
+            {
+              "type": "bool",
+              "name": "throwOnNotFound"
+            }
+          ],
+          "throws": [],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "plan_next_player_on_move",
+          "type": "void",
+          "access": "private",
+          "parameters": [],
+          "throws": [],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "put_remaining_dice_to_round_track",
+          "type": "void",
+          "access": "private",
+          "parameters": [],
+          "throws": [],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "plan_next_round",
+          "type": "void",
+          "access": "private",
+          "parameters": [],
+          "throws": [],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "plan_player_order",
+          "type": "void",
+          "access": "private",
+          "parameters": [],
+          "throws": [],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "shift_order_backwards",
+          "type": "void",
+          "access": "private",
+          "parameters": [],
+          "throws": [],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "undo_tool_card_move",
+          "type": "void",
+          "access": "private",
+          "parameters": [
+            {
+              "type": "MoveInfo  &",
+              "name": "m"
+            }
+          ],
+          "throws": [],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "get_first_possible_move",
+          "type": "move_t",
+          "access": "private",
+          "parameters": [],
+          "throws": [],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "get_random_possible_move",
+          "type": "move_t",
+          "access": "private",
+          "parameters": [],
+          "throws": [],
+          "templateParameters": []
+        }
+      ],
+      "access": "private",
+      "parentClasses": [],
+      "templateParameters": [],
+      "variables": [],
+      "nestedClasses": []
+    }
+  ],
+  "globalFunctions": []
+}

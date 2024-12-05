@@ -1,0 +1,240 @@
+nodeInfo:translation_unit [0:0-55:22] (named) -> child count: 2
+nodeInfo:  preproc_ifdef [0:0-55:6] (named) -> child count: 16
+nodeInfo:    #ifndef [0:0-0:7] text: "#ifndef"
+nodeInfo:    identifier [0:8-0:20] (named) text: "TOURNAMENT_H"
+nodeInfo:    preproc_def [1:0-2:0] (named) -> child count: 2
+nodeInfo:      #define [1:0-1:7] text: "#define"
+nodeInfo:      identifier [1:8-1:20] (named) text: "TOURNAMENT_H"
+nodeInfo:    preproc_include [3:0-4:0] (named) -> child count: 2
+nodeInfo:      #include [3:0-3:8] text: "#include"
+nodeInfo:      system_lib_string [3:9-3:24] (named) text: "<unordered_map>"
+nodeInfo:    preproc_include [4:0-5:0] (named) -> child count: 2
+nodeInfo:      #include [4:0-4:8] text: "#include"
+nodeInfo:      system_lib_string [4:9-4:17] (named) text: "<vector>"
+nodeInfo:    preproc_include [6:0-7:0] (named) -> child count: 2
+nodeInfo:      #include [6:0-6:8] text: "#include"
+nodeInfo:      string_literal [6:9-6:22] (named) -> child count: 3
+nodeInfo:        " [6:9-6:10] text: """
+nodeInfo:        string_content [6:10-6:21] (named) text: "AI_Player.h"
+nodeInfo:        " [6:21-6:22] text: """
+nodeInfo:    preproc_include [7:0-8:0] (named) -> child count: 2
+nodeInfo:      #include [7:0-7:8] text: "#include"
+nodeInfo:      string_literal [7:9-7:17] (named) -> child count: 3
+nodeInfo:        " [7:9-7:10] text: """
+nodeInfo:        string_content [7:10-7:16] (named) text: "Game.h"
+nodeInfo:        " [7:16-7:17] text: """
+nodeInfo:    preproc_include [8:0-9:0] (named) -> child count: 2
+nodeInfo:      #include [8:0-8:8] text: "#include"
+nodeInfo:      string_literal [8:9-8:35] (named) -> child count: 3
+nodeInfo:        " [8:9-8:10] text: """
+nodeInfo:        string_content [8:10-8:34] (named) text: "OnlyAIPlayerController.h"
+nodeInfo:        " [8:34-8:35] text: """
+nodeInfo:    preproc_include [9:0-10:0] (named) -> child count: 2
+nodeInfo:      #include [9:0-9:8] text: "#include"
+nodeInfo:      string_literal [9:9-9:29] (named) -> child count: 3
+nodeInfo:        " [9:9-9:10] text: """
+nodeInfo:        string_content [9:10-9:28] (named) text: "TournamentConfig.h"
+nodeInfo:        " [9:28-9:29] text: """
+nodeInfo:    preproc_include [10:0-11:0] (named) -> child count: 2
+nodeInfo:      #include [10:0-10:8] text: "#include"
+nodeInfo:      string_literal [10:9-10:38] (named) -> child count: 3
+nodeInfo:        " [10:9-10:10] text: """
+nodeInfo:        string_content [10:10-10:37] (named) text: "TournamentGameInformation.h"
+nodeInfo:        " [10:37-10:38] text: """
+nodeInfo:    preproc_include [11:0-12:0] (named) -> child count: 2
+nodeInfo:      #include [11:0-11:8] text: "#include"
+nodeInfo:      string_literal [11:9-11:33] (named) -> child count: 3
+nodeInfo:        " [11:9-11:10] text: """
+nodeInfo:        string_content [11:10-11:32] (named) text: "TournamentStatistics.h"
+nodeInfo:        " [11:32-11:33] text: """
+nodeInfo:    preproc_include [12:0-13:0] (named) -> child count: 2
+nodeInfo:      #include [12:0-12:8] text: "#include"
+nodeInfo:      string_literal [12:9-12:21] (named) -> child count: 3
+nodeInfo:        " [12:9-12:10] text: """
+nodeInfo:        string_content [12:10-12:20] (named) text: "Typedefs.h"
+nodeInfo:        " [12:20-12:21] text: """
+nodeInfo:    comment [14:0-17:3] (named) text: "/**
+ * @brief A class that lets the users run a tournament with a given
+ * configuration
+ */"
+nodeInfo:    class_specifier [18:0-53:1] (named) -> child count: 3
+nodeInfo:      class [18:0-18:5] text: "class"
+nodeInfo:      type_identifier [18:6-18:16] (named) text: "Tournament"
+nodeInfo:      field_declaration_list [19:0-53:1] (named) -> child count: 17
+nodeInfo:        { [19:0-19:1] text: "{"
+nodeInfo:        access_specifier [20:2-20:8] (named) -> child count: 1
+nodeInfo:          public [20:2-20:8] text: "public"
+nodeInfo:        : [20:8-20:9] text: ":"
+nodeInfo:        comment [21:4-26:7] (named) text: "/**
+     * @brief Runs a tournament continuously - used with the CLI
+     *
+     * @param config Config for the tournament
+     * @return TournamentStatistics The result of the tournament
+     */"
+nodeInfo:        field_declaration [27:4-27:64] (named) -> child count: 4
+nodeInfo:          storage_class_specifier [27:4-27:10] (named) -> child count: 1
+nodeInfo:            static [27:4-27:10] text: "static"
+nodeInfo:          type_identifier [27:11-27:31] (named) text: "TournamentStatistics"
+nodeInfo:          function_declarator [27:32-27:63] (named) -> child count: 2
+nodeInfo:            field_identifier [27:32-27:35] (named) text: "run"
+nodeInfo:            parameter_list [27:35-27:63] (named) -> child count: 3
+nodeInfo:              ( [27:35-27:36] text: "("
+nodeInfo:              parameter_declaration [27:36-27:62] (named) -> child count: 2
+nodeInfo:                type_identifier [27:36-27:55] (named) text: "tournament_config_t"
+nodeInfo:                identifier [27:56-27:62] (named) text: "config"
+nodeInfo:              ) [27:62-27:63] text: ")"
+nodeInfo:          ; [27:63-27:64] text: ";"
+nodeInfo:        comment [29:4-34:7] (named) text: "/**
+     * @brief Helper to run the games one-by-one - used by the GUI
+     *
+     * @param seed Seed of the tournament
+     * @return tournament_game_info_t Information about the result of the game
+     */"
+nodeInfo:        field_declaration [35:4-36:71] (named) -> child count: 3
+nodeInfo:          type_identifier [35:4-35:26] (named) text: "tournament_game_info_t"
+nodeInfo:          function_declarator [35:27-36:70] (named) -> child count: 2
+nodeInfo:            field_identifier [35:27-35:38] (named) text: "launch_game"
+nodeInfo:            parameter_list [35:38-36:70] (named) -> child count: 7
+nodeInfo:              ( [35:38-35:39] text: "("
+nodeInfo:              parameter_declaration [35:39-35:47] (named) -> child count: 2
+nodeInfo:                primitive_type [35:39-35:42] (named) text: "int"
+nodeInfo:                identifier [35:43-35:47] (named) text: "seed"
+nodeInfo:              , [35:47-35:48] text: ","
+nodeInfo:              parameter_declaration [35:49-35:66] (named) -> child count: 2
+nodeInfo:                primitive_type [35:49-35:55] (named) text: "size_t"
+nodeInfo:                identifier [35:56-35:66] (named) text: "gameNumber"
+nodeInfo:              , [35:66-35:67] text: ","
+nodeInfo:              parameter_declaration [36:39-36:69] (named) -> child count: 2
+nodeInfo:                type_identifier [36:39-36:58] (named) text: "ai_player_config_pc"
+nodeInfo:                reference_declarator [36:58-36:69] (named) -> child count: 2
+nodeInfo:                  & [36:58-36:59] text: "&"
+nodeInfo:                  identifier [36:60-36:69] (named) text: "aiConfigs"
+nodeInfo:              ) [36:69-36:70] text: ")"
+nodeInfo:          ; [36:70-36:71] text: ";"
+nodeInfo:        declaration [38:4-39:54] (named) -> child count: 2
+nodeInfo:          function_declarator [38:4-39:53] (named) -> child count: 2
+nodeInfo:            identifier [38:4-38:14] (named) text: "Tournament"
+nodeInfo:            parameter_list [38:14-39:53] (named) -> child count: 5
+nodeInfo:              ( [38:14-38:15] text: "("
+nodeInfo:              parameter_declaration [38:15-38:42] (named) -> child count: 2
+nodeInfo:                type_identifier [38:15-38:34] (named) text: "tournament_config_t"
+nodeInfo:                identifier [38:35-38:42] (named) text: "_config"
+nodeInfo:              , [38:42-38:43] text: ","
+nodeInfo:              parameter_declaration [39:15-39:52] (named) -> child count: 2
+nodeInfo:                type_identifier [39:15-39:35] (named) text: "TournamentStatistics"
+nodeInfo:                reference_declarator [39:35-39:52] (named) -> child count: 2
+nodeInfo:                  & [39:35-39:36] text: "&"
+nodeInfo:                  identifier [39:37-39:52] (named) text: "_destStatistics"
+nodeInfo:              ) [39:52-39:53] text: ")"
+nodeInfo:          ; [39:53-39:54] text: ";"
+nodeInfo:        function_definition [40:4-40:47] (named) -> child count: 4
+nodeInfo:          type_qualifier [40:4-40:9] (named) -> child count: 1
+nodeInfo:            const [40:4-40:9] text: "const"
+nodeInfo:          placeholder_type_specifier [40:10-40:14] (named) -> child count: 1
+nodeInfo:            auto [40:10-40:14] (named) text: "auto"
+nodeInfo:          reference_declarator [40:14-40:28] (named) -> child count: 2
+nodeInfo:            & [40:14-40:15] text: "&"
+nodeInfo:            function_declarator [40:16-40:28] (named) -> child count: 2
+nodeInfo:              field_identifier [40:16-40:26] (named) text: "get_config"
+nodeInfo:              parameter_list [40:26-40:28] (named) -> child count: 2
+nodeInfo:                ( [40:26-40:27] text: "("
+nodeInfo:                ) [40:27-40:28] text: ")"
+nodeInfo:          compound_statement [40:29-40:47] (named) -> child count: 3
+nodeInfo:            { [40:29-40:30] text: "{"
+nodeInfo:            return_statement [40:31-40:45] (named) -> child count: 3
+nodeInfo:              return [40:31-40:37] text: "return"
+nodeInfo:              identifier [40:38-40:44] (named) text: "config"
+nodeInfo:              ; [40:44-40:45] text: ";"
+nodeInfo:            } [40:46-40:47] text: "}"
+nodeInfo:        access_specifier [42:2-42:9] (named) -> child count: 1
+nodeInfo:          private [42:2-42:9] text: "private"
+nodeInfo:        : [42:9-42:10] text: ":"
+nodeInfo:        field_declaration [43:4-43:31] (named) -> child count: 3
+nodeInfo:          type_identifier [43:4-43:23] (named) text: "tournament_config_t"
+nodeInfo:          field_identifier [43:24-43:30] (named) text: "config"
+nodeInfo:          ; [43:30-43:31] text: ";"
+nodeInfo:        field_declaration [44:4-44:37] (named) -> child count: 3
+nodeInfo:          type_identifier [44:4-44:24] (named) text: "TournamentStatistics"
+nodeInfo:          reference_declarator [44:24-44:36] (named) -> child count: 2
+nodeInfo:            & [44:24-44:25] text: "&"
+nodeInfo:            field_identifier [44:26-44:36] (named) text: "statistics"
+nodeInfo:          ; [44:36-44:37] text: ";"
+nodeInfo:        field_declaration [46:4-48:53] (named) -> child count: 3
+nodeInfo:          qualified_identifier [46:4-46:39] (named) -> child count: 3
+nodeInfo:            namespace_identifier [46:4-46:7] (named) text: "std"
+nodeInfo:            :: [46:7-46:9] text: "::"
+nodeInfo:            template_type [46:9-46:39] (named) -> child count: 2
+nodeInfo:              type_identifier [46:9-46:15] (named) text: "vector"
+nodeInfo:              template_argument_list [46:15-46:39] (named) -> child count: 3
+nodeInfo:                < [46:15-46:16] text: "<"
+nodeInfo:                type_descriptor [46:16-46:38] (named) -> child count: 1
+nodeInfo:                  type_identifier [46:16-46:38] (named) text: "tournament_game_info_t"
+nodeInfo:                > [46:38-46:39] text: ">"
+nodeInfo:          function_declarator [46:40-48:52] (named) -> child count: 2
+nodeInfo:            field_identifier [46:40-46:52] (named) text: "launch_games"
+nodeInfo:            parameter_list [46:52-48:52] (named) -> child count: 7
+nodeInfo:              ( [46:52-46:53] text: "("
+nodeInfo:              parameter_declaration [47:8-47:16] (named) -> child count: 2
+nodeInfo:                primitive_type [47:8-47:11] (named) text: "int"
+nodeInfo:                identifier [47:12-47:16] (named) text: "seed"
+nodeInfo:              , [47:16-47:17] text: ","
+nodeInfo:              parameter_declaration [47:18-47:39] (named) -> child count: 2
+nodeInfo:                primitive_type [47:18-47:24] (named) text: "size_t"
+nodeInfo:                identifier [47:25-47:39] (named) text: "gameGroupCount"
+nodeInfo:              , [47:39-47:40] text: ","
+nodeInfo:              parameter_declaration [48:8-48:51] (named) -> child count: 2
+nodeInfo:                qualified_identifier [48:8-48:40] (named) -> child count: 3
+nodeInfo:                  namespace_identifier [48:8-48:11] (named) text: "std"
+nodeInfo:                  :: [48:11-48:13] text: "::"
+nodeInfo:                  template_type [48:13-48:40] (named) -> child count: 2
+nodeInfo:                    type_identifier [48:13-48:19] (named) text: "vector"
+nodeInfo:                    template_argument_list [48:19-48:40] (named) -> child count: 3
+nodeInfo:                      < [48:19-48:20] text: "<"
+nodeInfo:                      type_descriptor [48:20-48:39] (named) -> child count: 1
+nodeInfo:                        type_identifier [48:20-48:39] (named) text: "ai_player_config_pc"
+nodeInfo:                      > [48:39-48:40] text: ">"
+nodeInfo:                reference_declarator [48:40-48:51] (named) -> child count: 2
+nodeInfo:                  & [48:40-48:41] text: "&"
+nodeInfo:                  identifier [48:42-48:51] (named) text: "aiConfigs"
+nodeInfo:              ) [48:51-48:52] text: ")"
+nodeInfo:          ; [48:52-48:53] text: ";"
+nodeInfo:        field_declaration [50:4-50:72] (named) -> child count: 3
+nodeInfo:          type_identifier [50:4-50:17] (named) text: "game_result_t"
+nodeInfo:          function_declarator [50:18-50:71] (named) -> child count: 2
+nodeInfo:            field_identifier [50:18-50:35] (named) text: "update_statistics"
+nodeInfo:            parameter_list [50:35-50:71] (named) -> child count: 3
+nodeInfo:              ( [50:35-50:36] text: "("
+nodeInfo:              parameter_declaration [50:36-50:70] (named) -> child count: 2
+nodeInfo:                type_identifier [50:36-50:58] (named) text: "tournament_game_info_t"
+nodeInfo:                reference_declarator [50:58-50:70] (named) -> child count: 2
+nodeInfo:                  & [50:58-50:59] text: "&"
+nodeInfo:                  identifier [50:60-50:70] (named) text: "controller"
+nodeInfo:              ) [50:70-50:71] text: ")"
+nodeInfo:          ; [50:71-50:72] text: ";"
+nodeInfo:        field_declaration [51:4-52:60] (named) -> child count: 3
+nodeInfo:          primitive_type [51:4-51:8] (named) text: "void"
+nodeInfo:          function_declarator [51:9-52:59] (named) -> child count: 2
+nodeInfo:            field_identifier [51:9-51:22] (named) text: "print_results"
+nodeInfo:            parameter_list [51:22-52:59] (named) -> child count: 7
+nodeInfo:              ( [51:22-51:23] text: "("
+nodeInfo:              parameter_declaration [51:23-51:55] (named) -> child count: 2
+nodeInfo:                type_identifier [51:23-51:45] (named) text: "tournament_game_info_t"
+nodeInfo:                reference_declarator [51:45-51:55] (named) -> child count: 2
+nodeInfo:                  & [51:45-51:46] text: "&"
+nodeInfo:                  identifier [51:47-51:55] (named) text: "gameInfo"
+nodeInfo:              , [51:55-51:56] text: ","
+nodeInfo:              parameter_declaration [52:23-52:48] (named) -> child count: 2
+nodeInfo:                type_identifier [52:23-52:36] (named) text: "game_result_t"
+nodeInfo:                reference_declarator [52:36-52:48] (named) -> child count: 2
+nodeInfo:                  & [52:36-52:37] text: "&"
+nodeInfo:                  identifier [52:38-52:48] (named) text: "gameResult"
+nodeInfo:              , [52:48-52:49] text: ","
+nodeInfo:              parameter_declaration [52:50-52:58] (named) -> child count: 2
+nodeInfo:                primitive_type [52:50-52:53] (named) text: "int"
+nodeInfo:                identifier [52:54-52:58] (named) text: "seed"
+nodeInfo:              ) [52:58-52:59] text: ")"
+nodeInfo:          ; [52:59-52:60] text: ";"
+nodeInfo:        } [53:0-53:1] text: "}"
+nodeInfo:    ; [53:1-53:2] text: ";"
+nodeInfo:    #endif [55:0-55:6] text: "#endif"
+nodeInfo:  comment [55:7-55:22] (named) text: "// TOURNAMENT_H"

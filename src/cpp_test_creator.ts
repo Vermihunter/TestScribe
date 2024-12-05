@@ -67,6 +67,8 @@ export function generateTestsForFile(fileName: string, srcRoot: string, testFile
     const classDependency = `#include "${path.relative(testFilePath, fileName)}"`;
     const generatedTestFiles: string[] = [];
 
+    console.log(`Found classes: ${classData}`);
+
     // Generate a test file for every class
     classData.forEach((value) => {
         const data = testDependency + classDependency + "\n" + value.functions.map(func => {

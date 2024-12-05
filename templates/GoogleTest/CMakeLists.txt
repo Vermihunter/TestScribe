@@ -21,7 +21,6 @@ enable_testing()
 
 file(GLOB TEST_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/*.hpp" "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 
-
 {{#each Subdirectories}}
 add_subdirectory({{this}})
 {{/each}}
