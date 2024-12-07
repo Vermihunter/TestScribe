@@ -38,11 +38,11 @@ const cppCode = fs.readFileSync(filePath, 'utf8');
 // Parse the file content
 const tree = parser.parse(cppCode);
 
-printNode(tree.rootNode);
+//printNode(tree.rootNode);
 
 // Extract details from the root node
-// const classDetails = parse(tree.rootNode);
+const classDetails = parse(tree.rootNode);
 
-// // // Output the results
-// console.log('Classes and their details (including nested classes and templates):');
-// console.log(JSON.stringify(classDetails, null, 2));
+// // Output the results
+console.log('Classes and their details (including nested classes and templates):');
+console.log(JSON.stringify(classDetails, null, 2));

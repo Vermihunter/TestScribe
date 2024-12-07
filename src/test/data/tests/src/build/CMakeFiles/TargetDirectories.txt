@@ -1,2 +1,0 @@
-/home/akos/Desktop/TestScribe/src/test/data/tests/src/build/CMakeFiles/edit_cache.dir
-/home/akos/Desktop/TestScribe/src/test/data/tests/src/build/CMakeFiles/rebuild_cache.dir

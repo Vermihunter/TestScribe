@@ -2,33 +2,6 @@ Classes and their details (including nested classes and templates):
 {
   "classes": [
     {
-      "className": "GameFlowController",
-      "functions": [],
-      "access": "private",
-      "parentClasses": [],
-      "templateParameters": [],
-      "variables": [],
-      "nestedClasses": []
-    },
-    {
-      "className": "EvalState",
-      "functions": [],
-      "access": "private",
-      "parentClasses": [],
-      "templateParameters": [],
-      "variables": [],
-      "nestedClasses": []
-    },
-    {
-      "className": "GamePlayingPage",
-      "functions": [],
-      "access": "private",
-      "parentClasses": [],
-      "templateParameters": [],
-      "variables": [],
-      "nestedClasses": []
-    },
-    {
       "className": "Game",
       "functions": [
         {
@@ -265,6 +238,62 @@ Classes and their details (including nested classes and templates):
           "access": "public",
           "parameters": [],
           "throws": [],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "get_ctx",
+          "type": "const auto &",
+          "access": "public",
+          "parameters": [],
+          "throws": [],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "get_curr_state",
+          "type": "const auto &",
+          "access": "public",
+          "parameters": [],
+          "throws": [],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "get_ctx",
+          "type": "const int * const *",
+          "access": "public",
+          "parameters": [],
+          "throws": [
+            "std::exception{}",
+            "std::exc::runtime_exc{\"aa\",bb}",
+            "double",
+            "std::string",
+            "char",
+            "nullptr",
+            "bool",
+            "MyCustomException",
+            "HeapException",
+            "const std::bad_alloc &",
+            "const std::exception &",
+            "lalalom"
+          ],
+          "templateParameters": []
+        },
+        {
+          "isVirtual": false,
+          "isStatic": false,
+          "name": "get_curr_state",
+          "type": "auto &",
+          "access": "public",
+          "parameters": [],
+          "throws": [
+            "MyCustomException",
+            "lalalom"
+          ],
           "templateParameters": []
         },
         {

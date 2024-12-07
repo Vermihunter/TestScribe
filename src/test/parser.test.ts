@@ -576,11 +576,11 @@ function printNode(node: Parser.SyntaxNode, indent: string = '') {
 }
 
 //tree.rootNode.children.forEach(child => printNode(child));
-printNode(tree.rootNode);
+//printNode(tree.rootNode);
 
 // Extract details from the root node
-//const classDetails = collectClasses(tree.rootNode);
+// const classDetails = collectClasses(tree.rootNode);
 
-// Output the results
-//console.log('Classes and their details (including nested classes and templates):');
+// // Output the results
+// console.log('Classes and their details (including nested classes and templates):');
 //console.log(JSON.stringify(classDetails, null, 2));

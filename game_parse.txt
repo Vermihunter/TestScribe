@@ -1,5 +1,5 @@
-translation_unit [0:0-217:16] (named) -> child count: 2
-	preproc_ifdef [0:0-217:6] (named) -> child count: 25
+translation_unit [0:0-243:16] (named) -> child count: 2
+	preproc_ifdef [0:0-243:6] (named) -> child count: 25
 		#ifndef [0:0-0:7] text: "#ifndef"
 		identifier [0:8-0:14] (named) text: "GAME_H"
 		preproc_def [1:0-2:0] (named) -> child count: 2
@@ -91,10 +91,10 @@ translation_unit [0:0-217:16] (named) -> child count: 2
  * All the information about the game is stored inside the
  * currState and the ctx objects.
  */"
-		class_specifier [29:0-215:1] (named) -> child count: 3
+		class_specifier [29:0-241:1] (named) -> child count: 3
 			class [29:0-29:5] text: "class"
 			type_identifier [29:6-29:10] (named) text: "Game"
-			field_declaration_list [30:0-215:1] (named) -> child count: 59
+			field_declaration_list [30:0-241:1] (named) -> child count: 60
 				{ [30:0-30:1] text: "{"
 				access_specifier [31:2-31:8] (named) -> child count: 1
 					public [31:2-31:8] text: "public"
@@ -655,203 +655,380 @@ translation_unit [0:0-217:16] (named) -> child count: 2
 							identifier [174:48-174:57] (named) text: "currState"
 							; [174:57-174:58] text: ";"
 						} [174:59-174:60] text: "}"
-				function_definition [176:4-179:5] (named) -> child count: 4
-					type_qualifier [176:4-176:9] (named) -> child count: 1
-						const [176:4-176:9] text: "const"
-					primitive_type [176:10-176:13] (named) text: "int"
-					pointer_declarator [176:14-176:33] (named) -> child count: 3
-						* [176:14-176:15] text: "*"
-						type_qualifier [176:16-176:21] (named) -> child count: 1
-							const [176:16-176:21] text: "const"
-						pointer_declarator [176:22-176:33] (named) -> child count: 2
-							* [176:22-176:23] text: "*"
-							function_declarator [176:24-176:33] (named) -> child count: 2
-								field_identifier [176:24-176:31] (named) text: "get_ctx"
-								parameter_list [176:31-176:33] (named) -> child count: 2
-									( [176:31-176:32] text: "("
-									) [176:32-176:33] text: ")"
-					compound_statement [176:34-179:5] (named) -> child count: 4
-						{ [176:34-176:35] text: "{"
-						throw_statement [177:8-177:31] (named) -> child count: 3
-							throw [177:8-177:13] text: "throw"
-							compound_literal_expression [177:14-177:30] (named) -> child count: 2
-								qualified_identifier [177:14-177:28] (named) -> child count: 3
-									namespace_identifier [177:14-177:17] (named) text: "std"
-									:: [177:17-177:19] text: "::"
-									type_identifier [177:19-177:28] (named) text: "exception"
-								initializer_list [177:28-177:30] (named) -> child count: 2
-									{ [177:28-177:29] text: "{"
-									} [177:29-177:30] text: "}"
-							; [177:30-177:31] text: ";"
-						return_statement [178:8-178:19] (named) -> child count: 3
-							return [178:8-178:14] text: "return"
-							identifier [178:15-178:18] (named) text: "ctx"
-							; [178:18-178:19] text: ";"
-						} [179:4-179:5] text: "}"
-				function_definition [180:4-180:48] (named) -> child count: 3
-					placeholder_type_specifier [180:4-180:8] (named) -> child count: 1
-						auto [180:4-180:8] (named) text: "auto"
-					reference_declarator [180:8-180:26] (named) -> child count: 2
-						& [180:8-180:9] text: "&"
-						function_declarator [180:10-180:26] (named) -> child count: 2
-							field_identifier [180:10-180:24] (named) text: "get_curr_state"
-							parameter_list [180:24-180:26] (named) -> child count: 2
-								( [180:24-180:25] text: "("
-								) [180:25-180:26] text: ")"
-					compound_statement [180:27-180:48] (named) -> child count: 3
-						{ [180:27-180:28] text: "{"
-						return_statement [180:29-180:46] (named) -> child count: 3
-							return [180:29-180:35] text: "return"
-							identifier [180:36-180:45] (named) text: "currState"
-							; [180:45-180:46] text: ";"
-						} [180:47-180:48] text: "}"
-				access_specifier [182:2-182:9] (named) -> child count: 1
-					private [182:2-182:9] text: "private"
-				: [182:9-182:10] text: ":"
-				field_declaration [183:4-183:23] (named) -> child count: 3
-					type_identifier [183:4-183:18] (named) text: "game_context_t"
-					field_identifier [183:19-183:22] (named) text: "ctx"
-					; [183:22-183:23] text: ";"
-				comment [184:4-188:7] (named) text: "/**
+				comment [176:4-179:7] (named) text: "/**
+     * @throws MyCustomException aa
+     * @throws lalalom aa
+     */"
+				function_definition [180:4-205:5] (named) -> child count: 4
+					type_qualifier [180:4-180:9] (named) -> child count: 1
+						const [180:4-180:9] text: "const"
+					primitive_type [180:10-180:13] (named) text: "int"
+					pointer_declarator [180:14-180:33] (named) -> child count: 3
+						* [180:14-180:15] text: "*"
+						type_qualifier [180:16-180:21] (named) -> child count: 1
+							const [180:16-180:21] text: "const"
+						pointer_declarator [180:22-180:33] (named) -> child count: 2
+							* [180:22-180:23] text: "*"
+							function_declarator [180:24-180:33] (named) -> child count: 2
+								field_identifier [180:24-180:31] (named) text: "get_ctx"
+								parameter_list [180:31-180:33] (named) -> child count: 2
+									( [180:31-180:32] text: "("
+									) [180:32-180:33] text: ")"
+					compound_statement [180:34-205:5] (named) -> child count: 14
+						{ [180:34-180:35] text: "{"
+						throw_statement [181:8-181:31] (named) -> child count: 3
+							throw [181:8-181:13] text: "throw"
+							compound_literal_expression [181:14-181:30] (named) -> child count: 2
+								qualified_identifier [181:14-181:28] (named) -> child count: 3
+									namespace_identifier [181:14-181:17] (named) text: "std"
+									:: [181:17-181:19] text: "::"
+									type_identifier [181:19-181:28] (named) text: "exception"
+								initializer_list [181:28-181:30] (named) -> child count: 2
+									{ [181:28-181:29] text: "{"
+									} [181:29-181:30] text: "}"
+							; [181:30-181:31] text: ";"
+						throw_statement [182:8-182:45] (named) -> child count: 3
+							throw [182:8-182:13] text: "throw"
+							compound_literal_expression [182:14-182:44] (named) -> child count: 2
+								qualified_identifier [182:14-182:35] (named) -> child count: 3
+									namespace_identifier [182:14-182:17] (named) text: "std"
+									:: [182:17-182:19] text: "::"
+									qualified_identifier [182:19-182:35] (named) -> child count: 3
+										namespace_identifier [182:19-182:22] (named) text: "exc"
+										:: [182:22-182:24] text: "::"
+										type_identifier [182:24-182:35] (named) text: "runtime_exc"
+								initializer_list [182:35-182:44] (named) -> child count: 5
+									{ [182:35-182:36] text: "{"
+									string_literal [182:36-182:40] (named) -> child count: 3
+										" [182:36-182:37] text: """
+										string_content [182:37-182:39] (named) text: "aa"
+										" [182:39-182:40] text: """
+									, [182:40-182:41] text: ","
+									identifier [182:41-182:43] (named) text: "bb"
+									} [182:43-182:44] text: "}"
+							; [182:44-182:45] text: ";"
+						throw_statement [183:8-183:17] (named) -> child count: 3
+							throw [183:8-183:13] text: "throw"
+							number_literal [183:14-183:16] (named) text: "55"
+							; [183:16-183:17] text: ";"
+						throw_statement [184:8-184:19] (named) -> child count: 3
+							throw [184:8-184:13] text: "throw"
+							number_literal [184:14-184:18] (named) text: "98.6"
+							; [184:18-184:19] text: ";"
+						throw_statement [185:8-185:22] (named) -> child count: 3
+							throw [185:8-185:13] text: "throw"
+							string_literal [185:14-185:21] (named) -> child count: 3
+								" [185:14-185:15] text: """
+								string_content [185:15-185:20] (named) text: "hello"
+								" [185:20-185:21] text: """
+							; [185:21-185:22] text: ";"
+						throw_statement [186:8-186:18] (named) -> child count: 3
+							throw [186:8-186:13] text: "throw"
+							char_literal [186:14-186:17] (named) -> child count: 3
+								' [186:14-186:15] text: "'"
+								character [186:15-186:16] (named) text: "a"
+								' [186:16-186:17] text: "'"
+							; [186:17-186:18] text: ";"
+						throw_statement [187:8-187:22] (named) -> child count: 3
+							throw [187:8-187:13] text: "throw"
+							null [187:14-187:21] (named) -> child count: 1
+								nullptr [187:14-187:21] text: "nullptr"
+							; [187:21-187:22] text: ";"
+						throw_statement [188:8-188:20] (named) -> child count: 3
+							throw [188:8-188:13] text: "throw"
+							false [188:14-188:19] (named) text: "false"
+							; [188:19-188:20] text: ";"
+						throw_statement [190:8-190:34] (named) -> child count: 3
+							throw [190:8-190:13] text: "throw"
+							compound_literal_expression [190:14-190:33] (named) -> child count: 2
+								type_identifier [190:14-190:31] (named) text: "MyCustomException"
+								initializer_list [190:31-190:33] (named) -> child count: 2
+									{ [190:31-190:32] text: "{"
+									} [190:32-190:33] text: "}"
+							; [190:33-190:34] text: ";"
+						throw_statement [192:8-192:34] (named) -> child count: 3
+							throw [192:8-192:13] text: "throw"
+							new_expression [192:14-192:33] (named) -> child count: 3
+								new [192:14-192:17] text: "new"
+								type_identifier [192:18-192:31] (named) text: "HeapException"
+								argument_list [192:31-192:33] (named) -> child count: 2
+									( [192:31-192:32] text: "("
+									) [192:32-192:33] text: ")"
+							; [192:33-192:34] text: ";"
+						try_statement [194:8-203:9] (named) -> child count: 5
+							try [194:8-194:11] text: "try"
+							compound_statement [194:12-197:9] (named) -> child count: 5
+								{ [194:12-194:13] text: "{"
+								declaration [195:12-195:45] (named) -> child count: 3
+									primitive_type [195:12-195:15] (named) text: "int"
+									init_declarator [195:15-195:44] (named) -> child count: 3
+										pointer_declarator [195:15-195:20] (named) -> child count: 2
+											* [195:15-195:16] text: "*"
+											identifier [195:17-195:20] (named) text: "arr"
+										= [195:21-195:22] text: "="
+										new_expression [195:23-195:44] (named) -> child count: 3
+											new [195:23-195:26] text: "new"
+											primitive_type [195:27-195:30] (named) text: "int"
+											new_declarator [195:30-195:44] (named) -> child count: 3
+												[ [195:30-195:31] text: "["
+												number_literal [195:31-195:43] (named) text: "100000000000"
+												] [195:43-195:44] text: "]"
+									; [195:44-195:45] text: ";"
+								comment [195:46-195:73] (named) text: "// May throw std::bad_alloc"
+								throw_statement [196:12-196:35] (named) -> child count: 3
+									throw [196:12-196:17] text: "throw"
+									compound_literal_expression [196:18-196:34] (named) -> child count: 2
+										qualified_identifier [196:18-196:32] (named) -> child count: 3
+											namespace_identifier [196:18-196:21] (named) text: "std"
+											:: [196:21-196:23] text: "::"
+											type_identifier [196:23-196:32] (named) text: "bad_alloc"
+										initializer_list [196:32-196:34] (named) -> child count: 2
+											{ [196:32-196:33] text: "{"
+											} [196:33-196:34] text: "}"
+									; [196:34-196:35] text: ";"
+								} [197:8-197:9] text: "}"
+							catch_clause [197:10-199:9] (named) -> child count: 3
+								catch [197:10-197:15] text: "catch"
+								parameter_list [197:16-197:41] (named) -> child count: 3
+									( [197:16-197:17] text: "("
+									parameter_declaration [197:17-197:40] (named) -> child count: 3
+										type_qualifier [197:17-197:22] (named) -> child count: 1
+											const [197:17-197:22] text: "const"
+										qualified_identifier [197:23-197:37] (named) -> child count: 3
+											namespace_identifier [197:23-197:26] (named) text: "std"
+											:: [197:26-197:28] text: "::"
+											type_identifier [197:28-197:37] (named) text: "bad_alloc"
+										reference_declarator [197:37-197:40] (named) -> child count: 2
+											& [197:37-197:38] text: "&"
+											identifier [197:39-197:40] (named) text: "e"
+									) [197:40-197:41] text: ")"
+								compound_statement [197:42-199:9] (named) -> child count: 3
+									{ [197:42-197:43] text: "{"
+									expression_statement [198:12-198:79] (named) -> child count: 2
+										binary_expression [198:12-198:78] (named) -> child count: 3
+											binary_expression [198:12-198:65] (named) -> child count: 3
+												binary_expression [198:12-198:53] (named) -> child count: 3
+													qualified_identifier [198:12-198:21] (named) -> child count: 3
+														namespace_identifier [198:12-198:15] (named) text: "std"
+														:: [198:15-198:17] text: "::"
+														identifier [198:17-198:21] (named) text: "cerr"
+													<< [198:22-198:24] text: "<<"
+													string_literal [198:25-198:53] (named) -> child count: 3
+														" [198:25-198:26] text: """
+														string_content [198:26-198:52] (named) text: "Memory allocation failed:"
+														" [198:52-198:53] text: """
+												<< [198:54-198:56] text: "<<"
+												call_expression [198:57-198:65] (named) -> child count: 2
+													field_expression [198:57-198:63] (named) -> child count: 3
+														identifier [198:57-198:58] (named) text: "e"
+														. [198:58-198:59] text: "."
+														field_identifier [198:59-198:63] (named) text: "what"
+													argument_list [198:63-198:65] (named) -> child count: 2
+														( [198:63-198:64] text: "("
+														) [198:64-198:65] text: ")"
+											<< [198:66-198:68] text: "<<"
+											qualified_identifier [198:69-198:78] (named) -> child count: 3
+												namespace_identifier [198:69-198:72] (named) text: "std"
+												:: [198:72-198:74] text: "::"
+												identifier [198:74-198:78] (named) text: "endl"
+										; [198:78-198:79] text: ";"
+									} [199:8-199:9] text: "}"
+							catch_clause [199:10-201:9] (named) -> child count: 3
+								catch [199:10-199:15] text: "catch"
+								parameter_list [199:15-199:40] (named) -> child count: 3
+									( [199:15-199:16] text: "("
+									parameter_declaration [199:16-199:39] (named) -> child count: 3
+										type_qualifier [199:16-199:21] (named) -> child count: 1
+											const [199:16-199:21] text: "const"
+										qualified_identifier [199:22-199:36] (named) -> child count: 3
+											namespace_identifier [199:22-199:25] (named) text: "std"
+											:: [199:25-199:27] text: "::"
+											type_identifier [199:27-199:36] (named) text: "exception"
+										reference_declarator [199:36-199:39] (named) -> child count: 2
+											& [199:36-199:37] text: "&"
+											identifier [199:38-199:39] (named) text: "e"
+									) [199:39-199:40] text: ")"
+								compound_statement [199:41-201:9] (named) -> child count: 2
+									{ [199:41-199:42] text: "{"
+									} [201:8-201:9] text: "}"
+							catch_clause [201:10-203:9] (named) -> child count: 3
+								catch [201:10-201:15] text: "catch"
+								parameter_list [201:15-201:20] (named) -> child count: 3
+									( [201:15-201:16] text: "("
+									... [201:16-201:19] text: "..."
+									) [201:19-201:20] text: ")"
+								compound_statement [201:21-203:9] (named) -> child count: 2
+									{ [201:21-201:22] text: "{"
+									} [203:8-203:9] text: "}"
+						return_statement [204:8-204:19] (named) -> child count: 3
+							return [204:8-204:14] text: "return"
+							identifier [204:15-204:18] (named) text: "ctx"
+							; [204:18-204:19] text: ";"
+						} [205:4-205:5] text: "}"
+				function_definition [206:4-206:48] (named) -> child count: 3
+					placeholder_type_specifier [206:4-206:8] (named) -> child count: 1
+						auto [206:4-206:8] (named) text: "auto"
+					reference_declarator [206:8-206:26] (named) -> child count: 2
+						& [206:8-206:9] text: "&"
+						function_declarator [206:10-206:26] (named) -> child count: 2
+							field_identifier [206:10-206:24] (named) text: "get_curr_state"
+							parameter_list [206:24-206:26] (named) -> child count: 2
+								( [206:24-206:25] text: "("
+								) [206:25-206:26] text: ")"
+					compound_statement [206:27-206:48] (named) -> child count: 3
+						{ [206:27-206:28] text: "{"
+						return_statement [206:29-206:46] (named) -> child count: 3
+							return [206:29-206:35] text: "return"
+							identifier [206:36-206:45] (named) text: "currState"
+							; [206:45-206:46] text: ";"
+						} [206:47-206:48] text: "}"
+				access_specifier [208:2-208:9] (named) -> child count: 1
+					private [208:2-208:9] text: "private"
+				: [208:9-208:10] text: ":"
+				field_declaration [209:4-209:23] (named) -> child count: 3
+					type_identifier [209:4-209:18] (named) text: "game_context_t"
+					field_identifier [209:19-209:22] (named) text: "ctx"
+					; [209:22-209:23] text: ";"
+				comment [210:4-214:7] (named) text: "/**
      * @brief This raw pointer points to the same object as the ctx smart
      * pointer The reason to separate it into a raw pointer is connected to
      * performance
      */"
-				field_declaration [189:4-189:25] (named) -> child count: 3
-					type_identifier [189:4-189:15] (named) text: "GameContext"
-					pointer_declarator [189:15-189:24] (named) -> child count: 2
-						* [189:15-189:16] text: "*"
-						field_identifier [189:17-189:24] (named) text: "fastctx"
-					; [189:24-189:25] text: ";"
-				field_declaration [190:4-190:27] (named) -> child count: 3
-					type_identifier [190:4-190:16] (named) text: "game_state_t"
-					field_identifier [190:17-190:26] (named) text: "currState"
-					; [190:26-190:27] text: ";"
-				field_declaration [191:4-191:24] (named) -> child count: 3
-					type_identifier [191:4-191:15] (named) text: "GameHistory"
-					field_identifier [191:16-191:23] (named) text: "history"
-					; [191:23-191:24] text: ";"
-				comment [193:4-195:7] (named) text: "/**
+				field_declaration [215:4-215:25] (named) -> child count: 3
+					type_identifier [215:4-215:15] (named) text: "GameContext"
+					pointer_declarator [215:15-215:24] (named) -> child count: 2
+						* [215:15-215:16] text: "*"
+						field_identifier [215:17-215:24] (named) text: "fastctx"
+					; [215:24-215:25] text: ";"
+				field_declaration [216:4-216:27] (named) -> child count: 3
+					type_identifier [216:4-216:16] (named) text: "game_state_t"
+					field_identifier [216:17-216:26] (named) text: "currState"
+					; [216:26-216:27] text: ";"
+				field_declaration [217:4-217:24] (named) -> child count: 3
+					type_identifier [217:4-217:15] (named) text: "GameHistory"
+					field_identifier [217:16-217:23] (named) text: "history"
+					; [217:23-217:24] text: ";"
+				comment [219:4-221:7] (named) text: "/**
      * @brief Helper functions handling different types of move requests
      */"
-				field_declaration [196:4-196:77] (named) -> child count: 3
-					primitive_type [196:4-196:8] (named) text: "void"
-					function_declarator [196:9-196:76] (named) -> child count: 2
-						field_identifier [196:9-196:27] (named) text: "basic_move_request"
-						parameter_list [196:27-196:76] (named) -> child count: 5
-							( [196:27-196:28] text: "("
-							parameter_declaration [196:28-196:49] (named) -> child count: 2
-								type_identifier [196:28-196:47] (named) text: "die_to_field_move_t"
-								identifier [196:48-196:49] (named) text: "m"
-							, [196:49-196:50] text: ","
-							parameter_declaration [196:51-196:75] (named) -> child count: 2
-								primitive_type [196:51-196:55] (named) text: "bool"
-								identifier [196:56-196:75] (named) text: "allowDieToFieldMove"
-							) [196:75-196:76] text: ")"
-					; [196:76-196:77] text: ";"
-				field_declaration [197:4-197:42] (named) -> child count: 3
-					primitive_type [197:4-197:8] (named) text: "void"
-					function_declarator [197:9-197:41] (named) -> child count: 2
-						field_identifier [197:9-197:31] (named) text: "tool_card_move_request"
-						parameter_list [197:31-197:41] (named) -> child count: 3
-							( [197:31-197:32] text: "("
-							parameter_declaration [197:32-197:40] (named) -> child count: 2
-								type_identifier [197:32-197:38] (named) text: "move_t"
-								identifier [197:39-197:40] (named) text: "m"
-							) [197:40-197:41] text: ")"
-					; [197:41-197:42] text: ";"
-				comment [199:4-203:7] (named) text: "/**
+				field_declaration [222:4-222:77] (named) -> child count: 3
+					primitive_type [222:4-222:8] (named) text: "void"
+					function_declarator [222:9-222:76] (named) -> child count: 2
+						field_identifier [222:9-222:27] (named) text: "basic_move_request"
+						parameter_list [222:27-222:76] (named) -> child count: 5
+							( [222:27-222:28] text: "("
+							parameter_declaration [222:28-222:49] (named) -> child count: 2
+								type_identifier [222:28-222:47] (named) text: "die_to_field_move_t"
+								identifier [222:48-222:49] (named) text: "m"
+							, [222:49-222:50] text: ","
+							parameter_declaration [222:51-222:75] (named) -> child count: 2
+								primitive_type [222:51-222:55] (named) text: "bool"
+								identifier [222:56-222:75] (named) text: "allowDieToFieldMove"
+							) [222:75-222:76] text: ")"
+					; [222:76-222:77] text: ";"
+				field_declaration [223:4-223:42] (named) -> child count: 3
+					primitive_type [223:4-223:8] (named) text: "void"
+					function_declarator [223:9-223:41] (named) -> child count: 2
+						field_identifier [223:9-223:31] (named) text: "tool_card_move_request"
+						parameter_list [223:31-223:41] (named) -> child count: 3
+							( [223:31-223:32] text: "("
+							parameter_declaration [223:32-223:40] (named) -> child count: 2
+								type_identifier [223:32-223:38] (named) text: "move_t"
+								identifier [223:39-223:40] (named) text: "m"
+							) [223:40-223:41] text: ")"
+					; [223:41-223:42] text: ";"
+				comment [225:4-229:7] (named) text: "/**
      * @brief Functions that are connected to Game state operation after given
      * events These events include undo operation, last move of the round or
      * initialization
      */"
-				field_declaration [204:4-204:64] (named) -> child count: 3
-					primitive_type [204:4-204:8] (named) text: "void"
-					function_declarator [204:9-204:63] (named) -> child count: 2
-						field_identifier [204:9-204:33] (named) text: "remove_die_from_currents"
-						parameter_list [204:33-204:63] (named) -> child count: 5
-							( [204:33-204:34] text: "("
-							parameter_declaration [204:34-204:40] (named) -> child count: 2
-								type_identifier [204:34-204:37] (named) text: "Die"
-								pointer_declarator [204:37-204:40] (named) -> child count: 2
-									* [204:37-204:38] text: "*"
-									identifier [204:39-204:40] (named) text: "d"
-							, [204:40-204:41] text: ","
-							parameter_declaration [204:42-204:62] (named) -> child count: 2
-								primitive_type [204:42-204:46] (named) text: "bool"
-								identifier [204:47-204:62] (named) text: "throwOnNotFound"
-							) [204:62-204:63] text: ")"
-					; [204:63-204:64] text: ";"
-				field_declaration [205:4-205:36] (named) -> child count: 3
-					primitive_type [205:4-205:8] (named) text: "void"
-					function_declarator [205:9-205:35] (named) -> child count: 2
-						field_identifier [205:9-205:33] (named) text: "plan_next_player_on_move"
-						parameter_list [205:33-205:35] (named) -> child count: 2
-							( [205:33-205:34] text: "("
-							) [205:34-205:35] text: ")"
-					; [205:35-205:36] text: ";"
-				field_declaration [206:4-206:45] (named) -> child count: 3
-					primitive_type [206:4-206:8] (named) text: "void"
-					function_declarator [206:9-206:44] (named) -> child count: 2
-						field_identifier [206:9-206:42] (named) text: "put_remaining_dice_to_round_track"
-						parameter_list [206:42-206:44] (named) -> child count: 2
-							( [206:42-206:43] text: "("
-							) [206:43-206:44] text: ")"
-					; [206:44-206:45] text: ";"
-				field_declaration [207:4-207:27] (named) -> child count: 3
-					primitive_type [207:4-207:8] (named) text: "void"
-					function_declarator [207:9-207:26] (named) -> child count: 2
-						field_identifier [207:9-207:24] (named) text: "plan_next_round"
-						parameter_list [207:24-207:26] (named) -> child count: 2
-							( [207:24-207:25] text: "("
-							) [207:25-207:26] text: ")"
-					; [207:26-207:27] text: ";"
-				field_declaration [208:4-208:29] (named) -> child count: 3
-					primitive_type [208:4-208:8] (named) text: "void"
-					function_declarator [208:9-208:28] (named) -> child count: 2
-						field_identifier [208:9-208:26] (named) text: "plan_player_order"
-						parameter_list [208:26-208:28] (named) -> child count: 2
-							( [208:26-208:27] text: "("
-							) [208:27-208:28] text: ")"
-					; [208:28-208:29] text: ";"
-				field_declaration [209:4-209:33] (named) -> child count: 3
-					primitive_type [209:4-209:8] (named) text: "void"
-					function_declarator [209:9-209:32] (named) -> child count: 2
-						field_identifier [209:9-209:30] (named) text: "shift_order_backwards"
-						parameter_list [209:30-209:32] (named) -> child count: 2
-							( [209:30-209:31] text: "("
-							) [209:31-209:32] text: ")"
-					; [209:32-209:33] text: ";"
-				field_declaration [211:4-211:42] (named) -> child count: 3
-					primitive_type [211:4-211:8] (named) text: "void"
-					function_declarator [211:9-211:41] (named) -> child count: 2
-						field_identifier [211:9-211:28] (named) text: "undo_tool_card_move"
-						parameter_list [211:28-211:41] (named) -> child count: 3
-							( [211:28-211:29] text: "("
-							parameter_declaration [211:29-211:40] (named) -> child count: 2
-								type_identifier [211:29-211:37] (named) text: "MoveInfo"
-								reference_declarator [211:37-211:40] (named) -> child count: 2
-									& [211:37-211:38] text: "&"
-									identifier [211:39-211:40] (named) text: "m"
-							) [211:40-211:41] text: ")"
-					; [211:41-211:42] text: ";"
-				field_declaration [213:4-213:37] (named) -> child count: 3
-					type_identifier [213:4-213:10] (named) text: "move_t"
-					function_declarator [213:11-213:36] (named) -> child count: 2
-						field_identifier [213:11-213:34] (named) text: "get_first_possible_move"
-						parameter_list [213:34-213:36] (named) -> child count: 2
-							( [213:34-213:35] text: "("
-							) [213:35-213:36] text: ")"
-					; [213:36-213:37] text: ";"
-				field_declaration [214:4-214:38] (named) -> child count: 3
-					type_identifier [214:4-214:10] (named) text: "move_t"
-					function_declarator [214:11-214:37] (named) -> child count: 2
-						field_identifier [214:11-214:35] (named) text: "get_random_possible_move"
-						parameter_list [214:35-214:37] (named) -> child count: 2
-							( [214:35-214:36] text: "("
-							) [214:36-214:37] text: ")"
-					; [214:37-214:38] text: ";"
-				} [215:0-215:1] text: "}"
-		; [215:1-215:2] text: ";"
-		#endif [217:0-217:6] text: "#endif"
-	comment [217:7-217:16] (named) text: "// GAME_H"
+				field_declaration [230:4-230:64] (named) -> child count: 3
+					primitive_type [230:4-230:8] (named) text: "void"
+					function_declarator [230:9-230:63] (named) -> child count: 2
+						field_identifier [230:9-230:33] (named) text: "remove_die_from_currents"
+						parameter_list [230:33-230:63] (named) -> child count: 5
+							( [230:33-230:34] text: "("
+							parameter_declaration [230:34-230:40] (named) -> child count: 2
+								type_identifier [230:34-230:37] (named) text: "Die"
+								pointer_declarator [230:37-230:40] (named) -> child count: 2
+									* [230:37-230:38] text: "*"
+									identifier [230:39-230:40] (named) text: "d"
+							, [230:40-230:41] text: ","
+							parameter_declaration [230:42-230:62] (named) -> child count: 2
+								primitive_type [230:42-230:46] (named) text: "bool"
+								identifier [230:47-230:62] (named) text: "throwOnNotFound"
+							) [230:62-230:63] text: ")"
+					; [230:63-230:64] text: ";"
+				field_declaration [231:4-231:36] (named) -> child count: 3
+					primitive_type [231:4-231:8] (named) text: "void"
+					function_declarator [231:9-231:35] (named) -> child count: 2
+						field_identifier [231:9-231:33] (named) text: "plan_next_player_on_move"
+						parameter_list [231:33-231:35] (named) -> child count: 2
+							( [231:33-231:34] text: "("
+							) [231:34-231:35] text: ")"
+					; [231:35-231:36] text: ";"
+				field_declaration [232:4-232:45] (named) -> child count: 3
+					primitive_type [232:4-232:8] (named) text: "void"
+					function_declarator [232:9-232:44] (named) -> child count: 2
+						field_identifier [232:9-232:42] (named) text: "put_remaining_dice_to_round_track"
+						parameter_list [232:42-232:44] (named) -> child count: 2
+							( [232:42-232:43] text: "("
+							) [232:43-232:44] text: ")"
+					; [232:44-232:45] text: ";"
+				field_declaration [233:4-233:27] (named) -> child count: 3
+					primitive_type [233:4-233:8] (named) text: "void"
+					function_declarator [233:9-233:26] (named) -> child count: 2
+						field_identifier [233:9-233:24] (named) text: "plan_next_round"
+						parameter_list [233:24-233:26] (named) -> child count: 2
+							( [233:24-233:25] text: "("
+							) [233:25-233:26] text: ")"
+					; [233:26-233:27] text: ";"
+				field_declaration [234:4-234:29] (named) -> child count: 3
+					primitive_type [234:4-234:8] (named) text: "void"
+					function_declarator [234:9-234:28] (named) -> child count: 2
+						field_identifier [234:9-234:26] (named) text: "plan_player_order"
+						parameter_list [234:26-234:28] (named) -> child count: 2
+							( [234:26-234:27] text: "("
+							) [234:27-234:28] text: ")"
+					; [234:28-234:29] text: ";"
+				field_declaration [235:4-235:33] (named) -> child count: 3
+					primitive_type [235:4-235:8] (named) text: "void"
+					function_declarator [235:9-235:32] (named) -> child count: 2
+						field_identifier [235:9-235:30] (named) text: "shift_order_backwards"
+						parameter_list [235:30-235:32] (named) -> child count: 2
+							( [235:30-235:31] text: "("
+							) [235:31-235:32] text: ")"
+					; [235:32-235:33] text: ";"
+				field_declaration [237:4-237:42] (named) -> child count: 3
+					primitive_type [237:4-237:8] (named) text: "void"
+					function_declarator [237:9-237:41] (named) -> child count: 2
+						field_identifier [237:9-237:28] (named) text: "undo_tool_card_move"
+						parameter_list [237:28-237:41] (named) -> child count: 3
+							( [237:28-237:29] text: "("
+							parameter_declaration [237:29-237:40] (named) -> child count: 2
+								type_identifier [237:29-237:37] (named) text: "MoveInfo"
+								reference_declarator [237:37-237:40] (named) -> child count: 2
+									& [237:37-237:38] text: "&"
+									identifier [237:39-237:40] (named) text: "m"
+							) [237:40-237:41] text: ")"
+					; [237:41-237:42] text: ";"
+				field_declaration [239:4-239:37] (named) -> child count: 3
+					type_identifier [239:4-239:10] (named) text: "move_t"
+					function_declarator [239:11-239:36] (named) -> child count: 2
+						field_identifier [239:11-239:34] (named) text: "get_first_possible_move"
+						parameter_list [239:34-239:36] (named) -> child count: 2
+							( [239:34-239:35] text: "("
+							) [239:35-239:36] text: ")"
+					; [239:36-239:37] text: ";"
+				field_declaration [240:4-240:38] (named) -> child count: 3
+					type_identifier [240:4-240:10] (named) text: "move_t"
+					function_declarator [240:11-240:37] (named) -> child count: 2
+						field_identifier [240:11-240:35] (named) text: "get_random_possible_move"
+						parameter_list [240:35-240:37] (named) -> child count: 2
+							( [240:35-240:36] text: "("
+							) [240:36-240:37] text: ")"
+					; [240:37-240:38] text: ";"
+				} [241:0-241:1] text: "}"
+		; [241:1-241:2] text: ";"
+		#endif [243:0-243:6] text: "#endif"
+	comment [243:7-243:16] (named) text: "// GAME_H"

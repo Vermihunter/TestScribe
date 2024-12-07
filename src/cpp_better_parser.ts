@@ -2,6 +2,7 @@ import Parser from 'tree-sitter';
 import Cpp from 'tree-sitter-cpp';
 import {AccessSpecifier, ClassOrStruct, Member, FunctionMember, Parameter, CppFile } from './cpp_objects';
 import { error } from 'console';
+import { access } from 'fs';
 
 
 interface FunctionDeclarator {
@@ -167,6 +168,140 @@ function parse_throws_doc_tags(docString: string): { exception: string; descript
     return matches;
 }
 
+function parse_function_return_type_pointer_or_reference_declaration(node: Parser.SyntaxNode, declaratorStr: string): [string, FunctionDeclarator] {
+    let pointerDeclarator: string = "";
+    let functionDeclarator: FunctionDeclarator = {
+        parameters: [],
+        funcName: ""
+    };
+
+    node.children.forEach(child => {
+        switch(child.type) {
+            case declaratorStr:
+                pointerDeclarator += ` ${declaratorStr}`;
+                break;
+
+            case "reference_declarator":
+            case "pointer_declarator":
+                const [pointerDecl, funcDeclarator] = parse_function_return_type_pointer_or_reference_declaration(child, declaratorStr);
+                pointerDeclarator += pointerDecl;
+                functionDeclarator = funcDeclarator;
+                break;
+
+            case "function_declarator":
+                functionDeclarator = parse_function_declaration(child);
+                break;
+
+            case "type_qualifier":
+                pointerDeclarator += " const";
+                break;
+
+        }
+    });
+
+    return [pointerDeclarator, functionDeclarator];
+}
+
+
+function parse_compound_literal_expression(node: Parser.SyntaxNode): string {
+    let param: string = "";
+
+    node.children.forEach(child=> {
+        switch(child.type) {
+            case "type_identifier":
+                param = child.text;
+                break;
+
+            case "qualified_identifier":
+                param = parse_qualified_identifier(node);
+                break;
+        }
+    });
+
+    return param;
+}
+
+
+
+function parse_new_expression(node: Parser.SyntaxNode): string {
+    return node.children.find(child => child.type ==="type_identifier")?.text ?? "";
+}
+
+function parse_throw_statement(node: Parser.SyntaxNode) : string {
+    for(const child of node.children) {
+        switch(child.type) {
+            // throw 3; throw 99.99;
+            case "number_literal": 
+                return Number.isInteger(child.text) ? "int" : "double";
+
+            // throw false; 
+            case "false":
+            case "true":
+                return "bool";
+
+            // throw "Error message";
+            case "string_literal":
+                return "std::string";
+            
+            // throw 'a';
+            case "char_literal":
+                return "char";
+
+            // throw nullptr;
+            case "null":
+                return "nullptr";
+
+            case "new_expression":
+                return parse_new_expression(child);
+
+            case "compound_literal_expression":
+                return parse_compound_literal_expression(child);
+        }
+    }
+
+    return "";
+}
+
+function parse_catch_clause(node: Parser.SyntaxNode): Parameter[] {
+    const parametersList = node.children.find(child => child.type === "parameter_list");
+    return (parametersList !== undefined) ? parse_parameter_list(parametersList) : [];
+}
+
+function parse_try_statement(node: Parser.SyntaxNode): string[] {
+    const exceptions: string[] = [];
+
+    node.children.forEach(child => {
+        switch(child.type) {
+            case "catch_clause":
+                const parameters: Parameter[] = parse_catch_clause(child);
+                parameters
+                    .map(parameter => parameter.type)
+                    .forEach(param => exceptions.push(param));
+                break;
+        }
+    });
+
+    return exceptions;
+}
+
+function collect_exceptions_from_compound_statement(node: Parser.SyntaxNode): string[] {
+    let exceptions: string[] = [];
+
+    node.children.forEach(child => {
+        switch(child.type) {
+            case "throw_statement":
+                exceptions.push(parse_throw_statement(child));
+                break;
+
+            case "try_statement":
+                exceptions = exceptions.concat(exceptions, parse_try_statement(child));
+                break;
+
+        }
+    });
+    return exceptions;
+}
+
 function parse_function_definition(node: Parser.SyntaxNode, accessSpecifier: AccessSpecifier, functionComment: string): FunctionMember {
 
     let isVirtual: boolean = false;
@@ -174,7 +309,9 @@ function parse_function_definition(node: Parser.SyntaxNode, accessSpecifier: Acc
     let returnType: string = "";
     let funcName: string = "";
     let parameters: Parameter[] = [];
+    let exceptions: Set<string> = new Set;
     
+    // TODO: Missing const, pointer, reference return type -> recursive call must be done somehow
     node.children.forEach(child => {
         switch(child.type) {
             case "virtual":
@@ -186,8 +323,28 @@ function parse_function_definition(node: Parser.SyntaxNode, accessSpecifier: Acc
                 funcName = fnc.funcName;
                 break;
 
+
+            case "compound_statement":
+                const compoundExceptions: string[] = collect_exceptions_from_compound_statement(child);
+                compoundExceptions.forEach(exception => exceptions.add(exception));
+                break;
+
+            case "type_qualifier":
+                returnType += " const";
+                break;
+
             case "placeholder_type_specifier":
                 returnType += " auto";
+                break;
+
+            // Pointer / refference return types
+            case "reference_declarator":
+            case "pointer_declarator":
+                const declaratorStr: string = (child.type === "reference_declarator") ? "&" : "*";
+                const [returnTypeDeclarator, funcDeclarator] = parse_function_return_type_pointer_or_reference_declaration(child, declaratorStr);
+                returnType += returnTypeDeclarator;
+                parameters = funcDeclarator.parameters;
+                funcName = funcDeclarator.funcName;
                 break;
 
             case "type_identifier": // alias
@@ -199,16 +356,17 @@ function parse_function_definition(node: Parser.SyntaxNode, accessSpecifier: Acc
         }
     });
 
-    const exceptions = parse_throws_doc_tags(functionComment);
+    const docExceptions = parse_throws_doc_tags(functionComment);
+    docExceptions.forEach(docException => exceptions.add(docException.exception));
 
     return {
         isVirtual: isVirtual,
         isStatic: isStatic,
         name: funcName,
-        type: returnType,
+        type: returnType.trim(),
         access: accessSpecifier,
         parameters: parameters,
-        throws: exceptions.map(x => x.exception),
+        throws: Array.from(exceptions),
         templateParameters: [] // It is set in another step - this is correct
     };
 }
@@ -295,6 +453,10 @@ function parse_field_declaration_list(node: Parser.SyntaxNode, currAccessSpecifi
 
             case "template_declaration":
                 const templated = parse_templated(child, AccessSpecifier.Public);
+                if(templated === undefined) {
+                    break;
+                }
+
                 if(isFunctionMember(templated)) {
                     functions.push(templated);
                 } else {
@@ -307,6 +469,8 @@ function parse_field_declaration_list(node: Parser.SyntaxNode, currAccessSpecifi
                 break;
 
             case "function_definition":
+                functions.push(parse_function_definition(child, currAccessSpecifier, lastComment));
+                break;
             case "field_declaration":
             case "declaration":
                 //console.log(`Processing declaration - ${child}`);
@@ -327,7 +491,13 @@ function parse_field_declaration_list(node: Parser.SyntaxNode, currAccessSpecifi
     return [functions, nestedClasses];
 }
 
-function parse_class(node: Parser.SyntaxNode, defaultAccessSpecifier: AccessSpecifier): ClassOrStruct {
+/**
+ * 
+ * @param node 
+ * @param defaultAccessSpecifier 
+ * @returns null if the class is just a declaration e.g. "class Game;"
+ */
+function parse_class(node: Parser.SyntaxNode, defaultAccessSpecifier: AccessSpecifier): ClassOrStruct | null {
     if(!["class_specifier", "function_definition", "struct_specifier"].includes(node.type)) {
         throw new Error(`Invalid class type - ${node.type}`);
     }
@@ -336,6 +506,7 @@ function parse_class(node: Parser.SyntaxNode, defaultAccessSpecifier: AccessSpec
     let className: string = "";
     let functions: FunctionMember[] = [];
     let nestedClasses: ClassOrStruct[] = [];
+    let isDeclarationOnly = true;
 
     node.children.forEach(child => {
         switch(child.type) {
@@ -349,18 +520,21 @@ function parse_class(node: Parser.SyntaxNode, defaultAccessSpecifier: AccessSpec
                 const [newFunctions, newNestedClasses] = parse_field_declaration_list(child, defaultAccessSpecifier);
                 functions = newFunctions;
                 nestedClasses = newNestedClasses;
+                isDeclarationOnly = false;
                 break;
-
-            
         }
     });
+
+    if(isDeclarationOnly) {
+        return null;
+    }
 
     return {
         className: className,
         functions: functions,
         access: defaultAccessSpecifier,
         parentClasses: baseClasses,
-        templateParameters: [], // TODO
+        templateParameters: [], // This is fine, template parameters are added later
         variables: [],
         nestedClasses: nestedClasses
     };
@@ -381,11 +555,9 @@ function parse_template_parameter_declaration(node: Parser.SyntaxNode): Paramete
                 param.type = child.text;
                 break;
 
-            case "identifier":
+            case "identifier": // 55
                 param.name = child.text;
                 break;
-
-            
         }
     });
 
@@ -401,10 +573,10 @@ function parse_template_type_parameter_declaration(node: Parser.SyntaxNode): Par
     node.children.forEach(child=> {
         switch(child.type) {
             case "typename":
-                param.type = "typename";
+                param.type = "typename"; // typename
                 break;
             
-            case "type_identifier":
+            case "type_identifier": // T
                 param.name = child.text;
                 break;
         }
@@ -431,7 +603,7 @@ function parse_templated_parameter_list(node: Parser.SyntaxNode): Parameter[] {
     return parameters;
 }
 
-function parse_templated(node: Parser.SyntaxNode, accessSpecifier: AccessSpecifier): FunctionMember | ClassOrStruct {
+function parse_templated(node: Parser.SyntaxNode, accessSpecifier: AccessSpecifier): FunctionMember | ClassOrStruct | undefined {
     let params: Parameter[] = [];
     let templated: FunctionMember | ClassOrStruct | undefined;
     let lastComment: string = "";
@@ -459,15 +631,21 @@ function parse_templated(node: Parser.SyntaxNode, accessSpecifier: AccessSpecifi
                 }
                 break;
 
+            case "struct_specifier":
             case "class_specifier":
-                templated = parse_class(child, accessSpecifier);
+                const templatedClass = parse_class(child, accessSpecifier);
+                if(templatedClass !== null) {
+                    templated = templatedClass; 
+                }
                 break;
             
         }
     });
 
     if(templated === undefined) {
-        throw new Error("Never assigned anything to a templated variable");
+        return undefined;
+        //throw new Error(`Never assigned anything to a templated variable -> ${node}`);
+
     }
 
     templated.templateParameters = params;
@@ -487,10 +665,12 @@ export function parse(node: Parser.SyntaxNode): CppFile {
                 classes.push(...subFile.classes);
                 break;
             case "class_specifier":
-                classes.push(parse_class(child, AccessSpecifier.Private));
-                break;
             case "struct_specifier":
-                classes.push(parse_class(child, AccessSpecifier.Public));
+                const access: AccessSpecifier = (child.type === "class_specifier") ? AccessSpecifier.Private : AccessSpecifier.Public;
+                const newClass = parse_class(child, access);
+                if(newClass !== null) {
+                    classes.push(newClass);
+                }
                 break;
             case "function_definition":
                 globalFunctions.push(parse_function_definition(child, AccessSpecifier.Public, lastComment));
@@ -509,6 +689,10 @@ export function parse(node: Parser.SyntaxNode): CppFile {
 
             case "template_declaration":
                 const templated = parse_templated(child, AccessSpecifier.Public);
+                if(templated === undefined) {
+                    break;
+                }
+                
                 if(isFunctionMember(templated)) {
                     globalFunctions.push(templated);
                 } else {

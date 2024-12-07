@@ -174,8 +174,34 @@ class Game
     const auto& get_ctx() const { return fastctx; }
     const auto& get_curr_state() const { return currState; }
 
+    /**
+     * @throws MyCustomException aa
+     * @throws lalalom aa
+     */
     const int * const * get_ctx() { 
         throw std::exception{};
+        throw std::exc::runtime_exc{"aa",bb};
+        throw 55;
+        throw 98.6;
+        throw "hello";
+        throw 'a';
+        throw nullptr;
+        throw false;
+
+        throw MyCustomException{};
+
+        throw new HeapException();
+
+        try {
+            int* arr = new int[100000000000]; // May throw std::bad_alloc
+            throw std::bad_alloc{};
+        } catch (const std::bad_alloc& e) {
+            std::cerr << "Memory allocation failed: " << e.what() << std::endl;
+        } catch(const std::exception& e) {
+
+        } catch(...) {
+
+        }
         return ctx; 
     }
     auto& get_curr_state() { return currState; }
