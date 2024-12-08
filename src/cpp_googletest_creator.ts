@@ -11,6 +11,7 @@ import { CMakeBuildSystem } from './cmake_build_system';
 import { TemplateHandler } from './templates';
 import { cppPrimitiveTypes } from './cpp_primitive_types';
 import { buildTreeFromPaths, TreeNode } from './file_system_parser';
+import { cppOverloadableOperators } from './cpp_operators';
 
 
 const googleTestTemplateDir = path.join(__dirname, '..', 'templates', 'GoogleTest');
@@ -183,8 +184,8 @@ export class GoogleTestTestCreator implements ITestCreator {
     }
 
     generateForFunc(testFile: string, func: CppInterface.FunctionMember, testSuiteName: string) {
-        const isParametrized: boolean = func.parameters.length > 0;
         const hasReturnType: boolean  = func.type !== "void";
+        const isParametrized: boolean = func.parameters.length > 0 || hasReturnType;
         
 
         let params = func.parameters.slice();
@@ -208,7 +209,7 @@ export class GoogleTestTestCreator implements ITestCreator {
         }
         
         // Adding one general test case
-        this.addGeneralTestCase(testFile, func, testSuiteName);
+        this.addGeneralTestCase(testFile, params, func.name, testSuiteName);
         
         // Create additional test cases for all exceptions with 
         // one expect throw and one expect no throw test case
@@ -237,14 +238,14 @@ export class GoogleTestTestCreator implements ITestCreator {
         }));
     }
 
-    addGeneralTestCase(testFile: string, func: CppInterface.FunctionMember, testSuiteName: string) {
-        const testType: string = func.parameters.length > 0
+    addGeneralTestCase(testFile: string, params: CppInterface.Parameter[], funcName: string, testSuiteName: string) {
+        const testType: string = params.length > 0
             ? config["parametrized_simple"] 
             : config["test_simple"];
 
         fs.appendFileSync(testFile, this.templater.getTemplate(testType, {
             TestSuiteName: testSuiteName,
-            TestName: `${func.name}General`
+            TestName: `${funcName}General`
         }));
     }
 
@@ -277,12 +278,12 @@ export class GoogleTestTestCreator implements ITestCreator {
         const params = [
             `std::numeric_limits<${T}>::min()`,
             `std::numeric_limits<${T}>::max()`,
-            `${T}(0)`,
-            `${T}(5)`, 
+            `(${T})(0)`,
+            `(${T})(5)`, 
         ];
 
         if(typeInfo.signed) {
-            params.push(`${T}(-113)`);
+            params.push(`(${T})(-113)`);
         }
 
         return params;
@@ -293,15 +294,16 @@ export class GoogleTestTestCreator implements ITestCreator {
             return "";
         }
         console.log(`\tProcessing class ${classElement.className}`);
+        const className: string = toCppClassName(classElement.className);
         
-        testDir = path.join(testDir, classElement.className);
+        testDir = path.join(testDir, className);
         // Creating a separate directory for all the classes (They will contain multiple test files)
         if (!fs.existsSync(testDir) || !fs.lstatSync(testDir).isDirectory()) {
             fs.mkdirSync(testDir, {recursive: true});
         }
 
         // Adding base testing class
-        const testSuiteName: string = classElement.className;
+        const testSuiteName: string = className;
         const fileExt = path.extname(srcFile);
         const fileName: string = path.basename(srcFile, fileExt);
         const baseFileName = fileName + "Test" ;
@@ -310,49 +312,48 @@ export class GoogleTestTestCreator implements ITestCreator {
             TestSuiteName: testSuiteName
         }));
 
-        //this.buildSystem.generateSubdirBuilderFile(testDir);
-        //fs.writeFileSync(`${testDir}/CMakeLists.txt`, );
-        
-        //let testFile: string = "";
-        
-        // // The source file contains a single class
-        // if(!multiClassFile) {
-        //     testFile = path.join(testDir, fileName + "Test" + path.extname(srcFile));
-        // } else {
-        //     testFile = path.join(testDir, fileName + "_" + classElement.className + "Test" + path.extname(srcFile));
-        // }
-
-        
-        // Including the base file
         dependencies += `#include "${path.basename(baseTestFileName)}"\n`;
-        
-
+    
         classElement.functions.forEach(func => {
-            if(func.name === classElement.className || func.name === `~${classElement.className}`) {
+            if(func.name === classElement.className || func.name === `~${classElement.className}` || func.access !== CppInterface.AccessSpecifier.Public) {
                 return;
             }
 
-            console.log(`\t\tProcessing class func ${func.name}`);
-            const testFile = path.join(testDir, `${testSuiteName}_${func.name}Test.cpp`);
+            const funcName: string = Object.entries(cppOverloadableOperators).find(([key]) => func.name.startsWith(key))?.[1] ?? func.name;
+
+            console.log(`\t\tProcessing class func ${funcName}`);
+            const testFile = path.join(testDir, `${toCppClassName(testSuiteName + "_" + funcName)}Test.cpp`);
             fs.appendFileSync(testFile, dependencies);
 
             const relativeToSource = path.relative(testDir, srcFile);
-            //fs.appendFileSync(testFile, `#include "${relativeToSource}"\n`);
+            fs.appendFileSync(testFile, `#include "${relativeToSource}"\n`);
 
             let parameters: CppInterface.Parameter[] = func.parameters.slice();
-            const funcTestSuiteName = `${classElement.className}${toCppClassName(func.name)}`;
+            const funcTestSuiteName = className + funcName; 
             const hasReturnType: boolean = func.type !== "void";
+
             // Add return value as first parameter (possible to test)
             if(hasReturnType) {
-                parameters.unshift({ name: "",type: func.type});
+                parameters.unshift({ name: "", type: func.type});
             }
 
             parameters = parameters.map(param => {
-                const referenceInd: Number = param.type.indexOf('&');
-                if(referenceInd !== -1) {
-                    const trimmed: string = param.type.replace(/&/g, "").trim();
-                    param.type = `std::shared_ptr<${trimmed}>`;
+                let type: string = param.type.trim();
+                if(type.startsWith("const ")) {
+                    type = type.substring(6);
                 }
+                
+                // Removing reference -> GoogleTest does not allow reference template parameters
+                if(param.type.indexOf('&') !== -1 ) { 
+                    type = type.replace(/&/g, "").trim();
+                }
+
+                // Mapping any non primitive type / string / pointer to a shared_ptr to make compilation successful
+                if(!cppPrimitiveTypes.has(type) && type !== "std::string" && type !== "string" && type.indexOf("*") === -1) {
+                    type = `std::shared_ptr<${type}>`;
+                }
+
+                param.type = type;
                 return param;
             });
             
@@ -363,14 +364,14 @@ export class GoogleTestTestCreator implements ITestCreator {
                 fs.appendFileSync(testFile, this.templater.getTemplate(config["parametrized_suite_class_simple"], {
                     TestSuiteName: funcTestSuiteName,
                     HasBaseClass: true,
-                    BaseClass: `${classElement.className}Test`,
+                    BaseClass: `${className}Test`,
                     TemplateParams: params_to_str(parameters),
                     GoogleTestBaseClass: "testing::WithParamInterface"
                 }));
             }
             
             // Adding one general test case
-            this.addGeneralTestCase(testFile, func, funcTestSuiteName);
+            this.addGeneralTestCase(testFile, parameters, funcName, funcTestSuiteName);
 
             this.addTestThrow(testFile, funcTestSuiteName, func.throws);
 
@@ -386,10 +387,11 @@ export class GoogleTestTestCreator implements ITestCreator {
 
         return testDir;
     }
-
-
-    generateParametrized(): void {
-
-    }
 }
 
+// new GoogleTestTestCreator({
+//     rootDir: "./src/test/data",
+//     relativeSrcDir: "./src/test/data/src",
+//     testFiles: ["./src/test/data/src/templated_operator.h"]//["./src/test/data/src/nested/example.h", "./src/test/data/src/nested/double_nested/Game.h"]
+    
+// }, new CMakeBuildSystem("templates/GoogleTest")).generateTests();

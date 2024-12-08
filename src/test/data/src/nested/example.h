@@ -8,7 +8,7 @@ struct K {
 /**
  * @throws std::exception if a an b are equal
  */
-int add(int a, int b, K alpha) {
+inline int add(int a, int b, K alpha) {
 	return a + b;
 }
 

@@ -3,6 +3,7 @@ import Cpp from 'tree-sitter-cpp';
 import {AccessSpecifier, ClassOrStruct, Member, FunctionMember, Parameter, CppFile } from './cpp_objects';
 import { error } from 'console';
 import { access } from 'fs';
+import { types } from 'util';
 
 
 interface FunctionDeclarator {
@@ -116,6 +117,10 @@ function parse_parameter_declaration(node: Parser.SyntaxNode): Parameter {
 
             case "identifier":
                 name = child.text;
+                break;
+
+            case "sized_type_specifier":
+                type += " " + parse_sized_type_specifier(child);
                 break;
 
             case "template_type":
@@ -302,6 +307,18 @@ function collect_exceptions_from_compound_statement(node: Parser.SyntaxNode): st
     return exceptions;
 }
 
+function parse_sized_type_specifier(node: Parser.SyntaxNode): string {
+    return node.children.map(child => child.text).join(' ');
+    
+    let typeSpecifier: string = "";
+
+    node.children.forEach(child => {
+        typeSpecifier += child.text;
+    });
+
+    return typeSpecifier;
+}
+
 function parse_function_definition(node: Parser.SyntaxNode, accessSpecifier: AccessSpecifier, functionComment: string): FunctionMember {
 
     let isVirtual: boolean = false;
@@ -323,6 +340,9 @@ function parse_function_definition(node: Parser.SyntaxNode, accessSpecifier: Acc
                 funcName = fnc.funcName;
                 break;
 
+            case "sized_type_specifier":
+                returnType += " " + parse_sized_type_specifier(child);
+                break;
 
             case "compound_statement":
                 const compoundExceptions: string[] = collect_exceptions_from_compound_statement(child);
@@ -331,6 +351,10 @@ function parse_function_definition(node: Parser.SyntaxNode, accessSpecifier: Acc
 
             case "type_qualifier":
                 returnType += " const";
+                break;
+
+            case "qualified_identifier":
+                returnType += " " + parse_qualified_identifier(child);
                 break;
 
             case "placeholder_type_specifier":
@@ -522,6 +546,11 @@ function parse_class(node: Parser.SyntaxNode, defaultAccessSpecifier: AccessSpec
                 nestedClasses = newNestedClasses;
                 isDeclarationOnly = false;
                 break;
+            
+            case "qualified_identifier":
+                className = parse_qualified_identifier(child);
+                break;
+            // here add if class name is templated for example std::vector<bool> - std::hash<BoardIndex> -> "template_type"
         }
     });
 
@@ -557,6 +586,10 @@ function parse_template_parameter_declaration(node: Parser.SyntaxNode): Paramete
 
             case "identifier": // 55
                 param.name = child.text;
+                break;
+
+            case "sized_type_specifier":
+                param.type = parse_sized_type_specifier(child);
                 break;
         }
     });

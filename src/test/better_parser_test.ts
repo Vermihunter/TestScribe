@@ -32,7 +32,7 @@ parser.setLanguage(Cpp);
 
 // Read the C++ file
 //const filePath = path.resolve(__dirname, 'example.cpp');
-const filePath = path.resolve(__dirname, 'game.h');
+const filePath = path.resolve(__dirname, "data", "src", 'templated_operator.h');
 const cppCode = fs.readFileSync(filePath, 'utf8');
 
 // Parse the file content

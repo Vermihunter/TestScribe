@@ -1,7 +1,7 @@
 
 void lala();
 
-void lala_impl() {
+inline void lala_impl() {
 
 }
 
@@ -10,7 +10,7 @@ class D {
 };
 
 template<typename T, int K>
-void fill_impl(const T& source) {
+inline void fill_impl(const T& source) {
 
 }
 
@@ -18,7 +18,7 @@ template<typename T, int K>
 void fill_decl(const T& source);
 
 
-template<typename F, int Keys>
+template<typename T, int K>
 class Foo {
 public:
 
@@ -28,16 +28,17 @@ public:
     }
 
     bool operator==(const Foo<T,K>& other) const {
-        return (x == other.x) && (y == other.y);
+        return true;
+        //return (x == other.x) && (y == other.y);
     }
 
     bool operator<(const Foo<T,K>& other) const {
         // Compare by age, then by name if ages are equal
-        if (age != other.age) {
-            return age < other.age;
-        }
-        return name < other.name;
+        // if (age != other.age) {
+        //     return age < other.age;
+        // }
+        // return name < other.name;
     }
 
-    friend std::ostream& operator<<(std::ostream& os, const Foo<T,K>& person);
+    friend std::ostream& operator<<(std::ostream& os, const Foo<T,K>& person){ return os;}
 };

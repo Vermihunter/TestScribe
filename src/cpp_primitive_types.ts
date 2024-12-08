@@ -10,6 +10,7 @@ export const cppPrimitiveTypes = new Map<string, { signed: boolean }>([
     ["unsigned long", { signed: false }],
     ["long long", { signed: true }],
     ["unsigned long long", { signed: false }],
+    ["size_t", { signed: false }],
 
     // Floating-Point Types (Always Signed)
     ["float", { signed: true }],
