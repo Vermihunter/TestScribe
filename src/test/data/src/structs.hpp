@@ -13,5 +13,8 @@ struct SomeStruct {
     double x;
     double y;
 
+    /**
+     * @throws std::bad_alloc if in bad mood
+     */
     void struct_method();
 };

@@ -11,7 +11,7 @@ struct D {
 
 template<typename T, int K>
 inline void fill_impl(const T& source) {
-
+    throw "xd";
 }
 
 template<typename T, int K>

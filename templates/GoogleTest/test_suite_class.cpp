@@ -1,3 +1,4 @@
+
 {{#if HasTemplates}}template<{{ClassTemplateParams}}>{{/if}} 
 class {{TestSuiteName}}Test : public testing::Test {
 public:

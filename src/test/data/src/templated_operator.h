@@ -1,6 +1,8 @@
 #include <string>
 #include <vector>
 
+using namespace std;
+
 struct BoardIndex{
     std::string k;
     int l;

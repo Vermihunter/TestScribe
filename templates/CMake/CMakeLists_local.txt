@@ -6,4 +6,4 @@ add_subdirectory({{this}})
 {{/each}}
 
 # Add to global variable in parent scope
-set(ALL_SOURCE_FILES ${ALL_SOURCE_FILES} ${LOCAL_FILES} PARENT_SCOPE)
+set(TEST_SOURCES ${TEST_SOURCES} ${LOCAL_FILES} PARENT_SCOPE)
