@@ -19,13 +19,13 @@ const config = {
     "parametrized_instantiation_combine": path.join(googleTestTemplateDir, "test_parametrized_instantiation_combine.cpp"),
     "parametrized_instantiation_return_type": path.join(googleTestTemplateDir, "test_parametrized_instantiation_return_type.cpp"),
     "parametrized_simple": path.join(googleTestTemplateDir,"test_parametrized_simple.cpp"),
-    "parametrized_suite_class": path.join(googleTestTemplateDir,"test_parametrized_suite_class.cpp"),
     "parametrized_suite_class_simple": path.join(googleTestTemplateDir,"test_parametrized_suite_class_simple.cpp"),
     "test_exception": path.join(googleTestTemplateDir,"test_exception.cpp"),
     "test_simple": path.join(googleTestTemplateDir,"test_simple.cpp"),
     "dependency": path.join(googleTestTemplateDir,"dependency.cpp"),
     "main": path.join(googleTestTemplateDir, "test_main.cpp"),
     "test_suite_class": path.join(googleTestTemplateDir, "test_suite_class.cpp"),
+    "parametrized_class_func": path.join(googleTestTemplateDir, "test_parametrized_suite_class_for_func.cpp")
 };
 
 
@@ -195,7 +195,7 @@ export class GoogleTestTestCreator implements ITestCreator {
         // Function has at least one parameter -> parametrized test
         if(isParametrized) {
             // Adding test suite class
-            this.addParametrizedTestSuiteClass(testFile, params, testSuiteName, config["parametrized_suite_class_simple"]);
+            this.addParametrizedTestSuiteClass(testFile, params, testSuiteName, config["parametrized_suite_class_simple"], func.templateParameters);
         }
 
         this.createBaseTesting(testFile, params, func.name, testSuiteName, func);
@@ -222,12 +222,14 @@ export class GoogleTestTestCreator implements ITestCreator {
     }
 
 
-    addParametrizedTestSuiteClass(testFile: string, parameters: CppInterface.Parameter[], testSuiteName: string, template: string) {
+    addParametrizedTestSuiteClass(testFile: string, parameters: CppInterface.Parameter[], testSuiteName: string, template: string, templateParams: CppInterface.Parameter[]) {
         fs.appendFileSync(testFile, this.templater.getTemplate(template, {
-            TemplateParams: params_to_str(parameters),
+            FuncTemplateParams: params_to_str(parameters),
             TestSuiteName: testSuiteName,
             HasBaseClass: false,
             BaseClass: "",
+            HasTemplates: templateParams.length !== 0,
+            ClassTemplateParams: templateParams.map(t => `${t.type} ${t.name}`).join(','),
             GoogleTestBaseClass: "testing::TestWithParam"
         }));
     }
@@ -300,10 +302,17 @@ export class GoogleTestTestCreator implements ITestCreator {
         const testSuiteName: string = className;
         const fileExt = path.extname(srcFile);
         const fileName: string = path.basename(srcFile, fileExt);
-        const baseFileName = fileName + "Test" ;
+        const baseFileName = className + "Test";
         const baseTestFileName = path.join(testDir, baseFileName+ fileExt);
+        const joinedClassTemplates: string = classElement.templateParameters
+            .map(templateParam => `${templateParam.type} ${templateParam.name}`)
+            .join(',');
+
+        const classHasTemplates: boolean = joinedClassTemplates.length !== 0;
         fs.writeFileSync(baseTestFileName, dependencies + this.templater.getTemplate(config["test_suite_class"], {
-            TestSuiteName: testSuiteName
+            TestSuiteName: testSuiteName,
+            HasTemplates: classHasTemplates,
+            ClassTemplateParams: joinedClassTemplates,
         }));
 
         dependencies += `#include "${path.basename(baseTestFileName)}"\n`;
@@ -333,16 +342,21 @@ export class GoogleTestTestCreator implements ITestCreator {
 
             parameters = this.normalizeParameters(parameters);
             
+            const allTemplates: CppInterface.Parameter[] = classElement.templateParameters.concat(func.templateParameters);
             // Function without parameters and void return type -> no reason to add parametrized test suite
             if(parameters.length === 0) {
 
             } else {
-                fs.appendFileSync(testFile, this.templater.getTemplate(config["parametrized_suite_class_simple"], {
+                
+                fs.appendFileSync(testFile, this.templater.getTemplate(config["parametrized_class_func"], {
                     TestSuiteName: funcTestSuiteName,
                     HasBaseClass: true,
                     BaseClass: `${className}Test`,
-                    TemplateParams: params_to_str(parameters),
-                    GoogleTestBaseClass: "testing::WithParamInterface"
+                    FuncTemplateParams: params_to_str(parameters),
+                    GoogleTestBaseClass: "testing::WithParamInterface",
+                    HasTemplates: classHasTemplates || func.templateParameters.length !== 0,
+                    ClassTemplateParams: allTemplates.map(t => `${t.type} ${t.name}`).join(', '),
+                    ClassTemplateParamNames: classElement.templateParameters.map(t => t.name).join(', ')
                 }));
             }
 
@@ -398,7 +412,7 @@ export class GoogleTestTestCreator implements ITestCreator {
         }
 
         if(func.type !== "void") {
-            this.addParametrizedTestSuiteClass(testFile, parameters, funcTestSuiteName, config["parametrized_instantiation_return_type"]);
+            this.addParametrizedTestSuiteClass(testFile, parameters, funcTestSuiteName, config["parametrized_instantiation_return_type"], func.templateParameters);
         }
     }
 }
