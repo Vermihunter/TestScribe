@@ -1,11 +1,11 @@
 
 void lala();
 
-inline void lala_impl() {
+inline bool lala_impl() {
 
 }
 
-class D {
+struct D {
     void D_a();
 };
 

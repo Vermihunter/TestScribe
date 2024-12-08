@@ -138,9 +138,9 @@ export function activate(context: vscode.ExtensionContext) {
         // const cppFiles = getHppFilesRecursively(rootPath);
         // generateForFiles(cppFiles, rootPath, testPath);
 
-        // console.log(`Root path: ${rootFolderPath}`);
-        // console.log(`Src path: ${srcFolderPath}`);
-        // console.log(`C++ files: ${getHppFilesRecursively(srcFolderPath)}`);
+        console.log(`Root path: ${rootFolderPath}`);
+        console.log(`Src path: ${srcFolderPath}`);
+        console.log(`C++ files: ${getHppFilesRecursively(srcFolderPath)}`);
         const testCreator: GoogleTestTestCreator = new GoogleTestTestCreator({
             rootDir: rootFolderPath,
             relativeSrcDir: srcFolderPath,

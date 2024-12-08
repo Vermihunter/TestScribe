@@ -1,7 +1,6 @@
 # Collect local files
 file(GLOB LOCAL_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/*.hpp" "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 
-
 {{#each Subdirectories}}
 add_subdirectory({{this}})
 {{/each}}

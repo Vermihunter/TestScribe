@@ -11,8 +11,10 @@ inline void greet() {
 }
 
 class Game {
+
     int players;
 
+public:
     /**
      * @throws std::exception if in a bad mood :/
      */

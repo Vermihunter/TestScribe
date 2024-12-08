@@ -94,7 +94,7 @@ export class GoogleTestTestCreator implements ITestCreator {
 
         const dependencies = this.templater.getTemplate(config["dependency"],{}) + "\n#include <limits>\n";
         const subdirs: Set<string> = new Set;
-
+        
         this.ctx.testFiles.forEach(srcFile => {
             console.log(`Processing file1 ${srcFile}`);
             const cppCode = fs.readFileSync(srcFile, 'utf8');
@@ -106,10 +106,15 @@ export class GoogleTestTestCreator implements ITestCreator {
             const classDetails = parse(tree.rootNode);
 
             // Test file path
-            const srcToFile = path.relative(this.ctx.relativeSrcDir, path.dirname(srcFile));
+            //const srcToFile = path.relative(this.ctx.relativeSrcDir, path.dirname(srcFile));
+            
             const testRootDir = path.join(this.ctx.rootDir, "tests"); 
-            const testDir = path.join(testRootDir, srcToFile);
+            const srcToFile = path.relative(this.ctx.rootDir, path.dirname(srcFile)).split(path.sep).slice(1);
+
+            const testDir = path.join(testRootDir, srcToFile.join(path.sep));
+            console.log(`Src to file: ${srcToFile} vs testDir: ${testDir}`);
             if (!fs.existsSync(testDir) || !fs.lstatSync(testDir).isDirectory()) {
+                console.log(`Creaing dir ${testDir}`);
                 fs.mkdirSync(testDir, {recursive: true});
             }
 
@@ -143,23 +148,15 @@ export class GoogleTestTestCreator implements ITestCreator {
         // Each key in the current node is a child directory/file
         for (const key of Object.keys(node)) {
             const newPath = [...path_elements, key];
-            // Do something with the current path
-            //console.log(newPath.join('/'));
-
             subdirs.push(key);
         
             // Recurse into the child node
             this.constructBuildSystem(node[key], newPath, false);
         }
 
-        // if(subdirs.length === 0) {
-        //     return;
-        // }
-
         if(isTopLevel) {
             this.buildSystem.generateRootBuilderFile(this.ctx.rootDir, subdirs);
         } else {
-            //console.log(`Generating cmake subdir for ${this.ctx.rootDir}/tests/${currPath} with keys ${subdirs}`);
             this.buildSystem.generateSubdirBuilderFile(`${this.ctx.rootDir}/tests/${currPath}`, subdirs);
         }
     }
@@ -193,38 +190,35 @@ export class GoogleTestTestCreator implements ITestCreator {
             params.unshift({type: func.type, name: ""});
         }
 
-        params = params.map(param => {
-            const referenceInd: Number = param.type.indexOf('&');
-            if(referenceInd !== -1) {
-                const trimmed: string = param.type.replace(/&/g, "").trim();
-                param.type = `std::shared_ptr<${trimmed}>`;
-            }
-            return param;
-        });
+        params = this.normalizeParameters(params);
 
         // Function has at least one parameter -> parametrized test
         if(isParametrized) {
             // Adding test suite class
             this.addParametrizedTestSuiteClass(testFile, params, testSuiteName, config["parametrized_suite_class_simple"]);
         }
-        
-        // Adding one general test case
-        this.addGeneralTestCase(testFile, params, func.name, testSuiteName);
-        
-        // Create additional test cases for all exceptions with 
-        // one expect throw and one expect no throw test case
-        this.addTestThrow(testFile, testSuiteName, func.throws);
 
-        // Adding some instance values
-        if(isParametrized) {
-            this.addParamInstantiation(testFile, testSuiteName, params.map(param => this.generateInstantiationParameters(param)));
-        }
+        this.createBaseTesting(testFile, params, func.name, testSuiteName, func);
         
-        // Adding test for return types -> would be hard because the test suite class does not contain
-        // the return type -> lets put the first argument as the return type if its non-void
-        if(hasReturnType) {
-            this.addParametrizedTestSuiteClass(testFile, params, testSuiteName, config["parametrized_instantiation_return_type"]);
-        }
+        // // Adding one general test case
+        // this.addGeneralTestCase(testFile, params, func.name, testSuiteName);
+        
+        // // Create additional test cases for all exceptions with 
+        // // one expect throw and one expect no throw test case
+        // this.addTestThrow(testFile, testSuiteName, func.throws);
+
+        // // Adding some instance values
+        // if(func.parameters.length > 0) {
+        //     this.addParamInstantiation(testFile, testSuiteName, params.map(param => this.generateInstantiationParameters(param)));
+        // }
+        
+        // // Adding test for return types -> would be hard because the test suite class does not contain
+        // // the return type -> lets put the first argument as the return type if its non-void
+        // if(hasReturnType) {
+        //     this.addParametrizedTestSuiteClass(testFile, params, testSuiteName, config["parametrized_instantiation_return_type"]);
+        // }
+
+
     }
 
 
@@ -293,7 +287,7 @@ export class GoogleTestTestCreator implements ITestCreator {
         if(classElement.functions.length === 0) {
             return "";
         }
-        console.log(`\tProcessing class ${classElement.className}`);
+        //console.log(`\tProcessing class ${classElement.className}`);
         const className: string = toCppClassName(classElement.className);
         
         testDir = path.join(testDir, className);
@@ -321,7 +315,7 @@ export class GoogleTestTestCreator implements ITestCreator {
 
             const funcName: string = Object.entries(cppOverloadableOperators).find(([key]) => func.name.startsWith(key))?.[1] ?? func.name;
 
-            console.log(`\t\tProcessing class func ${funcName}`);
+            //console.log(`\t\tProcessing class func ${funcName}`);
             const testFile = path.join(testDir, `${toCppClassName(testSuiteName + "_" + funcName)}Test.cpp`);
             fs.appendFileSync(testFile, dependencies);
 
@@ -334,28 +328,10 @@ export class GoogleTestTestCreator implements ITestCreator {
 
             // Add return value as first parameter (possible to test)
             if(hasReturnType) {
-                parameters.unshift({ name: "", type: func.type});
+                parameters.unshift({name: "", type: func.type.replace("auto", "std::string /* auto */")});
             }
 
-            parameters = parameters.map(param => {
-                let type: string = param.type.trim();
-                if(type.startsWith("const ")) {
-                    type = type.substring(6);
-                }
-                
-                // Removing reference -> GoogleTest does not allow reference template parameters
-                if(param.type.indexOf('&') !== -1 ) { 
-                    type = type.replace(/&/g, "").trim();
-                }
-
-                // Mapping any non primitive type / string / pointer to a shared_ptr to make compilation successful
-                if(!cppPrimitiveTypes.has(type) && type !== "std::string" && type !== "string" && type.indexOf("*") === -1) {
-                    type = `std::shared_ptr<${type}>`;
-                }
-
-                param.type = type;
-                return param;
-            });
+            parameters = this.normalizeParameters(parameters);
             
             // Function without parameters and void return type -> no reason to add parametrized test suite
             if(parameters.length === 0) {
@@ -369,23 +345,61 @@ export class GoogleTestTestCreator implements ITestCreator {
                     GoogleTestBaseClass: "testing::WithParamInterface"
                 }));
             }
+
+            this.createBaseTesting(testFile, parameters, funcName, funcTestSuiteName, func);
             
-            // Adding one general test case
-            this.addGeneralTestCase(testFile, parameters, funcName, funcTestSuiteName);
+            // // Adding one general test case
+            // this.addGeneralTestCase(testFile, parameters, funcName, funcTestSuiteName);
 
-            this.addTestThrow(testFile, funcTestSuiteName, func.throws);
+            // this.addTestThrow(testFile, funcTestSuiteName, func.throws);
 
-            if(func.parameters.length > 0) {
-                this.addParamInstantiation(testFile, funcTestSuiteName, parameters.map(param => this.generateInstantiationParameters(param)));
-            }
+            // if(func.parameters.length > 0) {
+            //     this.addParamInstantiation(testFile, funcTestSuiteName, parameters.map(param => this.generateInstantiationParameters(param)));
+            // }
 
-            if(hasReturnType) {
-                this.addParametrizedTestSuiteClass(testFile, parameters, funcTestSuiteName, config["parametrized_instantiation_return_type"]);
-            }
+            // if(hasReturnType) {
+            //     this.addParametrizedTestSuiteClass(testFile, parameters, funcTestSuiteName, config["parametrized_instantiation_return_type"]);
+            // }
 
         });
 
         return testDir;
+    }
+
+    normalizeParameters(params: CppInterface.Parameter[]): CppInterface.Parameter[] {
+        return params.map(param => {
+            let type: string = param.type.trim();
+            if(type.startsWith("const ")) {
+                type = type.substring(6);
+            }
+            
+            // Removing reference -> GoogleTest does not allow reference template parameters
+            if(param.type.indexOf('&') !== -1 ) { 
+                type = type.replace(/&/g, "").trim();
+            }
+
+            // Mapping any non primitive type / string / pointer to a shared_ptr to make compilation successful
+            if(!cppPrimitiveTypes.has(type) && type !== "std::string" && type !== "std::string /* auto */" && type !== "string" && type.indexOf("*") === -1) {
+                type = `std::shared_ptr<${type}>`;
+            }
+
+            param.type = type;
+            return param;
+        });
+    }
+
+    createBaseTesting(testFile: string, parameters: CppInterface.Parameter[], funcName: string, funcTestSuiteName: string, func: CppInterface.FunctionMember) {
+        this.addGeneralTestCase(testFile, parameters, funcName, funcTestSuiteName);
+
+        this.addTestThrow(testFile, funcTestSuiteName, func.throws);
+
+        if(func.parameters.length > 0) {
+            this.addParamInstantiation(testFile, funcTestSuiteName, parameters.map(param => this.generateInstantiationParameters(param)));
+        }
+
+        if(func.type !== "void") {
+            this.addParametrizedTestSuiteClass(testFile, parameters, funcTestSuiteName, config["parametrized_instantiation_return_type"]);
+        }
     }
 }
 
