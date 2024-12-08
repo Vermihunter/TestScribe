@@ -1,26 +1,11 @@
-# testscribe README
-
 TestScribe is a tool to automatically generate unit tests for your projects. It supports both project-level generation and
-file/class level test generation. Currently it supports `C++` and the most famous C++ unit testing framework, [GoogleTest](https://github.com/google/googletest).
-
-The project describes some best practices i.e. some scenarios that are most likely one of the best solutions for a problem. These techniques
-are mappings for code-to-unit test type. On the other hand, TestScribe gives the users the freedom to generate any type of test type for
-a given piece of code.
-
-Although TestScribe currently implements a single programming language with a single unit testing framework implementation, it defines
-an interface that allows developers to extend this framework for their favorite programming language and unit testing framework. More about 
-this feature in the [Extending TestScribe](#extending-testscribe) section.
+file level test generation. Currently it supports `C++` and the most famous C++ unit testing framework, [GoogleTest](https://github.com/google/googletest).
 
 ## Features
 
-- Generate unit tests for a directory
-- Generate unit tests for a file
-- Generate unit tests for the selected code 
-
-The unit test generation for the selected code option comes with two different customization levels:
-- The user decides what type of test should be generated for the given class/method
-- Automatic generation specificed by TestScribe
-
+First, all the C++ header and source files are parsed according to the configuration path. Each global function and public class function
+is processed and the following code is generated for them:
+- For every global function, a parametrized test suite class is generated with 
 
 ## Extension Settings
 
