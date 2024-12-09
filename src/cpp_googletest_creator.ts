@@ -165,6 +165,18 @@ export class GoogleTestTestCreator implements ITestCreator {
         }
     }
 
+    getRealType(cppType: string): string {
+        // Remove const/volatile/other qualifiers
+        cppType = cppType.replace(/\b(const|volatile|mutable|restrict)\b/g, '');
+    
+        // Remove pointer (*) and reference (&) modifiers
+        cppType = cppType.replace(/[*&]+/g, '');
+    
+        // Remove extra whitespace
+        cppType = cppType.trim().replace(/\s+/g, ' ');
+    
+        return cppType;
+    }
 
     generateForGlobalFunc(testDir: string, srcFile: string, func: CppInterface.FunctionMember, dependencies: string): void {
         const testSuiteName: string = func.name;
@@ -295,6 +307,26 @@ export class GoogleTestTestCreator implements ITestCreator {
         return templates.map(t => `${t.type} ${t.name}`).join(', ');
     }
 
+    toTemplateType(param: CppInterface.Parameter): string {
+        
+        return param.type === "typename" 
+            ? `typename T::${param.name}` // Typename
+            : `T::${param.name}`; // Constant 
+    }
+
+    toTemplateTypeFuncParam(param: CppInterface.Parameter, allTemplates: CppInterface.Parameter[]): CppInterface.Parameter {
+        const type: string = this.getRealType(param.type);
+        console.log(`\t\tFound type: ${type} --- ${this.getTemplateRepresentation(allTemplates)}`);
+        if(allTemplates.some(p => p.name === type)) {
+            return {
+                name: param.name,
+                type: `typename T::${param.type}`
+            };
+        }
+
+        return param;
+    }
+
     generateForClass(testDir: string, srcFile: string, classElement: CppInterface.ClassOrStruct, multiClassFile: boolean, dependencies: string): string {
         if(classElement.functions.length === 0) {
             return "";
@@ -350,22 +382,21 @@ export class GoogleTestTestCreator implements ITestCreator {
                 parameters.unshift({name: "retType", type: func.type.replace("auto", "std::string /* auto */")});
             }
 
-            parameters = this.normalizeParameters(parameters);            
             const allTemplates: CppInterface.Parameter[] = classElement.templateParameters.concat(func.templateParameters);
             if(allTemplates.length > 0) {
                 this.generateTemplatedFunc(testFile, func, {
                     ClassTemplateParams: this.getTemplateRepresentation(allTemplates),
                     TestSuiteName: `${testSuiteName}${funcName}`,
                     TestName: `${funcName}General`,
-                    FuncTemplateParams: params_to_str(parameters),
-                    BaseClasses: [`${testSuiteName}Test<${classElement.templateParameters.map(t => t.name).join(', ')}>`]
+                    FuncTemplateParams: params_to_str(this.normalizeParameters(parameters.map(p => this.toTemplateTypeFuncParam(p, allTemplates)))),//params_to_str(parameters),
+                    BaseClasses: [`${testSuiteName}Test<${classElement.templateParameters.map(t => this.toTemplateType(t)).join(', ')}>`]
                 });
-
                 
-
+            
                 return;
             }
-
+            
+            parameters = this.normalizeParameters(parameters);            
             // Function without parameters and void return type -> no reason to add parametrized test suite
            // if(parameters.length !== 0) {
                 fs.appendFileSync(testFile, this.templater.getTemplate(config["parametrized_class_func"], {
