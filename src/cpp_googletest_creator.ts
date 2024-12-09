@@ -72,6 +72,7 @@ function toCppClassName(input: string): string {
     return result;
 }
 
+
 // // Example usage:
 // console.log(toCppClassName("   my cool! class??? "));  // "MyCoolClass"
 // console.log(toCppClassName("123ClassName"));           // "_123classname" => After PascalCase: "_123classname" -> "_123classname" (starts with _)
@@ -388,7 +389,8 @@ export class GoogleTestTestCreator implements ITestCreator {
                     ClassTemplateParams: this.getTemplateRepresentation(allTemplates),
                     TestSuiteName: `${testSuiteName}${funcName}`,
                     TestName: `${funcName}General`,
-                    FuncTemplateParams: params_to_str(this.normalizeParameters(parameters.map(p => this.toTemplateTypeFuncParam(p, allTemplates)))),//params_to_str(parameters),
+                    //FuncTemplateParams: this.processAllTemplated(params_to_str(this.normalizeParameters(parameters.map(p => this.toTemplateTypeFuncParam(p, allTemplates)))), allTemplates),//,//params_to_str(parameters),
+                    FuncTemplateParams: this.normalizeParameters(parameters).map(p => this.processAllTemplated(p.type, allTemplates)).join(", "),
                     BaseClasses: [`${testSuiteName}Test<${classElement.templateParameters.map(t => this.toTemplateType(t)).join(', ')}>`]
                 });
                 
@@ -416,6 +418,32 @@ export class GoogleTestTestCreator implements ITestCreator {
 
         return testDir;
     }
+
+    processAllTemplated(s: string, allTemplateParams: CppInterface.Parameter[]): string {
+        console.log(`Processing: "${s} ---- "`);
+        allTemplateParams.forEach(p => console.log(p.name));
+        const nextOpeningOccurence = s.indexOf("<");
+        const nextClosingOccurence = s.lastIndexOf(">");
+    
+        if(nextClosingOccurence === -1 || nextOpeningOccurence === -1) {
+            return s;
+        }
+    
+        const variables: string[] = s
+            .slice(nextOpeningOccurence + 1, nextClosingOccurence)
+            .split(",")
+            .map(x => {
+                const innerType: string = this.getRealType(x.trim());
+                return allTemplateParams.some(x => x.name === innerType)
+                    ? `typename T::${innerType}`
+                    : this.processAllTemplated(innerType, allTemplateParams);
+            });
+
+        console.log(`Product: ${s.slice(0, nextOpeningOccurence + 1) + variables.join(", ") + s.slice(nextClosingOccurence, s.length)}`);
+        
+        return s.slice(0, nextOpeningOccurence + 1) + variables.join(", ") + s.slice(nextClosingOccurence, s.length);
+    }
+    
 
     addNonTemplatedClassFuncTest(testFile: string, className: string, classElement: CppInterface.ClassOrStruct, func: CppInterface.FunctionMember) {
 
