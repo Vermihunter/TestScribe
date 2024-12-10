@@ -1,3 +1,4 @@
+import { AccessSpecifier } from "./cpp_objects";
 
 export interface TestCreatorContext {
     // The current directory i.e. the one that is opened by the user (root of the project)
@@ -7,5 +8,7 @@ export interface TestCreatorContext {
     //
     testFiles: string[];
     //
-    
+
+    generatedForMethodVisibilities: AccessSpecifier[];
+    relativeTestDirName: string;
 }

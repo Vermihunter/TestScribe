@@ -4,12 +4,14 @@ import * as vscode from 'vscode';
 //import {generateRootTestCMake, generateTestMain, generateTestsForFile} from './cpp_test_creator';
 import { CMakeBuildSystem } from './cmake_build_system';
 import { GoogleTestTestCreator } from './cpp_googletest_creator';
+import { TestCreatorContext } from './test_creator_context';
+import { AccessSpecifier } from './cpp_objects';
 
 const fs = require('fs');
 const path = require('path');
 
 
-function getRelativePathFromRoot(filePath: string): string | null  {
+function getRelativePathFromRoot(filePath: string, relativeTestDir: string): string | null  {
     const workspaceFolders = vscode.workspace.workspaceFolders;
 
     if(!workspaceFolders || workspaceFolders.length === 0) {
@@ -23,7 +25,7 @@ function getRelativePathFromRoot(filePath: string): string | null  {
     }
     
     const parts = relativePath.split(path.sep); 
-    parts[0] = "tests"; 
+    parts[0] = relativeTestDir; 
     const testPath = path.resolve(rootPath, parts.join(path.sep));
     return testPath;
 }
@@ -99,7 +101,16 @@ export function activate(context: vscode.ExtensionContext) {
         // Get the current file path
         const filePath = editor.document.uri.fsPath;
 
-        const testPath = getRelativePathFromRoot(filePath);
+        const config = vscode.workspace.getConfiguration('testScribe');
+        const ctx: TestCreatorContext = {
+            rootDir: "",
+            relativeSrcDir: "",
+            testFiles: [],
+            generatedForMethodVisibilities: [AccessSpecifier.Public],
+            relativeTestDirName: config.get<string>("testPath") ?? "tests"
+        };
+
+        const testPath = getRelativePathFromRoot(filePath, ctx.relativeTestDirName);
         if(testPath === null) {
             return;
         }
@@ -141,12 +152,25 @@ export function activate(context: vscode.ExtensionContext) {
         console.log(`Root path: ${rootFolderPath}`);
         console.log(`Src path: ${srcFolderPath}`);
         console.log(`C++ files: ${getHppFilesRecursively(srcFolderPath)}`);
-        const testCreator: GoogleTestTestCreator = new GoogleTestTestCreator({
+        const config = vscode.workspace.getConfiguration('testScribe');
+        const visibilitiesToGenerateFor: AccessSpecifier[] = [AccessSpecifier.Public];
+        if(config.get<boolean>("generateForClassPrivateMethods")) {
+            visibilitiesToGenerateFor.push(AccessSpecifier.Private);
+        }
+
+        if(config.get<boolean>("generateForClassProtectedMethods")) {
+            visibilitiesToGenerateFor.push(AccessSpecifier.Protected);
+        }
+        
+        const ctx: TestCreatorContext = {
             rootDir: rootFolderPath,
             relativeSrcDir: srcFolderPath,
-            testFiles: getHppFilesRecursively(srcFolderPath)//["./src/test/data/src/nested/example.h", "./src/test/data/src/nested/double_nested/Game.h"]
-            
-        }, new CMakeBuildSystem("templates/GoogleTest"));
+            generatedForMethodVisibilities: visibilitiesToGenerateFor,
+            testFiles: getHppFilesRecursively(srcFolderPath),
+            relativeTestDirName: config.get<string>('testPath') ?? "tests"
+        };
+
+        const testCreator: GoogleTestTestCreator = new GoogleTestTestCreator(ctx, new CMakeBuildSystem("templates/GoogleTest", ctx));
 
 
         testCreator.generateTests();

@@ -735,9 +735,6 @@ export function parse(node: Parser.SyntaxNode): CppFile {
         }
     });
 
-    return {
-        classes: classes,
-        globalFunctions: globalFunctions,
-    };
+    return { classes: classes, globalFunctions: globalFunctions};
 }
 

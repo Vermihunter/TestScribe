@@ -82,27 +82,21 @@ function toCppClassName(input: string): string {
 export class GoogleTestTestCreator implements ITestCreator {
     ctx: TestCreatorContext;
     buildSystem: IBuildSystem;
-    templater: TemplateHandler;
 
     constructor(_ctx: TestCreatorContext, _buildSystem: IBuildSystem) {
         this.ctx = _ctx;
         this.buildSystem = _buildSystem;
-        this.templater = new TemplateHandler;
     }
 
     generateTests(): void {
-        
-        
-        // const rootToSrc = path.relative(this.ctx.rootDir, this.ctx.relativeSrcDir);
         const parser = new Parser();
         parser.setLanguage(Cpp);
 
 
-        const dependencies = this.templater.getTemplate(config["dependency"],{}) + "\n#include <limits>\n";
+        const dependencies = TemplateHandler.getTemplate(config["dependency"],{}) + "\n#include <limits>\n";
         const subdirs: Set<string> = new Set;
         
         this.ctx.testFiles.forEach(srcFile => {
-            console.log(`Processing file1 ${srcFile}`);
             const cppCode = fs.readFileSync(srcFile, 'utf8');
 
             // Parse the file content
@@ -111,22 +105,15 @@ export class GoogleTestTestCreator implements ITestCreator {
             // Extract details from the root node
             const classDetails = parse(tree.rootNode);
 
-            // Test file path
-            
-            const testRootDir = path.join(this.ctx.rootDir, "tests"); 
+            // Test file path            
+            const testRootDir = path.join(this.ctx.rootDir, this.ctx.relativeTestDirName); 
             const srcToFile = path.relative(this.ctx.rootDir, path.dirname(srcFile)).split(path.sep).slice(1);
 
             const testDir = path.join(testRootDir, srcToFile.join(path.sep));
-            console.log(`Src to file: ${srcToFile} vs testDir: ${testDir}`);
             if (!fs.existsSync(testDir) || !fs.lstatSync(testDir).isDirectory()) {
-                console.log(`Creaing dir ${testDir}`);
                 fs.mkdirSync(testDir, {recursive: true});
             }
 
-            const fileName: string = path.basename(srcFile, path.extname(srcFile));
-            const testFile = path.join(testDir, `${fileName}Test${path.extname(srcFile)}`);
-            
-            console.log(`Processing file2 ${srcFile}`);
             classDetails.globalFunctions.forEach(globalFunc => this.generateForGlobalFunc(testDir, srcFile, globalFunc, dependencies));
             classDetails.classes.forEach(_class => {
                 const subdir: string = this.generateForClass(testDir, srcFile, _class, classDetails.classes.length > 1, dependencies);
@@ -135,15 +122,11 @@ export class GoogleTestTestCreator implements ITestCreator {
                 }
             });
 
-            
-            //this.buildSystem.generateSubdirBuilderFile(testDir);
             subdirs.add(path.relative(testRootDir, testDir));
         });
 
         const fileSystem = buildTreeFromPaths(subdirs);
         this.constructBuildSystem(fileSystem);
-        // console.log(JSON.stringify(fileSystem, null, 2));
-        // this.buildSystem.generateRootBuilderFile(this.ctx.rootDir, Array.from(subdirs));
     }
 
     constructBuildSystem(node: TreeNode, path_elements: string[] = [], isTopLevel: boolean = true): void {
@@ -204,11 +187,11 @@ export class GoogleTestTestCreator implements ITestCreator {
     }
 
     generateTemplatedFunc(testFile: string, func: CppInterface.FunctionMember, data: Record<string, any>) {
-        fs.appendFileSync(testFile, this.templater.getTemplate(config["test_typed_suite_class"], data));
-        fs.appendFileSync(testFile, this.templater.getTemplate(config["test_typed"], data));
+        fs.appendFileSync(testFile, TemplateHandler.getTemplate(config["test_typed_suite_class"], data));
+        fs.appendFileSync(testFile, TemplateHandler.getTemplate(config["test_typed"], data));
         const exceptionTestSuites: string[] = this.addTestThrow(testFile, data.TestSuiteName, func.throws, "TYPED_TEST_P");
         data.TestSuites = [...exceptionTestSuites, data.TestName];
-        fs.appendFileSync(testFile, this.templater.getTemplate(config["test_typed_instantiate"], data));
+        fs.appendFileSync(testFile, TemplateHandler.getTemplate(config["test_typed_instantiate"], data));
     }
 
     generateForFunc(testFile: string, func: CppInterface.FunctionMember, testSuiteName: string) {
@@ -234,7 +217,7 @@ export class GoogleTestTestCreator implements ITestCreator {
 
 
     addParametrizedTestSuiteClass(testFile: string, parameters: CppInterface.Parameter[], testSuiteName: string, template: string, templateParams: CppInterface.Parameter[]) {
-        fs.appendFileSync(testFile, this.templater.getTemplate(template, {
+        fs.appendFileSync(testFile, TemplateHandler.getTemplate(template, {
             FuncTemplateParams: params_to_str(parameters),
             TestSuiteName: testSuiteName,
             HasBaseClass: false,
@@ -250,14 +233,14 @@ export class GoogleTestTestCreator implements ITestCreator {
             ? config["parametrized_simple"] 
             : config["test_simple"];
 
-        fs.appendFileSync(testFile, this.templater.getTemplate(testType, {
+        fs.appendFileSync(testFile, TemplateHandler.getTemplate(testType, {
             TestSuiteName: testSuiteName,
             TestName: `${funcName}General`
         }));
     }
 
     addParamInstantiation(testFile: string, testSuiteName: string, testingParams: string[]) {
-        fs.appendFileSync(testFile, this.templater.getTemplate(config["parametrized_instantiation_combine"], {
+        fs.appendFileSync(testFile, TemplateHandler.getTemplate(config["parametrized_instantiation_combine"], {
             TestSuiteName: testSuiteName,
             TestingParameters: testingParams
         }));
@@ -269,7 +252,7 @@ export class GoogleTestTestCreator implements ITestCreator {
             const exceptionClassName = toCppClassName(exception);
             const testNameThrow = `Throw${exceptionClassName}`;
             const testNameNoThrow = `NoThrow${exceptionClassName}`;
-            fs.appendFileSync(fileName, this.templater.getTemplate(config["test_exception"], {
+            fs.appendFileSync(fileName, TemplateHandler.getTemplate(config["test_exception"], {
                 TestSuiteName: testSuiteName,
                 TestNameThrow: testNameThrow,
                 TestNameNoThrow: testNameNoThrow,
@@ -344,13 +327,14 @@ export class GoogleTestTestCreator implements ITestCreator {
         // Adding base testing class
         const testSuiteName: string = className;
         const fileExt = path.extname(srcFile);
-        const fileName: string = path.basename(srcFile, fileExt);
         const baseFileName = className + "Test";
         const baseTestFileName = path.join(testDir, baseFileName+ fileExt);
         const joinedClassTemplates: string = this.getTemplateRepresentation(classElement.templateParameters);
 
         const classHasTemplates: boolean = joinedClassTemplates.length !== 0;
-        fs.writeFileSync(baseTestFileName, dependencies + this.templater.getTemplate(config["test_suite_class"], {
+        
+        // Create base test class -> if class is parametrized - type parametrized - otherwise value parametrized class
+        fs.writeFileSync(baseTestFileName, dependencies + TemplateHandler.getTemplate(config["test_suite_class"], {
             TestSuiteName: testSuiteName,
             HasTemplates: classHasTemplates,
             ClassTemplateParams: joinedClassTemplates,
@@ -359,20 +343,16 @@ export class GoogleTestTestCreator implements ITestCreator {
         dependencies += `#include "${path.basename(baseTestFileName)}"\n`;
     
         classElement.functions.forEach(func => {
-            if(func.name === classElement.className || func.name === `~${classElement.className}` || func.access !== CppInterface.AccessSpecifier.Public) {
+            if(func.name === classElement.className || func.name === `~${classElement.className}` || !this.ctx.generatedForMethodVisibilities.includes(func.access)) {
                 return;
             }
 
-            
+            // Maybe filter operator names to their C++ identifier-friendly variant: operator+ -> operatorPlus
             const funcName: string = Object.entries(cppOverloadableOperators).find(([key]) => func.name.startsWith(key))?.[1] ?? func.name;
-            
-            //console.log(`\t\tProcessing class func ${funcName}`);
             const testFile = path.join(testDir, `${toCppClassName(testSuiteName + "_" + funcName)}Test.cpp`);
             
-            fs.appendFileSync(testFile, dependencies);
-
             const relativeToSource = path.relative(testDir, srcFile);
-            fs.appendFileSync(testFile, `#include "${relativeToSource}"\n`);
+            fs.appendFileSync(testFile, dependencies + `#include "${relativeToSource}"\n`);
 
             let parameters: CppInterface.Parameter[] = func.parameters.slice();
             const funcTestSuiteName = className + funcName; 
@@ -380,6 +360,7 @@ export class GoogleTestTestCreator implements ITestCreator {
 
             // Add return value as first parameter (possible to test)
             if(hasReturnType) {
+                // Replace auto with std::string (auto cannot be a template parameter)
                 parameters.unshift({name: "retType", type: func.type.replace("auto", "std::string /* auto */")});
             }
 
@@ -389,7 +370,7 @@ export class GoogleTestTestCreator implements ITestCreator {
                     ClassTemplateParams: this.getTemplateRepresentation(allTemplates),
                     TestSuiteName: `${testSuiteName}${funcName}`,
                     TestName: `${funcName}General`,
-                    //FuncTemplateParams: this.processAllTemplated(params_to_str(this.normalizeParameters(parameters.map(p => this.toTemplateTypeFuncParam(p, allTemplates)))), allTemplates),//,//params_to_str(parameters),
+                    // TODO: fix template parsing
                     FuncTemplateParams: this.normalizeParameters(parameters).map(p => this.processAllTemplated(p.type, allTemplates)).join(", "),
                     BaseClasses: [`${testSuiteName}Test<${classElement.templateParameters.map(t => this.toTemplateType(t)).join(', ')}>`]
                 });
@@ -399,19 +380,17 @@ export class GoogleTestTestCreator implements ITestCreator {
             }
             
             parameters = this.normalizeParameters(parameters);            
-            // Function without parameters and void return type -> no reason to add parametrized test suite
-           // if(parameters.length !== 0) {
-                fs.appendFileSync(testFile, this.templater.getTemplate(config["parametrized_class_func"], {
-                    TestSuiteName: funcTestSuiteName,
-                    HasBaseClass: true,
-                    BaseClass: `${className}Test`,
-                    FuncTemplateParams: params_to_str(parameters),
-                    GoogleTestBaseClass: "testing::WithParamInterface",
-                    HasTemplates: classHasTemplates || func.templateParameters.length !== 0,
-                    ClassTemplateParams: allTemplates.map(t => `${t.type} ${t.name}`).join(', '),
-                    ClassTemplateParamNames: classElement.templateParameters.map(t => t.name).join(', ')
-                }));
-            //}
+            fs.appendFileSync(testFile, TemplateHandler.getTemplate(config["parametrized_class_func"], {
+                TestSuiteName: funcTestSuiteName,
+                HasBaseClass: true,
+                BaseClass: `${className}Test`,
+                FuncTemplateParams: params_to_str(parameters),
+                GoogleTestBaseClass: "testing::WithParamInterface",
+                HasTemplates: classHasTemplates || func.templateParameters.length !== 0,
+                ClassTemplateParams: allTemplates.map(t => `${t.type} ${t.name}`).join(', '),
+                ClassTemplateParamNames: classElement.templateParameters.map(t => t.name).join(', ')
+            }));
+        
 
             this.createBaseTesting(testFile, parameters, funcName, funcTestSuiteName, func, "TEST_P");
         });
@@ -420,7 +399,7 @@ export class GoogleTestTestCreator implements ITestCreator {
     }
 
     processAllTemplated(s: string, allTemplateParams: CppInterface.Parameter[]): string {
-        console.log(`Processing: "${s} ---- "`);
+        //console.log(`Processing: "${s} ---- "`);
         allTemplateParams.forEach(p => console.log(p.name));
         const nextOpeningOccurence = s.indexOf("<");
         const nextClosingOccurence = s.lastIndexOf(">");
@@ -439,7 +418,7 @@ export class GoogleTestTestCreator implements ITestCreator {
                     : this.processAllTemplated(innerType, allTemplateParams);
             });
 
-        console.log(`Product: ${s.slice(0, nextOpeningOccurence + 1) + variables.join(", ") + s.slice(nextClosingOccurence, s.length)}`);
+        //console.log(`Product: ${s.slice(0, nextOpeningOccurence + 1) + variables.join(", ") + s.slice(nextClosingOccurence, s.length)}`);
         
         return s.slice(0, nextOpeningOccurence + 1) + variables.join(", ") + s.slice(nextClosingOccurence, s.length);
     }

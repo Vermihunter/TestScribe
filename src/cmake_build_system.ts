@@ -1,9 +1,11 @@
 import { IBuildSystem } from './build_system_interface';
 import { TemplateHandler } from './templates';
+import { TestCreatorContext } from './test_creator_context';
 import * as path from 'path';
 import * as fs from 'fs';
 
 const cmakeTemplateDir = path.join(__dirname, '..', 'templates', 'CMake');
+const CMAKE_FILE_NAME = "CMakeLists.txt";
 const config_paths = {
     "root_cmake": path.join(cmakeTemplateDir ,"CMakeLists.txt"),
     "subdir_cmake": path.join(cmakeTemplateDir, "CMakeLists_local.txt")
@@ -11,37 +13,32 @@ const config_paths = {
 
 export class CMakeBuildSystem  implements IBuildSystem {
     templateDir: string;
-    templateHandler: TemplateHandler;
+    testCtx: TestCreatorContext;
     
-    constructor(_templateDir: string) {
+    constructor(_templateDir: string, _testCtx: TestCreatorContext) {
         this.templateDir = _templateDir;
-        this.templateHandler = new TemplateHandler;
+        this.testCtx = _testCtx;
     }
 
     generateRootBuilderFile(root: string, subdirs: string[]): void {
-        const rootCMakeFileName: string = path.join(root, "tests", "CMakeLists.txt");
-        if(fs.existsSync(rootCMakeFileName)) {
-            this.addSubdirsToCMakeFile(rootCMakeFileName, subdirs, 23);
-        } else {
-            fs.writeFileSync(rootCMakeFileName, this.templateHandler.getTemplate(config_paths["root_cmake"], {
-                Subdirectories: subdirs
-            }));
-        }
+        this.generateBuilderFile(path.join(root, this.testCtx.relativeTestDirName, CMAKE_FILE_NAME), config_paths["root_cmake"], subdirs, 23);
     }
 
     generateSubdirBuilderFile(subdir: string, subdirs: string[]): void {
-        const subdirCMakeFileName: string = path.join(subdir, "CMakeLists.txt");
-        if(fs.existsSync(subdirCMakeFileName)) {
-            this.addSubdirsToCMakeFile(subdirCMakeFileName, subdirs, 5);
+        this.generateBuilderFile(path.join(subdir, CMAKE_FILE_NAME), config_paths["subdir_cmake"], subdirs, 5);
+    }
+
+    generateBuilderFile(cmakeFilePath:string, template: string, subdirs: string[], lineNumber: number) {
+        if(fs.existsSync(cmakeFilePath)) {
+            this.addSubdirsToCMakeFile(cmakeFilePath, subdirs, lineNumber);
         } else {
-            fs.writeFileSync(`${subdir}/CMakeLists.txt`, this.templateHandler.getTemplate(config_paths["subdir_cmake"], {
+            fs.writeFileSync(cmakeFilePath, TemplateHandler.getTemplate(template, {
                 Subdirectories: subdirs
             }));
         }
     }
 
     addSubdirsToCMakeFile(rootCMakeFileName: string, subdirs: string[], lineNumber: number){
-        //const lineNumber: number = 23;
         try {
             // Read the file content and split it into lines
             const fileContent = fs.readFileSync(rootCMakeFileName, 'utf-8');

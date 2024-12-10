@@ -1,6 +1,7 @@
 
 void lala();
 
+template<typename K>
 inline bool lala_impl() {
 
 }
@@ -25,6 +26,10 @@ public:
     template<typename V>
     void func(double s, std::ofstream& of) {
 
+    }
+
+    void haha() {
+        
     }
 
     bool operator==(const Foo<T,K>& other) const {
