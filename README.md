@@ -4,7 +4,11 @@ file level test generation. Currently it supports `C++` and the most famous C++ 
 TestScribe does not provide deep code analysis to generate unit tests but offers an easy way to create a skeleton for your tests on directory and file level
 that compiles without any further compilation/modification action.
 
-To use this tool, open your C++ project's root directory. 
+## Usage 
+
+1. Open your C++ project's root directory
+2. From the command-palette select `Generate tests for the current file` or `Generate tests for the selected directory` according to your preferences
+3. By running the command `cmake -B build && cd build && cmake --build . && ctest`, the tests should be built, compiled and ran
 
 ## Features
 
@@ -54,50 +58,17 @@ TestScribe does not want to play the role of a complete C++ compiler and for tha
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+This extension contributes the following settings through the `contributes.configuration` extension point:
 
-For example:
+* `testScribe.testPath`: Specifies the test path relative to the root folder (default `tests`).
+* `testScribe.generateForClassPrivateMethods`: Specifies whether tests should be generated for private member methods of a class (default `false`).
+* `testScribe.generateForClassProtectedMethods`: Specifies whether tests should be generated for protected member methods of a class (default `false`).
 
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Problems with nested template types for example `Foo<T, K>` should be converted to `Foo<typename T::T, T::K>`  in case of testing templated classes/functions using GoogleTest's typed test cases.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
 
 ## Extending TestScribe
 
-TestScribe uses [Tree-sitter](https://tree-sitter.github.io/tree-sitter/) as a parser making it extremely easy to add new languages.
-
-The application is divided into two parts:
-- Parsing the file into objects
-- Generating unit tests for the objects
-
-
-### Parsing
-
-
-### Generating unit tests
-
-TestScribe uses the [handlebars](https://handlebarsjs.com/) templating engine to define the different types of tests. Separating this logic from code helps making it easily configurable. To add support for your beloved unit testing framework you have to first define what the tests look like.
+- TestScribe uses [Tree-sitter](https://tree-sitter.github.io/tree-sitter/) as a parser making it extremely easy to add new languages. It may happen (and happens for sure) that TestScribe does not support all C++ constructs. To add more features, extend the `cpp_better_parser.ts` parser.
+- Adding another build system (e.g. [meson](https://mesonbuild.com/)) is possible by implementing the `IBuildSystem` interface and define a logic according to what `TestScribe` will decide which build system to use
+- Adding another framework is not so easy, but the templates could be defined inside the `templates/` directory and adding the new framework by implementing the `ITestCreator` interface
+- Adding other user preferences could be done by declaring new variables inside the `TestCreatorContext` interface and use according to the needs
 
