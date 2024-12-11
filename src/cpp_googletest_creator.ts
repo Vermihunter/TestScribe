@@ -371,7 +371,7 @@ export class GoogleTestTestCreator implements ITestCreator {
                     TestSuiteName: `${testSuiteName}${funcName}`,
                     TestName: `${funcName}General`,
                     // TODO: fix template parsing
-                    FuncTemplateParams: this.normalizeParameters(parameters).map(p => this.processAllTemplated(p.type, allTemplates)).join(", "),
+                    FuncTemplateParams: this.normalizeParameters(parameters).map(p => this.addTemplatedConstructs(p.type, allTemplates)[0]).join(", "),
                     BaseClasses: [`${testSuiteName}Test<${classElement.templateParameters.map(t => this.toTemplateType(t)).join(', ')}>`]
                 });
                 
@@ -397,6 +397,64 @@ export class GoogleTestTestCreator implements ITestCreator {
 
         return testDir;
     }
+
+    addTemplatedConstructs(s: string, templates: CppInterface.Parameter[]): [string, number] {
+
+        let currParam: string = "";
+        const allParams: string[] = [];
+    
+        function pushParam() {
+            const trimmedParam: string = currParam.trim();
+            if(trimmedParam.length > 0) {
+                allParams.push(trimmedParam);
+            }
+            currParam = "";
+        }
+    
+        function mapParams(): string {
+            pushParam();
+            return allParams.map(p => {
+                const template = templates.find(t => t.name === p);
+                if(!template) {
+                    return p;
+                }
+
+                return template.type === "typename"
+                    ? `typename T::${p}`
+                    : `T::${p}`;
+   
+            }).join(", ");
+        }
+    
+        for(let i = 0; i < s.length; i += 1) {
+            switch(s[i]) {
+                case "<":
+                    const [nextLevelString, charsChecked] = this.addTemplatedConstructs(s.slice(i + 1), templates);
+                    currParam += "<" + nextLevelString + ">";
+                    i += charsChecked + 1;
+                    pushParam();
+                    break;
+    
+                case ">":
+                    return [mapParams(), i];
+    
+                case ",":
+                case ' ':
+                case '\t':
+                case '\n':
+                case '\r':
+                case '\f':
+                    pushParam();
+                    break;
+    
+                default:
+                    currParam = currParam + s[i];
+            }
+        }
+    
+        return [mapParams(), s.length];
+    }
+    
 
     processAllTemplated(s: string, allTemplateParams: CppInterface.Parameter[]): string {
         //console.log(`Processing: "${s} ---- "`);

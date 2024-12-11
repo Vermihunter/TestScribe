@@ -23,25 +23,25 @@
       }
     ],
     "configuration": {
-        "type": "object",
-        "title": "My Extension Settings",
-        "properties": {
-            "testScribe.testPath": {
-                "type": "string",
-                "default": "tests",
-                "description": "Specify the test path relative to the root folder."
-            },
-            "testScribe.generateForClassPrivateMethods": {
-                "type": "boolean",
-                "default": "false",
-                "description": "Specify whether tests should be generated for private member methods of a class."
-            },
-            "testScribe.generateForClassProtectedMethods": {
-                "type": "boolean",
-                "default": "false",
-                "description": "Specify whether tests should be generated for protected member methods of a class."
-            }
+      "type": "object",
+      "title": "My Extension Settings",
+      "properties": {
+        "testScribe.testPath": {
+          "type": "string",
+          "default": "tests",
+          "description": "Specify the test path relative to the root folder."
+        },
+        "testScribe.generateForClassPrivateMethods": {
+          "type": "boolean",
+          "default": "false",
+          "description": "Specify whether tests should be generated for private member methods of a class."
+        },
+        "testScribe.generateForClassProtectedMethods": {
+          "type": "boolean",
+          "default": "false",
+          "description": "Specify whether tests should be generated for protected member methods of a class."
         }
+      }
     }
   },
   "scripts": {
@@ -53,8 +53,8 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/node": "20.x",
-    "@types/vscode": "^1.95.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^20.17.9",
     "@typescript-eslint/eslint-plugin": "^8.10.0",
     "@typescript-eslint/parser": "^8.7.0",
     "@vscode/test-cli": "^0.0.10",
@@ -64,11 +64,13 @@
     "typescript": "^5.6.3"
   },
   "dependencies": {
+    "@types/vscode": "^1.95.0",
     "handlebars": "^4.7.8",
     "jest": "^29.7.0",
     "tree-sitter": "^0.21.1",
     "tree-sitter-cli": "^0.24.4",
     "tree-sitter-cpp": "^0.23.4",
-    "vscode-languageserver": "^9.0.1"
+    "vscode-languageserver": "^9.0.1",
+    "vscode-test": "^1.6.1"
   }
 }
