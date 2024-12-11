@@ -22,9 +22,9 @@ struct std::hash<BoardIndex>
 
         return h1 ^ h2;
     }
-
+    unsigned int l;
     const unsigned int& load(const unsigned int * k, const std::string& name, string& name2, std::string a, const std::string kalapacs, std::string& name3, const string nam4) {
-
+        return l;
     }
 
     const std::string& get_name() {

@@ -8,4 +8,8 @@ REGISTER_TYPED_TEST_SUITE_P({{TestSuiteName}}Test, {{#each TestSuites}}{{this}}{
 // INSTANTIATE_TYPED_TEST_SUITE_P(InstantiationName, {{TestSuiteName}}Test, MyTypes);
 
 // Add values for concrete template parameters
-//template<> std::vector<char> {{TestSuiteName}}Test<char>::params{std::make_tuple('1'),std::make_tuple('2'),std::make_tuple('3')};
+// template<> 
+// std::vector<std::tuple<bool, std::shared_ptr<Foo<int, 6>>>>
+   // {{TestSuiteName}}Test<TypeDefinitions<{{ClassTemplateParams}}>>::params = {
+        // {false, nullptr}
+   // };

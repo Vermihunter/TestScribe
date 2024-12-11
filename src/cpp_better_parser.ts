@@ -588,6 +588,10 @@ function parse_template_parameter_declaration(node: Parser.SyntaxNode): Paramete
                 param.name = child.text;
                 break;
 
+            case "type_identifier":
+                param.type = child.text;
+                break;
+
             case "sized_type_specifier":
                 param.type = parse_sized_type_specifier(child);
                 break;

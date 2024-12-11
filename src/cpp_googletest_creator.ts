@@ -72,6 +72,84 @@ function toCppClassName(input: string): string {
     return result;
 }
 
+/**
+ * Possibly alters the definition of a type so it was appliable as template paremeters inside the
+ * type parametrized test suite's value parametrization.
+ * 
+ * Processes all template parameters on the lowest level (i.e. in case of std::shared_ptr<Foo<T,K>> processes T and K)
+ * and adds the correct declaration before these template parameters if they are passed in the templates
+ * array. For each type it adds a "typename T::" prefix and for each compile-time constant (e.g. int)
+ * adds "T::"
+ * 
+ * This makes any type parametrized test suite compile.
+ * 
+ * @param s A C++ type already without the modifiers (const,...) and pointer/reference declaration
+ * @param templates All the templates that may have effect on the type
+ * @returns The modified string and the total processed length (this is used only in the recursive calls)
+ */
+function addTemplatedConstructs(s: string, templates: CppInterface.Parameter[]): [string, number] {
+
+    let currParam: string = "";
+    const allParams: string[] = [];
+
+    function pushParam() {
+        const trimmedParam: string = currParam.trim();
+        if(trimmedParam.length > 0) {
+            allParams.push(trimmedParam);
+        }
+        currParam = "";
+    }
+
+    function mapParams(): string {
+        pushParam();
+        return allParams.map(p => {
+            const template = templates.find(t => t.name === p);
+            if(!template) {
+                return p;
+            }
+
+            return template.type === "typename"
+                ? `typename T::${p}`
+                : `T::${p}`;
+
+        }).join(", ");
+    }
+
+    for(let i = 0; i < s.length; i += 1) {
+        switch(s[i]) {
+            case "<":
+                const [nextLevelString, charsChecked] = addTemplatedConstructs(s.slice(i + 1), templates);
+                currParam += "<" + nextLevelString + ">";
+                i += charsChecked + 1;
+                pushParam();
+                break;
+
+            case ">":
+                return [mapParams(), i];
+
+            case ",":
+            case ' ':
+            case '\t':
+            case '\n':
+            case '\r':
+            case '\f':
+                pushParam();
+                break;
+
+            default:
+                currParam = currParam + s[i];
+        }
+    }
+
+    return [mapParams(), s.length];
+}
+
+function toTemplateType(param: CppInterface.Parameter): string {
+        
+    return param.type === "typename" 
+        ? `typename T::${param.name}` // Typename
+        : `T::${param.name}`; // Constant 
+}
 
 // // Example usage:
 // console.log(toCppClassName("   my cool! class??? "));  // "MyCoolClass"
@@ -176,11 +254,30 @@ export class GoogleTestTestCreator implements ITestCreator {
         if(func.templateParameters.length === 0) {
             this.generateForFunc(testFile, func,  testSuiteName);
         } else {
+            const params = func.parameters.slice();
+            if(func.type !== "void") {
+                params.unshift({type: func.type, name: ""});
+            }
+
+
+            const funcTemplateParams = this.normalizeParameters(params).map(p => addTemplatedConstructs(p.type, func.templateParameters)[0]).join(", ");
+            const modifiedParams: CppInterface.Parameter[] = func.templateParameters
+                .map(t => {
+                    const newParam = {...t};
+                    if(func.templateParameters.some(tp => tp.name === t.type)) {
+                        newParam.type = `_${newParam.type}`;
+                    }
+                    
+                    return newParam;
+                })
+                .map(t => ({...t, name: `_${t.name}`}));
+
+
             this.generateTemplatedFunc(testFile, func, {
-                ClassTemplateParams: func.templateParameters.map(t => `${t.type} ${t.name}`).join(', '),
+                ClassTemplateParams: this.getTemplateRepresentation(modifiedParams),//func.templateParameters.map(t => `${t.type} _${t.name}`).join(', '),
                 TestSuiteName: testSuiteName,
                 TestName: `${func.name}General`,
-                FuncTemplateParams: params_to_str(this.normalizeParameters(func.parameters)),
+                FuncTemplateParams: funcTemplateParams,//params_to_str(this.normalizeParameters(params)),
                 BaseClasses: ["testing::Test"]
             });
         }
@@ -223,7 +320,7 @@ export class GoogleTestTestCreator implements ITestCreator {
             HasBaseClass: false,
             BaseClass: "",
             HasTemplates: templateParams.length !== 0,
-            ClassTemplateParams: templateParams.map(t => `${t.type} ${t.name}`).join(','),
+            ClassTemplateParams: this.getTemplateRepresentation(templateParams),//templateParams.map(t => `${t.type} ${t.name}`).join(','),
             GoogleTestBaseClass: "testing::TestWithParam"
         }));
     }
@@ -287,38 +384,24 @@ export class GoogleTestTestCreator implements ITestCreator {
         return params;
     }
 
+    /**
+     * 
+     * @param templates 
+     * @returns 
+     */
     getTemplateRepresentation(templates: CppInterface.Parameter[]): string {
         return templates.map(t => `${t.type} ${t.name}`).join(', ');
     }
 
-    toTemplateType(param: CppInterface.Parameter): string {
-        
-        return param.type === "typename" 
-            ? `typename T::${param.name}` // Typename
-            : `T::${param.name}`; // Constant 
-    }
-
-    toTemplateTypeFuncParam(param: CppInterface.Parameter, allTemplates: CppInterface.Parameter[]): CppInterface.Parameter {
-        const type: string = this.getRealType(param.type);
-        console.log(`\t\tFound type: ${type} --- ${this.getTemplateRepresentation(allTemplates)}`);
-        if(allTemplates.some(p => p.name === type)) {
-            return {
-                name: param.name,
-                type: `typename T::${param.type}`
-            };
-        }
-
-        return param;
-    }
 
     generateForClass(testDir: string, srcFile: string, classElement: CppInterface.ClassOrStruct, multiClassFile: boolean, dependencies: string): string {
         if(classElement.functions.length === 0) {
             return "";
         }
-        //console.log(`\tProcessing class ${classElement.className}`);
+
         const className: string = toCppClassName(classElement.className);
-        
         testDir = path.join(testDir, className);
+
         // Creating a separate directory for all the classes (They will contain multiple test files)
         if (!fs.existsSync(testDir) || !fs.lstatSync(testDir).isDirectory()) {
             fs.mkdirSync(testDir, {recursive: true});
@@ -326,9 +409,9 @@ export class GoogleTestTestCreator implements ITestCreator {
 
         // Adding base testing class
         const testSuiteName: string = className;
-        const fileExt = path.extname(srcFile);
         const baseFileName = className + "Test";
-        const baseTestFileName = path.join(testDir, baseFileName+ fileExt);
+        const fileExt = path.extname(srcFile);
+        const baseTestFileName = path.join(testDir, baseFileName + fileExt);
         const joinedClassTemplates: string = this.getTemplateRepresentation(classElement.templateParameters);
 
         const classHasTemplates: boolean = joinedClassTemplates.length !== 0;
@@ -364,15 +447,31 @@ export class GoogleTestTestCreator implements ITestCreator {
                 parameters.unshift({name: "retType", type: func.type.replace("auto", "std::string /* auto */")});
             }
 
-            const allTemplates: CppInterface.Parameter[] = classElement.templateParameters.concat(func.templateParameters);
+            let allTemplates: CppInterface.Parameter[] = classElement.templateParameters.concat(func.templateParameters)
+            const funcTemplateParams = this.normalizeParameters(parameters).map(p => addTemplatedConstructs(p.type, allTemplates)[0]).join(", ");
+
+           allTemplates = allTemplates
+                .map(t => {
+                    const newParam = {...t};
+                    if(func.templateParameters.some(tp => tp.name === t.type)) {
+                        newParam.type = `_${newParam.type}`;
+                    }
+                    
+                    return newParam;
+                })
+                .map(t => ({...t, name: `_${t.name}`})); // t.name = `_${t.name}`; return t;
+
+
             if(allTemplates.length > 0) {
+                console.log(`${func.name} params: `);
+                //const modifiedParams: CppInterface.Parameter[] = allTemplates.map(t => {t.name = `_${t.name}`; return t;});
+                allTemplates.forEach(p => console.log(p));
                 this.generateTemplatedFunc(testFile, func, {
                     ClassTemplateParams: this.getTemplateRepresentation(allTemplates),
                     TestSuiteName: `${testSuiteName}${funcName}`,
                     TestName: `${funcName}General`,
-                    // TODO: fix template parsing
-                    FuncTemplateParams: this.normalizeParameters(parameters).map(p => this.addTemplatedConstructs(p.type, allTemplates)[0]).join(", "),
-                    BaseClasses: [`${testSuiteName}Test<${classElement.templateParameters.map(t => this.toTemplateType(t)).join(', ')}>`]
+                    FuncTemplateParams: funcTemplateParams,
+                    BaseClasses: [`${testSuiteName}Test<${classElement.templateParameters.map(t => toTemplateType(t)).join(', ')}>`]
                 });
                 
             
@@ -398,95 +497,15 @@ export class GoogleTestTestCreator implements ITestCreator {
         return testDir;
     }
 
-    addTemplatedConstructs(s: string, templates: CppInterface.Parameter[]): [string, number] {
-
-        let currParam: string = "";
-        const allParams: string[] = [];
-    
-        function pushParam() {
-            const trimmedParam: string = currParam.trim();
-            if(trimmedParam.length > 0) {
-                allParams.push(trimmedParam);
-            }
-            currParam = "";
-        }
-    
-        function mapParams(): string {
-            pushParam();
-            return allParams.map(p => {
-                const template = templates.find(t => t.name === p);
-                if(!template) {
-                    return p;
-                }
-
-                return template.type === "typename"
-                    ? `typename T::${p}`
-                    : `T::${p}`;
-   
-            }).join(", ");
-        }
-    
-        for(let i = 0; i < s.length; i += 1) {
-            switch(s[i]) {
-                case "<":
-                    const [nextLevelString, charsChecked] = this.addTemplatedConstructs(s.slice(i + 1), templates);
-                    currParam += "<" + nextLevelString + ">";
-                    i += charsChecked + 1;
-                    pushParam();
-                    break;
-    
-                case ">":
-                    return [mapParams(), i];
-    
-                case ",":
-                case ' ':
-                case '\t':
-                case '\n':
-                case '\r':
-                case '\f':
-                    pushParam();
-                    break;
-    
-                default:
-                    currParam = currParam + s[i];
-            }
-        }
-    
-        return [mapParams(), s.length];
-    }
-    
-
-    processAllTemplated(s: string, allTemplateParams: CppInterface.Parameter[]): string {
-        //console.log(`Processing: "${s} ---- "`);
-        allTemplateParams.forEach(p => console.log(p.name));
-        const nextOpeningOccurence = s.indexOf("<");
-        const nextClosingOccurence = s.lastIndexOf(">");
-    
-        if(nextClosingOccurence === -1 || nextOpeningOccurence === -1) {
-            return s;
-        }
-    
-        const variables: string[] = s
-            .slice(nextOpeningOccurence + 1, nextClosingOccurence)
-            .split(",")
-            .map(x => {
-                const innerType: string = this.getRealType(x.trim());
-                return allTemplateParams.some(x => x.name === innerType)
-                    ? `typename T::${innerType}`
-                    : this.processAllTemplated(innerType, allTemplateParams);
-            });
-
-        //console.log(`Product: ${s.slice(0, nextOpeningOccurence + 1) + variables.join(", ") + s.slice(nextClosingOccurence, s.length)}`);
-        
-        return s.slice(0, nextOpeningOccurence + 1) + variables.join(", ") + s.slice(nextClosingOccurence, s.length);
-    }
-    
-
-    addNonTemplatedClassFuncTest(testFile: string, className: string, classElement: CppInterface.ClassOrStruct, func: CppInterface.FunctionMember) {
-
-
-    }
-
+    /**
+     * Transforms parameters that may not be move-constructible to a parameter that surely is.
+     * It is done by removing the const modifier and the reference declaration. If the result
+     * of this operation is not a primitive type or a string instance, it is wrapped in a 
+     * std::shared_ptr<> instance.
+     * 
+     * @param params Paramters to process
+     * @returns Transformed parameters
+     */
     normalizeParameters(params: CppInterface.Parameter[]): CppInterface.Parameter[] {
         return params.map(param => {
             let type: string = param.type.trim();
@@ -505,14 +524,25 @@ export class GoogleTestTestCreator implements ITestCreator {
             }
 
             param.type = type;
+            console.log(`Normalized paramater: ${param}`);
             return param;
         });
     }
 
-    createBaseTesting(testFile: string, parameters: CppInterface.Parameter[], funcName: string, funcTestSuiteName: string, func: CppInterface.FunctionMember, testhThrowType: string) {
+    /**
+     * Declares the basic constructs that are generated for each test
+     * 
+     * @param testFile The name of the output test file
+     * @param parameters All the parameters of a function (including return type if non-void on position 0)
+     * @param funcName Pre-processed name of the function that the tests are generated for
+     * @param funcTestSuiteName Suite name for the test cases that belong together
+     * @param func The function object that the tests are generated for
+     * @param testhThrowType The type of GoogleTest test cases that will be used for the given function (TEST/TEST_P/TYPED_TEST_P)
+     */
+    createBaseTesting(testFile: string, parameters: CppInterface.Parameter[], funcName: string, funcTestSuiteName: string, func: CppInterface.FunctionMember, testThrowType: string) {
         this.addGeneralTestCase(testFile, parameters, funcName, funcTestSuiteName);
 
-        this.addTestThrow(testFile, funcTestSuiteName, func.throws, testhThrowType);
+        this.addTestThrow(testFile, funcTestSuiteName, func.throws, testThrowType);
 
         if(func.parameters.length > 0) {
             this.addParamInstantiation(testFile, funcTestSuiteName, parameters.map(param => this.generateInstantiationParameters(param)));

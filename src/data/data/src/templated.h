@@ -1,9 +1,10 @@
 
 void lala();
 
+
 template<typename K>
 inline bool lala_impl() {
-
+    return false;
 }
 
 struct D {
@@ -19,6 +20,29 @@ template<typename T, int K>
 void fill_decl(const T& source);
 
 
+template<int K>
+inline int get_K() {
+    return K;
+}
+
+
+template<typename T, T K>
+inline T get_TK() {
+    return K;
+}
+
+template<typename T>
+inline T get_T(int a) {
+    return 0;
+}
+
+template<typename T>
+inline int get_INT_T(int a) {
+    return 0;
+}
+
+
+
 template<typename T, int K>
 class Foo {
 public:
@@ -26,6 +50,10 @@ public:
     template<typename V>
     void func(double s, std::ofstream& of) {
 
+    }
+
+    T get() {
+        return T(0);
     }
 
     void haha() {
@@ -43,6 +71,7 @@ public:
         //     return age < other.age;
         // }
         // return name < other.name;
+        return true;
     }
 
     friend std::ostream& operator<<(std::ostream& os, const Foo<T,K>& person){ return os;}
