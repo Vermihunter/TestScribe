@@ -6,10 +6,8 @@ import { CMakeBuildSystem } from './cmake_build_system';
 import { GoogleTestTestCreator } from './cpp_googletest_creator';
 import { TestCreatorContext } from './test_creator_context';
 import { AccessSpecifier } from './cpp_objects';
-
-const fs = require('fs');
-const path = require('path');
-
+import * as fs from 'fs';
+import * as path from 'path';
 
 function getRelativePathFromRoot(filePath: string, relativeTestDir: string): string | null  {
     const workspaceFolders = vscode.workspace.workspaceFolders;
@@ -92,20 +90,27 @@ export function activate(context: vscode.ExtensionContext) {
     const forCurrFile = vscode.commands.registerCommand('testscribe.forCurrFile', () => {
         // Get the active editor
         const editor = vscode.window.activeTextEditor;
+        const workspaceFolders = vscode.workspace.workspaceFolders;
 
-        if (!editor) {
+        if (!editor || !workspaceFolders || workspaceFolders.length === 0) {
             vscode.window.showErrorMessage('No active editor found');
             return;
         }
 
+
         // Get the current file path
         const filePath = editor.document.uri.fsPath;
+        const rootFolderPath = workspaceFolders[0].uri.fsPath; 
+
+        if(!endings.includes(path.extname(filePath))) {
+            vscode.window.showErrorMessage('The selected file must be a C++ file');
+            return;
+        }
 
         const config = vscode.workspace.getConfiguration('testScribe');
         const ctx: TestCreatorContext = {
-            rootDir: "",
-            relativeSrcDir: "",
-            testFiles: [],
+            rootDir: rootFolderPath,
+            testFiles: [filePath],
             generatedForMethodVisibilities: [AccessSpecifier.Public],
             relativeTestDirName: config.get<string>("testPath") ?? "tests"
         };
@@ -116,7 +121,11 @@ export function activate(context: vscode.ExtensionContext) {
         }
 
         console.log(`Curr file - file path: ${filePath}`);
-        generateForFiles([filePath], path.dirname(filePath), path.dirname(testPath));
+        //generateForFiles([filePath], path.dirname(filePath), path.dirname(testPath));
+
+
+        const testCreator: GoogleTestTestCreator = new GoogleTestTestCreator(ctx, new CMakeBuildSystem("templates/GoogleTest", ctx));
+        testCreator.generateTests();
     });
 
     const forSelectedDir = vscode.commands.registerCommand('testscribe.forSelectedDir', async () => {
@@ -127,31 +136,26 @@ export function activate(context: vscode.ExtensionContext) {
         
         const rootFolderPath = workspaceFolders[0].uri.fsPath; 
 
+        const d = vscode.Uri.joinPath(workspaceFolders[0].uri);
         const srcFolderUri = await vscode.window.showOpenDialog({
             canSelectFiles: false,
             canSelectFolders: true,
-            canSelectMany: false,
-            openLabel: 'Select source folder'
+            canSelectMany: true,
+            openLabel: 'Select source folder',
+            defaultUri: d
         });
 
-        if(srcFolderUri === undefined || srcFolderUri[0] === null) {
+        if(!srcFolderUri) {
             return;
         }
 
-        const srcFolderPath: string = srcFolderUri[0].fsPath;
-        
-        // const srcRootPath = srcFolderUri[0].fsPath;
-        // const testPath = getRelativePathFromRoot(rootPath);
-        // if(testPath === null) {
-        //     return;
-        // }
+        const allSrcFiles = srcFolderUri.flatMap(uri => getHppFilesRecursively(uri.fsPath));
 
-        // const cppFiles = getHppFilesRecursively(rootPath);
-        // generateForFiles(cppFiles, rootPath, testPath);
+        if(allSrcFiles.length === 0) {
+            vscode.window.showErrorMessage('No C++ files found under the selected directories!');
+            return;
+        }
 
-        console.log(`Root path: ${rootFolderPath}`);
-        console.log(`Src path: ${srcFolderPath}`);
-        console.log(`C++ files: ${getHppFilesRecursively(srcFolderPath)}`);
         const config = vscode.workspace.getConfiguration('testScribe');
         const visibilitiesToGenerateFor: AccessSpecifier[] = [AccessSpecifier.Public];
         if(config.get<boolean>("generateForClassPrivateMethods")) {
@@ -164,9 +168,8 @@ export function activate(context: vscode.ExtensionContext) {
         
         const ctx: TestCreatorContext = {
             rootDir: rootFolderPath,
-            relativeSrcDir: srcFolderPath,
             generatedForMethodVisibilities: visibilitiesToGenerateFor,
-            testFiles: getHppFilesRecursively(srcFolderPath),
+            testFiles: allSrcFiles,
             relativeTestDirName: config.get<string>('testPath') ?? "tests"
         };
 

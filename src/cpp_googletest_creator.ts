@@ -7,7 +7,6 @@ import { ITestCreator } from './test_creator';
 import { TestCreatorContext } from './test_creator_context';
 import * as path from 'path';
 import * as fs from 'fs';
-import { CMakeBuildSystem } from './cmake_build_system';
 import { TemplateHandler } from './templates';
 import { cppPrimitiveTypes } from './cpp_primitive_types';
 import { buildTreeFromPaths, TreeNode } from './file_system_parser';
