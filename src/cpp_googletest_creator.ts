@@ -32,11 +32,20 @@ const config = {
     
 };
 
-
+/**
+ * Converts parameters to string separated by commas
+ * @param params Parameters to join
+ * @returns A comma separated representation of all parameters
+ */
 function params_to_str(params: CppInterface.Parameter[]): string {
     return params.map(param => param.type).join(', ');
 }
 
+/**
+ * Converts an input string into a string that could be used as a C++ identifier
+ * @param input Input string
+ * @returns C++ identifier-friendly representation
+ */
 function toCppClassName(input: string): string {
     // Trim whitespace
     let result = input.trim();
@@ -143,18 +152,17 @@ function addTemplatedConstructs(s: string, templates: CppInterface.Parameter[]):
     return [mapParams(), s.length];
 }
 
+/**
+ * Adds the correseponting prefix for templates
+ * @param param Parameter to use
+ * @returns Template-parameter friendly representation that actually compiles
+ */
 function toTemplateType(param: CppInterface.Parameter): string {
-        
     return param.type === "typename" 
         ? `typename T::${param.name}` // Typename
         : `T::${param.name}`; // Constant 
 }
 
-// // Example usage:
-// console.log(toCppClassName("   my cool! class??? "));  // "MyCoolClass"
-// console.log(toCppClassName("123ClassName"));           // "_123classname" => After PascalCase: "_123classname" -> "_123classname" (starts with _)
-// console.log(toCppClassName("std::exc::runtime_exc{\"aa\",bb}"));                    // "_ClassName"
-// console.log(toCppClassName("std::exception")); 
 
 export class GoogleTestTestCreator implements ITestCreator {
     ctx: TestCreatorContext;
@@ -206,6 +214,13 @@ export class GoogleTestTestCreator implements ITestCreator {
         this.constructBuildSystem(fileSystem);
     }
 
+    /**
+     * Goes through all the generated files by layers and adds the necessary build system constructs
+     * On the first (top) level, a different type of build file is generated
+     * @param node The current root node of the logical file-system
+     * @param path_elements Path to the current root
+     * @param isTopLevel Whether we are on the topmost layer or not
+     */
     constructBuildSystem(node: TreeNode, path_elements: string[] = [], isTopLevel: boolean = true): void {
         const subdirs: string[] = [];
 
@@ -226,6 +241,11 @@ export class GoogleTestTestCreator implements ITestCreator {
         }
     }
 
+    /**
+     * Removes specifiers, pointers and references from a type and returns the concrete type
+     * @param cppType A C++ variable declaration type like const std::shared_ptr<int> * const
+     * @returns The modifier-free version of the same variable like std::shared_ptr<int>
+     */
     getRealType(cppType: string): string {
         // Remove const/volatile/other qualifiers
         cppType = cppType.replace(/\b(const|volatile|mutable|restrict)\b/g, '');
@@ -239,11 +259,17 @@ export class GoogleTestTestCreator implements ITestCreator {
         return cppType;
     }
 
+    /**
+     * Generates tests for a global function inside a C++ file
+     * @param testDir The directory where the tests are inserted
+     * @param srcFile The source file that the tests are generated for - used for including it and to construct the test file name from its name
+     * @param func The function that the tests are generated for
+     * @param dependencies The GoogleTest and other dependencies that are added to each test file
+     */
     generateForGlobalFunc(testDir: string, srcFile: string, func: CppInterface.FunctionMember, dependencies: string): void {
         const testSuiteName: string = func.name;
         const fileName: string = path.basename(srcFile, path.extname(srcFile));
-        const testFile: string = path.join(testDir, fileName + "_" + func.name + "Test.cpp"); //+ path.extname(srcFile));
-        console.log(`\tProcessing func ${func.name}`);
+        const testFile: string = path.join(testDir, fileName + "_" + func.name + "Test.cpp");
 
         // Creating file + adding dependency
         fs.appendFileSync(testFile, dependencies);
@@ -251,15 +277,27 @@ export class GoogleTestTestCreator implements ITestCreator {
         fs.appendFileSync(testFile, `#include "${relativeToSource}"\n`);
 
         if(func.templateParameters.length === 0) {
+            // Non-templated function generation
             this.generateForFunc(testFile, func,  testSuiteName);
         } else {
+            // Templated function generation
             const params = func.parameters.slice();
             if(func.type !== "void") {
                 params.unshift({type: func.type, name: ""});
             }
 
-
+            /**
+             * This has to be done first because on the next line we modify the template parameters 
+             * First, the params are normalized (wrapped in shared_ptr if needed) and then template constructs are
+             * added (T:: prefix for compile-time constants and typename T:: prefix for types) so the code was compilable.
+             */ 
             const funcTemplateParams = this.normalizeParameters(params).map(p => addTemplatedConstructs(p.type, func.templateParameters)[0]).join(", ");
+            /**
+             * To not hide the types inside TypeDefinitions, we add a _ prefix to the types: T -> _T
+             * Notice that first we have to map the possible instances of a type definition to its type as well
+             * for example template<typename T, T K> (suppose T=int) - the first move is to map it to template<typename T, _T k>
+             * and then apply the same method on T
+             */ 
             const modifiedParams: CppInterface.Parameter[] = func.templateParameters
                 .map(t => {
                     const newParam = {...t};
@@ -271,17 +309,23 @@ export class GoogleTestTestCreator implements ITestCreator {
                 })
                 .map(t => ({...t, name: `_${t.name}`}));
 
-
+            // Generate templated function constructs
             this.generateTemplatedFunc(testFile, func, {
-                ClassTemplateParams: this.getTemplateRepresentation(modifiedParams),//func.templateParameters.map(t => `${t.type} _${t.name}`).join(', '),
+                ClassTemplateParams: this.getTemplateRepresentation(modifiedParams),
                 TestSuiteName: testSuiteName,
                 TestName: `${func.name}General`,
-                FuncTemplateParams: funcTemplateParams,//params_to_str(this.normalizeParameters(params)),
+                FuncTemplateParams: funcTemplateParams,
                 BaseClasses: ["testing::Test"]
             });
         }
     }
 
+    /**
+     * A set of tests that are appended for each templated function
+     * @param testFile Path to the test file where the tests for the given functions are generated
+     * @param func The function that the tests are generated for
+     * @param data Data records that will be passed to the templates
+     */
     generateTemplatedFunc(testFile: string, func: CppInterface.FunctionMember, data: Record<string, any>) {
         fs.appendFileSync(testFile, TemplateHandler.getTemplate(config["test_typed_suite_class"], data));
         fs.appendFileSync(testFile, TemplateHandler.getTemplate(config["test_typed"], data));
@@ -290,6 +334,12 @@ export class GoogleTestTestCreator implements ITestCreator {
         fs.appendFileSync(testFile, TemplateHandler.getTemplate(config["test_typed_instantiate"], data));
     }
 
+    /**
+     * Non-templated global function generation 
+     * @param testFile Path to the test file where the tests for the given functions are generated
+     * @param func The function that the tests are generated for
+     * @param testSuiteName Name of the test suite which the test will be long to
+     */
     generateForFunc(testFile: string, func: CppInterface.FunctionMember, testSuiteName: string) {
         const hasReturnType: boolean  = func.type !== "void";
         const isParametrized: boolean = func.parameters.length > 0 || hasReturnType;
@@ -312,6 +362,14 @@ export class GoogleTestTestCreator implements ITestCreator {
     }
 
 
+    /**
+     * Adds a parametrized test suite for non-templated classes that have at least one parameter (and/or non-void return type)
+     * @param testFile Path to the test file where the tests for the given functions are generated
+     * @param parameters Parameters of a function including return type if non-void
+     * @param testSuiteName Name of the test suite which the test will be long to
+     * @param template The template that will be used to generate the tests
+     * @param templateParams Template parameters of a function
+     */
     addParametrizedTestSuiteClass(testFile: string, parameters: CppInterface.Parameter[], testSuiteName: string, template: string, templateParams: CppInterface.Parameter[]) {
         fs.appendFileSync(testFile, TemplateHandler.getTemplate(template, {
             FuncTemplateParams: params_to_str(parameters),
@@ -319,11 +377,18 @@ export class GoogleTestTestCreator implements ITestCreator {
             HasBaseClass: false,
             BaseClass: "",
             HasTemplates: templateParams.length !== 0,
-            ClassTemplateParams: this.getTemplateRepresentation(templateParams),//templateParams.map(t => `${t.type} ${t.name}`).join(','),
+            ClassTemplateParams: this.getTemplateRepresentation(templateParams),
             GoogleTestBaseClass: "testing::TestWithParam"
         }));
     }
 
+    /**
+     * Adds a general test case (that is the minimum what is generated for each function)
+     * @param testFile Path to the test file where the tests for the given functions are generated
+     * @param params Parameters of a function including return type if non-void
+     * @param funcName Name of the function
+     * @param testSuiteName Name of the test suite which the test will be long to
+     */
     addGeneralTestCase(testFile: string, params: CppInterface.Parameter[], funcName: string, testSuiteName: string) {
         const testType: string = params.length > 0
             ? config["parametrized_simple"] 
@@ -335,6 +400,12 @@ export class GoogleTestTestCreator implements ITestCreator {
         }));
     }
 
+    /**
+     * Adds the instantiation part of the value-parametrized tests
+     * @param testFile Path to the test file where the tests for the given functions are generated
+     * @param testSuiteName Name of the test suite which the test will be long to
+     * @param testingParams The instantiation values for each argument
+     */
     addParamInstantiation(testFile: string, testSuiteName: string, testingParams: string[]) {
         fs.appendFileSync(testFile, TemplateHandler.getTemplate(config["parametrized_instantiation_combine"], {
             TestSuiteName: testSuiteName,
@@ -342,6 +413,15 @@ export class GoogleTestTestCreator implements ITestCreator {
         }));
     }
 
+    /**
+     * For every exception that is thrown inside the function (or marked in doxygen documentation), an
+     * expect throw and an except no throw test case is generated
+     * @param fileName Path to the test file where the tests for the given functions are generated
+     * @param testSuiteName Name of the test suite which the test will be long to
+     * @param exceptions Array of exceptions that the function may throw
+     * @param testType Type of GoogleTest test that should be generated for the specific function
+     * @returns All the test suite names generated for exceptions (including throw/no throw)
+     */
     addTestThrow(fileName: string, testSuiteName: string, exceptions: string[], testType: string): string[] {
         const testSuites: string[] = [];
         exceptions.forEach(exception => {
@@ -361,6 +441,12 @@ export class GoogleTestTestCreator implements ITestCreator {
         return testSuites;
     }
 
+    /**
+     * Generates instantiation parameters for C++ primitive types
+     * Tries to go for corner cases 
+     * @param param A C++ parameter that the values should be generated for
+     * @returns A comma separated string representing the values to be added
+     */
     generateInstantiationParameters(param: CppInterface.Parameter): string {
         const typeInfo = cppPrimitiveTypes.get(param.type);
         return typeInfo !== undefined
@@ -368,6 +454,14 @@ export class GoogleTestTestCreator implements ITestCreator {
             : "";
     }
 
+    /**
+     * Generates instantiation values for primitive types
+     * Uses std::numeric_limits to make easier to include corner case (min/max) values of a type
+     * Tries to add a minimalistic but comprehensive set of examples
+     * @param T The type to generate the values for
+     * @param typeInfo Information about the type - whether signed or not
+     * @returns A list of values for the type
+     */
     constructInstantiationParamsForPrimitiveType(T: string, typeInfo: {signed: boolean}): string[] {
         const params = [
             `std::numeric_limits<${T}>::min()`,
@@ -384,15 +478,30 @@ export class GoogleTestTestCreator implements ITestCreator {
     }
 
     /**
-     * 
-     * @param templates 
-     * @returns 
+     * Joins the template types and names into a string, each template variable separated by commas
+     * @param templates The template variables that are joined
+     * @returns The string representation of template variables joined by comma
      */
     getTemplateRepresentation(templates: CppInterface.Parameter[]): string {
         return templates.map(t => `${t.type} ${t.name}`).join(', ');
     }
 
 
+    /**
+     * Generates unit tests for a class and all its methods (... that are specified by the user)
+     * Features:
+     * - May happen that a file contains multiple classes/structs -> for each class a new directory is created with the name of the class
+     * - For each class there is a class with the same name and "Test" suffix that serves as a base class for other value/type
+     *   parametrized tests. This base class defined the SetUp() and TearDown() functions that are most likely similar to all the functions
+     * - For each function (that is tested), a new file is generated containing a type/value parametrzied test according to the fact
+     *   whether the function is templated or not.
+     * @param testDir 
+     * @param srcFile 
+     * @param classElement 
+     * @param multiClassFile 
+     * @param dependencies 
+     * @returns 
+     */
     generateForClass(testDir: string, srcFile: string, classElement: CppInterface.ClassOrStruct, multiClassFile: boolean, dependencies: string): string {
         if(classElement.functions.length === 0) {
             return "";
@@ -449,7 +558,7 @@ export class GoogleTestTestCreator implements ITestCreator {
             let allTemplates: CppInterface.Parameter[] = classElement.templateParameters.concat(func.templateParameters)
             const funcTemplateParams = this.normalizeParameters(parameters).map(p => addTemplatedConstructs(p.type, allTemplates)[0]).join(", ");
 
-           allTemplates = allTemplates
+            allTemplates = allTemplates
                 .map(t => {
                     const newParam = {...t};
                     if(func.templateParameters.some(tp => tp.name === t.type)) {
@@ -463,7 +572,6 @@ export class GoogleTestTestCreator implements ITestCreator {
 
             if(allTemplates.length > 0) {
                 console.log(`${func.name} params: `);
-                //const modifiedParams: CppInterface.Parameter[] = allTemplates.map(t => {t.name = `_${t.name}`; return t;});
                 allTemplates.forEach(p => console.log(p));
                 this.generateTemplatedFunc(testFile, func, {
                     ClassTemplateParams: this.getTemplateRepresentation(allTemplates),
@@ -523,7 +631,6 @@ export class GoogleTestTestCreator implements ITestCreator {
             }
 
             param.type = type;
-            console.log(`Normalized paramater: ${param}`);
             return param;
         });
     }
@@ -552,10 +659,3 @@ export class GoogleTestTestCreator implements ITestCreator {
         }
     }
 }
-
-// new GoogleTestTestCreator({
-//     rootDir: "./src/test/data",
-//     relativeSrcDir: "./src/test/data/src",
-//     testFiles: ["./src/test/data/src/templated_operator.h"]//["./src/test/data/src/nested/example.h", "./src/test/data/src/nested/double_nested/Game.h"]
-    
-// }, new CMakeBuildSystem("templates/GoogleTest")).generateTests();

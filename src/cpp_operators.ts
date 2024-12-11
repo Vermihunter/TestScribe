@@ -1,3 +1,5 @@
+
+// Mapping from C++ operator declaration to their corresponding variants that may be used as C++ identifiers
 export const cppOverloadableOperators: Record<string, string> = {
     "operator+": "operatorPlus",
     "operator-": "operatorMinus",

@@ -2,6 +2,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as Handlebars from 'handlebars';
 
+/**
+ * Handlebars template handler with caching mechanism
+ */
 export class TemplateHandler {
     private static cache: Map<string, string> = new Map();
 
@@ -12,7 +15,7 @@ export class TemplateHandler {
         )(data);
     }
 
-    static loadTemplate(templateFilePathName: string) {
+    private static loadTemplate(templateFilePathName: string) {
         if(!fs.existsSync(templateFilePathName)) {
             throw new Error(`Template ${templateFilePathName} not found.`);
         }
@@ -21,6 +24,3 @@ export class TemplateHandler {
         return this.cache.get(templateFilePathName);
     }
 }
-// Usage
-//const welcomeMessage = getTemplate('test_parametrized.cpp', { TestSuiteName: 'Game', TemplateParams: 'int' });
-//console.log(welcomeMessage);

@@ -11,6 +11,10 @@ const config_paths = {
     "subdir_cmake": path.join(cmakeTemplateDir, "CMakeLists_local.txt")
 };
 
+/**
+ * Represents a CMake build system configurator that adds/updates the CMake file
+ * of the given layer according to the needs.
+ */
 export class CMakeBuildSystem  implements IBuildSystem {
     templateDir: string;
     testCtx: TestCreatorContext;
@@ -50,7 +54,6 @@ export class CMakeBuildSystem  implements IBuildSystem {
             }
     
             // Update the specific line (lineNumber is 1-based)
-            //lines[lineNumber - 1] = newContent;
             subdirs.forEach((subdir, ind) => {
                 lines.splice(lineNumber + ind, 0, `add_subdirectory(${subdir})`);
             });
@@ -60,7 +63,7 @@ export class CMakeBuildSystem  implements IBuildSystem {
     
             console.log(`Updated line ${lineNumber} in the file successfully.`);
         } catch (error) {
-            //console.error(`Error writing to file: ${error.message}`);
+            console.error(`Error writing to file: ${error}`);
         }
     }
 }

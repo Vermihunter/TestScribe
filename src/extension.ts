@@ -9,53 +9,9 @@ import { AccessSpecifier } from './cpp_objects';
 import * as fs from 'fs';
 import * as path from 'path';
 
-function getRelativePathFromRoot(filePath: string, relativeTestDir: string): string | null  {
-    const workspaceFolders = vscode.workspace.workspaceFolders;
-
-    if(!workspaceFolders || workspaceFolders.length === 0) {
-        return null;
-    }
-    
-    const rootPath = workspaceFolders[0].uri.fsPath;
-    const relativePath = path.relative(rootPath, filePath);
-    if(relativePath.startsWith('..')) {
-        return null;
-    }
-    
-    const parts = relativePath.split(path.sep); 
-    parts[0] = relativeTestDir; 
-    const testPath = path.resolve(rootPath, parts.join(path.sep));
-    return testPath;
-}
-
-function generateForFiles(fileNames: string[], srcRoot: string, testFilePath: string) {
-    // const workspaceFolders = vscode.workspace.workspaceFolders;
-    // if(!workspaceFolders || workspaceFolders.length === 0) {
-    //     return null;
-    // }
-
-    // const testRootPath = path.resolve(workspaceFolders[0].uri.fsPath, "tests");
-    // const generatedCppFiles: string[] = fileNames.flatMap(input =>  
-    //     generateTestsForFile(input, srcRoot, testFilePath));
-      
-    // // This is unnecessary -> possible to link with google test's main 
-    // //generateTestMain(testRootPath);
-
-    // // TODO: get all relative paths from root/tests -> pass as third argument that are not root/tests = subdirectories
-    // console.log(`Generated cpp files: ${generatedCppFiles}`);
-    // const subdirectories = Array.from(
-    //     // Make a set -> remove duplicates
-    //     new Set(generatedCppFiles
-    //     .map(x => path.relative(testFilePath, path.dirname(x)))
-    //     .filter(x => x !== ""))); // Remove empty paths -> test files in root/tests (they are part of the root CMakeLists.txt)
-    
-    // console.log(`Subdirectories: ${subdirectories} - testFilePath: ${testFilePath}`);
-    // generateRootTestCMake(generatedCppFiles, testRootPath, subdirectories);
-}
-
-const endings = ['.hpp', '.cpp', '.h'];
-function getHppFilesRecursively(dir: string): string[] {
-    let hppFiles: string[] = [];
+const cppFileEndings = ['.hpp','.hh', '.hxx', '.h', '.cpp', '.cc', '.cxx', '.c'];
+function getCppFilesRecursively(dir: string): string[] {
+    let cppFiles: string[] = [];
 
     const entries = fs.readdirSync(dir, { withFileTypes: true });
 
@@ -63,15 +19,13 @@ function getHppFilesRecursively(dir: string): string[] {
         const fullPath = path.join(dir, entry.name);
 
         if (entry.isDirectory()) {
-            // Recursively read subdirectories
-            hppFiles = hppFiles.concat(getHppFilesRecursively(fullPath));
-        } else if (entry.isFile() && endings.some(ending => fullPath.endsWith(ending))) {
-            // Add the .hpp file to the list
-            hppFiles.push(fullPath);
+            cppFiles = cppFiles.concat(getCppFilesRecursively(fullPath));
+        } else if (entry.isFile() && cppFileEndings.some(ending => fullPath.endsWith(ending))) {
+            cppFiles.push(fullPath);
         }
     }
 
-    return hppFiles;
+    return cppFiles;
 }
 
 
@@ -79,14 +33,6 @@ function getHppFilesRecursively(dir: string): string[] {
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "testscribe" is now active!');
-
-
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
     const forCurrFile = vscode.commands.registerCommand('testscribe.forCurrFile', () => {
         // Get the active editor
         const editor = vscode.window.activeTextEditor;
@@ -102,7 +48,7 @@ export function activate(context: vscode.ExtensionContext) {
         const filePath = editor.document.uri.fsPath;
         const rootFolderPath = workspaceFolders[0].uri.fsPath; 
 
-        if(!endings.includes(path.extname(filePath))) {
+        if(!cppFileEndings.includes(path.extname(filePath))) {
             vscode.window.showErrorMessage('The selected file must be a C++ file');
             return;
         }
@@ -115,17 +61,7 @@ export function activate(context: vscode.ExtensionContext) {
             relativeTestDirName: config.get<string>("testPath") ?? "tests"
         };
 
-        const testPath = getRelativePathFromRoot(filePath, ctx.relativeTestDirName);
-        if(testPath === null) {
-            return;
-        }
-
-        console.log(`Curr file - file path: ${filePath}`);
-        //generateForFiles([filePath], path.dirname(filePath), path.dirname(testPath));
-
-
-        const testCreator: GoogleTestTestCreator = new GoogleTestTestCreator(ctx, new CMakeBuildSystem("templates/GoogleTest", ctx));
-        testCreator.generateTests();
+        new GoogleTestTestCreator(ctx, new CMakeBuildSystem("templates/GoogleTest", ctx)).generateTests();
     });
 
     const forSelectedDir = vscode.commands.registerCommand('testscribe.forSelectedDir', async () => {
@@ -149,7 +85,7 @@ export function activate(context: vscode.ExtensionContext) {
             return;
         }
 
-        const allSrcFiles = srcFolderUri.flatMap(uri => getHppFilesRecursively(uri.fsPath));
+        const allSrcFiles = srcFolderUri.flatMap(uri => getCppFilesRecursively(uri.fsPath));
 
         if(allSrcFiles.length === 0) {
             vscode.window.showErrorMessage('No C++ files found under the selected directories!');
@@ -173,10 +109,7 @@ export function activate(context: vscode.ExtensionContext) {
             relativeTestDirName: config.get<string>('testPath') ?? "tests"
         };
 
-        const testCreator: GoogleTestTestCreator = new GoogleTestTestCreator(ctx, new CMakeBuildSystem("templates/GoogleTest", ctx));
-
-
-        testCreator.generateTests();
+        new GoogleTestTestCreator(ctx, new CMakeBuildSystem("templates/GoogleTest", ctx)).generateTests();
     });
 
 

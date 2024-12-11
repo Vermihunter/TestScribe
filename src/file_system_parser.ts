@@ -2,9 +2,9 @@ export interface TreeNode {
     [name: string]: TreeNode;
 }
   
-  /**
-   * Inserts a path (like "/usr/local/bin") into the given tree object.
-   */
+/**
+ * Inserts a path (like "/usr/local/bin") into the given tree object.
+ */
 function insertPathIntoTree(root: TreeNode, path: string) {
     // Remove leading/trailing slashes and split the path into segments
     const segments = path.replace(/^\/+/, '').replace(/\/+$/, '').split('/');
@@ -22,9 +22,9 @@ function insertPathIntoTree(root: TreeNode, path: string) {
     }
 }
   
-  /**
-   * Takes a set of paths and returns a tree structure.
-   */
+/**
+ * Takes a set of paths and returns a tree structure.
+ */
 export function buildTreeFromPaths(paths: Set<string>): TreeNode {
     const root: TreeNode = {};
     for (const path of paths) {
@@ -33,16 +33,3 @@ export function buildTreeFromPaths(paths: Set<string>): TreeNode {
   
     return root;
 }
-  
-// Example usage
-// const paths = new Set([
-//     "/usr/local/bin",
-//     "/usr/local/share",
-//     "/usr/local/lib",
-//     "/etc/nginx/nginx.conf",
-//     "/home/user/docs/readme.md"
-// ]);
-  
-// const tree = buildTreeFromPaths(paths);
-// console.log(JSON.stringify(tree, null, 2));
-  

@@ -1,3 +1,5 @@
+// An interface representing C++ constructs that are used during test generation
+
 // Define the AccessSpecifier enum
 export enum AccessSpecifier {
     Public = 'public',
@@ -16,7 +18,7 @@ export interface Member {
     type: string;
     isStatic: boolean;
     isVirtual: boolean;
-    access: AccessSpecifier; // public, private, or protected
+    access: AccessSpecifier; 
 }
 
 export interface FunctionMember extends Member {

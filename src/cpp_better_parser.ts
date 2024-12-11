@@ -570,8 +570,6 @@ function parse_class(node: Parser.SyntaxNode, defaultAccessSpecifier: AccessSpec
 }
 
 
-
-
 function parse_template_parameter_declaration(node: Parser.SyntaxNode): Parameter {
     let param: Parameter = {
         type: "",
