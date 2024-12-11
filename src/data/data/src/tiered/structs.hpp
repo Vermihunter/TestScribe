@@ -9,6 +9,18 @@ public:
     virtual void virtual_class_method();
 };
 
+struct Kapa {
+    template<typename K>
+    void kapal() {
+
+    }
+
+    template<typename K>
+    void kapal_szamot(int l) {
+        
+    }
+};
+
 struct SomeStruct {
     double x;
     double y;

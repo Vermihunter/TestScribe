@@ -571,14 +571,18 @@ export class GoogleTestTestCreator implements ITestCreator {
 
 
             if(allTemplates.length > 0) {
-                console.log(`${func.name} params: `);
+                let baseClass: string = `${testSuiteName}Test`;
+                if(classElement.templateParameters.length > 0) {
+                    baseClass += `<${classElement.templateParameters.map(t => toTemplateType(t)).join(', ')}>`;
+                }
+
                 allTemplates.forEach(p => console.log(p));
                 this.generateTemplatedFunc(testFile, func, {
                     ClassTemplateParams: this.getTemplateRepresentation(allTemplates),
                     TestSuiteName: `${testSuiteName}${funcName}`,
                     TestName: `${funcName}General`,
                     FuncTemplateParams: funcTemplateParams,
-                    BaseClasses: [`${testSuiteName}Test<${classElement.templateParameters.map(t => toTemplateType(t)).join(', ')}>`]
+                    BaseClasses: [baseClass]
                 });
                 
             
