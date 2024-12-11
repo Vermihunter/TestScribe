@@ -29,17 +29,17 @@
         "testScribe.testPath": {
           "type": "string",
           "default": "tests",
-          "description": "Specify the test path relative to the root folder."
+          "description": "Specifies the test path relative to the root folder."
         },
         "testScribe.generateForClassPrivateMethods": {
           "type": "boolean",
           "default": "false",
-          "description": "Specify whether tests should be generated for private member methods of a class."
+          "description": "Specifies whether tests should be generated for private member methods of a class."
         },
         "testScribe.generateForClassProtectedMethods": {
           "type": "boolean",
           "default": "false",
-          "description": "Specify whether tests should be generated for protected member methods of a class."
+          "description": "Specifies whether tests should be generated for protected member methods of a class."
         }
       }
     }

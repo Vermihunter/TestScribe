@@ -1,7 +1,6 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-//import {generateRootTestCMake, generateTestMain, generateTestsForFile} from './cpp_test_creator';
 import { CMakeBuildSystem } from './cmake_build_system';
 import { GoogleTestTestCreator } from './cpp_googletest_creator';
 import { TestCreatorContext } from './test_creator_context';

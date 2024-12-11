@@ -1,9 +1,5 @@
 import Parser from 'tree-sitter';
-import Cpp from 'tree-sitter-cpp';
 import {AccessSpecifier, ClassOrStruct, Member, FunctionMember, Parameter, CppFile } from './cpp_objects';
-import { error } from 'console';
-import { access } from 'fs';
-import { types } from 'util';
 
 
 interface FunctionDeclarator {
@@ -450,11 +446,6 @@ function parse_declaration(node: Parser.SyntaxNode, accessSpecifier: AccessSpeci
     if(structSpecifier !== undefined) {
         return parse_class(structSpecifier, accessSpecifier);
     }
-
-    // structSpecifier = node.children.find(child => child.type === "class_specifier");
-    // if(structSpecifier !== undefined) {
-    //     return parse_class(structSpecifier, accessSpecifier);
-    // }
 
     return null;
 }
