@@ -4,6 +4,10 @@ file level test generation. Currently it supports `C++` and the most famous C++ 
 TestScribe does not provide deep code analysis to generate unit tests but offers an easy way to create a skeleton for your tests on directory and file level
 that compiles without any further compilation/modification action.
 
+A quick demo on a Tic tac toe implementation in Gtkmm:
+![Watch the demo](docs/demo.gif)
+
+
 ## Usage 
 
 1. Open your C++ project's root directory
