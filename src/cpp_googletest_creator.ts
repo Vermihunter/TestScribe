@@ -567,7 +567,7 @@ export class GoogleTestTestCreator implements ITestCreator {
                     
                     return newParam;
                 })
-                .map(t => ({...t, name: `_${t.name}`})); // t.name = `_${t.name}`; return t;
+                .map(t => ({...t, name: `_${t.name}`}));
 
 
             if(allTemplates.length > 0) {
