@@ -34,6 +34,11 @@ Suppose that the file that is located at `root/include/foo/bar/some.h`:
 - Tests for a global function named `add` of this file will be located at `root/tests/foo/bar/some_addTest.cpp`
 - Tests for a class named `Point` of this file will be located at `root/tests/foo/bar/Point/PointTest.h` and a public member function `distance` of this class at `root/tests/foo/bar/Point/PointDistanceTest.cpp`
 
+### Autofailing behavior
+
+The generated tests are configured in a way that all of them failed - they contain a `EXPECT_TRUE(false)` statement. The reason behind this decision was to not mislead the user that all of their pass but to notify them that the tests need implementation. 
+
+
 ### Generated tests
 
 - For every method (both global and class methods), a general test case is generated
