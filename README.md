@@ -14,6 +14,68 @@ A quick demo on a Tic tac toe implementation in Gtkmm:
 2. From the command-palette select `Generate tests for the current file` or `Generate tests for the selected directory` according to your preferences
 3. By running the command `cmake -B build && cd build && cmake --build . && ctest`, the tests should be built, compiled and ran
 
+Example:
+
+Suppose we have a local controller from the MVC design pattern that processes user requests and forwards them to the Model component. A simple class could look like this:
+```cpp
+struct LocalController : public IController {
+    /** ... other methods */
+
+    /**
+     * @throws std::invalid_argument if row or col are negative
+     */
+    virtual bool send_move(int row, int col) override {
+        return game->send_move(row, col);
+    }
+
+    /* ... other methods */
+};
+```
+
+For the previous piece of code the following Testing code is generated:
+```cpp
+/** LocalControllerTest.h - set up the class instance maybe using a Mock object... */
+class LocalcontrollerTest : public testing::Test {
+public:
+    virtual void SetUp() override {
+        
+    }
+
+    virtual void TearDown() override {
+        
+    }
+};
+
+/* LocalcontrollerSendMoveTest.cpp - test an individual class member method */
+class Localcontrollersend_moveTest : public testing::WithParamInterface<std::tuple<bool, int, int>>, public LocalcontrollerTest  {};
+    
+TEST_P(Localcontrollersend_moveTest, send_moveGeneral) {
+    auto param = GetParam();
+    EXPECT_TRUE(false);
+}
+
+TEST_P(Localcontrollersend_moveTest, ThrowStdInvalidArgument) {
+    // auto param = GetParam();
+    EXPECT_TRUE(false);
+    // EXPECT_THROW(func_call(), std::invalid_argument);
+}
+
+TEST_P(Localcontrollersend_moveTest, NoThrowStdInvalidArgument) {
+    // auto param = GetParam();
+    EXPECT_TRUE(false);
+    // EXPECT_NO_THROW(func_call(), std::invalid_argument);
+}
+
+INSTANTIATE_TEST_SUITE_P(BehaviorTest, Localcontrollersend_moveTest, 
+    testing::Combine(
+        testing::Values(std::numeric_limits<bool>::min(), std::numeric_limits<bool>::max(), (bool)(0), (bool)(5)),
+        testing::Values(std::numeric_limits<int>::min(), std::numeric_limits<int>::max(), (int)(0), (int)(5), (int)(-113)),
+        testing::Values(std::numeric_limits<int>::min(), std::numeric_limits<int>::max(), (int)(0), (int)(5), (int)(-113)))
+    );
+
+INSTANTIATE_TEST_SUITE_P(ReturnTypeTest, Localcontrollersend_moveTest, testing::Values());
+```
+
 ## Features
 
 ### Classes and functions
