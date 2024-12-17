@@ -81,3 +81,6 @@ This extension contributes the following settings through the `contributes.confi
 - Adding another framework is not so easy, but the templates could be defined inside the `templates/` directory and adding the new framework by implementing the `ITestCreator` interface
 - Adding other user preferences could be done by declaring new variables inside the `TestCreatorContext` interface and use according to the needs
 
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
