@@ -18,6 +18,9 @@ struct LocalController : public IController {
         return game->get_curr_player();
     }
 
+    /**
+     * @throws std::invalid_argument if row or col are negative
+     */
     virtual bool send_move(int row, int col) override {
         return game->send_move(row, col);
     }
